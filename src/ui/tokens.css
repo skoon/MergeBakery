@@ -1,0 +1,28 @@
+/* Palette names come from the GDD; hex values are placeholders until the art style sheet (T-O4). */
+:root {
+  --color-butter: #f7d774;
+  --color-crust: #9c5b2e;
+  --color-strawberry: #f27ba0;
+  --color-mint: #9ed9c3;
+  --color-cream: #fff6e6;
+  --color-ink: #4a2c17;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  --font-body:
+    ui-rounded, 'SF Pro Rounded', 'Nunito', 'Segoe UI', system-ui, sans-serif;
+
+  /* Settings (T5.9) raises this to 1.5; every font size scales from it. */
+  --text-scale: 1;
+  --font-size-sm: calc(0.875rem * var(--text-scale));
+  --font-size-md: calc(1rem * var(--text-scale));
+  --font-size-lg: calc(1.25rem * var(--text-scale));
+  --font-size-xl: calc(1.5rem * var(--text-scale));
+}

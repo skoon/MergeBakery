@@ -1,0 +1,38 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-crust);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--font-size-md);
+}
+
+#app {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  height: 100dvh;
+  margin-inline: auto;
+  background: var(--color-cream);
+}
+
+#stage,
+#overlay-root {
+  position: absolute;
+  inset: 0;
+}
+
+#stage canvas {
+  display: block;
+}
+
+/* The overlay covers the canvas; only its children take input. */
+#overlay-root {
+  pointer-events: none;
+}
+
+#overlay-root > * {
+  pointer-events: auto;
+}

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design tokens</title>
+    <link rel="stylesheet" href="/src/ui/tokens.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: var(--space-5);
+        background: var(--color-cream);
+        color: var(--color-ink);
+        font-family: var(--font-body);
+        font-size: var(--font-size-md);
+      }
+      h2 {
+        font-size: var(--font-size-lg);
+        margin-block: var(--space-6) var(--space-3);
+      }
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: var(--space-4);
+      }
+      .swatch {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        font-size: var(--font-size-sm);
+      }
+      .chip {
+        height: 72px;
+        border-radius: var(--space-3);
+        border: 1px solid rgb(0 0 0 / 0.1);
+      }
+      .space-row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin-block: var(--space-2);
+        font-size: var(--font-size-sm);
+      }
+      .space-bar {
+        height: var(--space-3);
+        background: var(--color-strawberry);
+      }
+    </style>
+  </head>
+  <body>
+    <h1 style="font-size: var(--font-size-xl)">Design tokens</h1>
+
+    <h2>Colors</h2>
+    <div class="swatches">
+      <div class="swatch">
+        <div class="chip" style="background: var(--color-butter)"></div>
+        --color-butter
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: var(--color-crust)"></div>
+        --color-crust
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: var(--color-strawberry)"></div>
+        --color-strawberry
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: var(--color-mint)"></div>
+        --color-mint
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: var(--color-cream)"></div>
+        --color-cream
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: var(--color-ink)"></div>
+        --color-ink
+      </div>
+    </div>
+
+    <h2>Spacing</h2>
+    <div class="space-row">
+      <div class="space-bar" style="width: var(--space-1)"></div>
+      --space-1
+    </div>
+    <div class="space-row">
+      <div class="space-bar" style="width: var(--space-2)"></div>
+      --space-2
+    </div>
+    <div class="space-row">
+      <div class="space-bar" style="width: var(--space-3)"></div>
+      --space-3
+    </div>
+    <div class="space-row">
+      <div class="space-bar" style="width: var(--space-4)"></div>
+      --space-4
+    </div>
+    <div class="space-row">
+      <div class="space-bar" style="width: var(--space-5)"></div>
+      --space-5
+    </div>
+    <div class="space-row">
+      <div class="space-bar" style="width: var(--space-6)"></div>
+      --space-6
+    </div>
+    <div class="space-row">
+      <div class="space-bar" style="width: var(--space-7)"></div>
+      --space-7
+    </div>
+    <div class="space-row">
+      <div class="space-bar" style="width: var(--space-8)"></div>
+      --space-8
+    </div>
+
+    <h2>Type</h2>
+    <p style="font-size: var(--font-size-sm)">Small: Fresh croissants</p>
+    <p style="font-size: var(--font-size-md)">Medium: Fresh croissants</p>
+    <p style="font-size: var(--font-size-lg)">Large: Fresh croissants</p>
+    <p style="font-size: var(--font-size-xl)">Extra large: Fresh croissants</p>
+  </body>
+</html>
