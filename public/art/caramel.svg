@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <style>
+      .placeholder-bg { fill: #f27ba0; stroke: #b63f64; stroke-width: 4; }
+      .tier-text { font-size: 48px; font-weight: bold; fill: #ffffff; text-anchor: middle; }
+      .label-text { font-size: 16px; font-weight: 500; fill: #ffffff; text-anchor: middle; }
+    </style>
+  </defs>
+  <rect class="placeholder-bg" x="2" y="2" width="124" height="124" rx="24" ry="24"/>
+  <text class="tier-text" x="64" y="58">4</text>
+  <text class="label-text" x="64" y="85">C</text>
+</svg>

@@ -1,0 +1,643 @@
+{
+  "chains": [
+    {
+      "id": "flour",
+      "name": "Flour",
+      "kind": "ingredient",
+      "color": "#e8c07d",
+      "completionGems": 8
+    },
+    {
+      "id": "dairy",
+      "name": "Dairy",
+      "kind": "ingredient",
+      "color": "#a8d8f0",
+      "completionGems": 7
+    },
+    {
+      "id": "egg",
+      "name": "Eggs",
+      "kind": "ingredient",
+      "color": "#f7d774",
+      "completionGems": 6
+    },
+    {
+      "id": "sugar",
+      "name": "Sugar",
+      "kind": "ingredient",
+      "color": "#f27ba0",
+      "completionGems": 7
+    },
+    {
+      "id": "fruit",
+      "name": "Fruit",
+      "kind": "ingredient",
+      "color": "#e05a5a",
+      "completionGems": 6
+    },
+    {
+      "id": "cookie",
+      "name": "Cookies",
+      "kind": "baked",
+      "color": "#b07a45",
+      "completionGems": 4
+    },
+    {
+      "id": "croissant",
+      "name": "Croissants",
+      "kind": "baked",
+      "color": "#e0a458",
+      "completionGems": 3
+    },
+    {
+      "id": "cupcake",
+      "name": "Cupcakes",
+      "kind": "baked",
+      "color": "#f5a3c0",
+      "completionGems": 4
+    },
+    {
+      "id": "flour-mill",
+      "name": "Flour Mill",
+      "kind": "generator",
+      "color": "#9c5b2e",
+      "completionGems": 0
+    },
+    {
+      "id": "dairy-fridge",
+      "name": "Dairy Fridge",
+      "kind": "generator",
+      "color": "#9ed9c3",
+      "completionGems": 0
+    },
+    {
+      "id": "energy-jar",
+      "name": "Energy Jar",
+      "kind": "bonus",
+      "color": "#7fc8f8",
+      "completionGems": 0
+    },
+    {
+      "id": "coin-pouch",
+      "name": "Coin Pouch",
+      "kind": "bonus",
+      "color": "#f2c94c",
+      "completionGems": 0
+    },
+    {
+      "id": "golden-whisk",
+      "name": "Golden Whisk",
+      "kind": "wildcard",
+      "color": "#ffd700",
+      "completionGems": 0
+    }
+  ],
+  "items": [
+    {
+      "id": "wheat-stalk",
+      "name": "Wheat stalk",
+      "chainId": "flour",
+      "tier": 1,
+      "spriteKey": "wheat-stalk",
+      "sellValue": 1,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "wheat-bundle",
+      "name": "Wheat bundle",
+      "chainId": "flour",
+      "tier": 2,
+      "spriteKey": "wheat-bundle",
+      "sellValue": 2,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "flour-scoop",
+      "name": "Flour scoop",
+      "chainId": "flour",
+      "tier": 3,
+      "spriteKey": "flour-scoop",
+      "sellValue": 4,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "flour-bag",
+      "name": "Flour bag",
+      "chainId": "flour",
+      "tier": 4,
+      "spriteKey": "flour-bag",
+      "sellValue": 8,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "flour-sack",
+      "name": "Flour sack",
+      "chainId": "flour",
+      "tier": 5,
+      "spriteKey": "flour-sack",
+      "sellValue": 16,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "dough-ball",
+      "name": "Dough ball",
+      "chainId": "flour",
+      "tier": 6,
+      "spriteKey": "dough-ball",
+      "sellValue": 32,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "bread-loaf",
+      "name": "Bread loaf",
+      "chainId": "flour",
+      "tier": 7,
+      "spriteKey": "bread-loaf",
+      "sellValue": 64,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "sourdough-boule",
+      "name": "Sourdough boule",
+      "chainId": "flour",
+      "tier": 8,
+      "spriteKey": "sourdough-boule",
+      "sellValue": 128,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "milk-splash",
+      "name": "Milk splash",
+      "chainId": "dairy",
+      "tier": 1,
+      "spriteKey": "milk-splash",
+      "sellValue": 1,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "milk-bottle",
+      "name": "Milk bottle",
+      "chainId": "dairy",
+      "tier": 2,
+      "spriteKey": "milk-bottle",
+      "sellValue": 2,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "cream-jug",
+      "name": "Cream jug",
+      "chainId": "dairy",
+      "tier": 3,
+      "spriteKey": "cream-jug",
+      "sellValue": 4,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "butter-pat",
+      "name": "Butter pat",
+      "chainId": "dairy",
+      "tier": 4,
+      "spriteKey": "butter-pat",
+      "sellValue": 8,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "butter-block",
+      "name": "Butter block",
+      "chainId": "dairy",
+      "tier": 5,
+      "spriteKey": "butter-block",
+      "sellValue": 16,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "cheese-wedge",
+      "name": "Cheese wedge",
+      "chainId": "dairy",
+      "tier": 6,
+      "spriteKey": "cheese-wedge",
+      "sellValue": 32,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "cheese-wheel",
+      "name": "Cheese wheel",
+      "chainId": "dairy",
+      "tier": 7,
+      "spriteKey": "cheese-wheel",
+      "sellValue": 64,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "egg",
+      "name": "Egg",
+      "chainId": "egg",
+      "tier": 1,
+      "spriteKey": "egg",
+      "sellValue": 1,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "egg-pair",
+      "name": "Egg pair",
+      "chainId": "egg",
+      "tier": 2,
+      "spriteKey": "egg-pair",
+      "sellValue": 2,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "egg-carton",
+      "name": "Egg carton",
+      "chainId": "egg",
+      "tier": 3,
+      "spriteKey": "egg-carton",
+      "sellValue": 4,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "whisked-eggs",
+      "name": "Whisked eggs",
+      "chainId": "egg",
+      "tier": 4,
+      "spriteKey": "whisked-eggs",
+      "sellValue": 8,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "custard-cup",
+      "name": "Custard cup",
+      "chainId": "egg",
+      "tier": 5,
+      "spriteKey": "custard-cup",
+      "sellValue": 16,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "creme-brulee",
+      "name": "Crème brûlée",
+      "chainId": "egg",
+      "tier": 6,
+      "spriteKey": "creme-brulee",
+      "sellValue": 32,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "sugar-cube",
+      "name": "Sugar cube",
+      "chainId": "sugar",
+      "tier": 1,
+      "spriteKey": "sugar-cube",
+      "sellValue": 1,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "sugar-bowl",
+      "name": "Sugar bowl",
+      "chainId": "sugar",
+      "tier": 2,
+      "spriteKey": "sugar-bowl",
+      "sellValue": 2,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "syrup-bottle",
+      "name": "Syrup bottle",
+      "chainId": "sugar",
+      "tier": 3,
+      "spriteKey": "syrup-bottle",
+      "sellValue": 4,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "caramel",
+      "name": "Caramel",
+      "chainId": "sugar",
+      "tier": 4,
+      "spriteKey": "caramel",
+      "sellValue": 8,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "cocoa-bean",
+      "name": "Cocoa bean",
+      "chainId": "sugar",
+      "tier": 5,
+      "spriteKey": "cocoa-bean",
+      "sellValue": 16,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "chocolate-bar",
+      "name": "Chocolate bar",
+      "chainId": "sugar",
+      "tier": 6,
+      "spriteKey": "chocolate-bar",
+      "sellValue": 32,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "truffle-box",
+      "name": "Truffle box",
+      "chainId": "sugar",
+      "tier": 7,
+      "spriteKey": "truffle-box",
+      "sellValue": 64,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "berry",
+      "name": "Berry",
+      "chainId": "fruit",
+      "tier": 1,
+      "spriteKey": "berry",
+      "sellValue": 1,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "berry-bunch",
+      "name": "Berry bunch",
+      "chainId": "fruit",
+      "tier": 2,
+      "spriteKey": "berry-bunch",
+      "sellValue": 2,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "apple",
+      "name": "Apple",
+      "chainId": "fruit",
+      "tier": 3,
+      "spriteKey": "apple",
+      "sellValue": 4,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "apple-basket",
+      "name": "Apple basket",
+      "chainId": "fruit",
+      "tier": 4,
+      "spriteKey": "apple-basket",
+      "sellValue": 8,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "jam-jar",
+      "name": "Jam jar",
+      "chainId": "fruit",
+      "tier": 5,
+      "spriteKey": "jam-jar",
+      "sellValue": 16,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "fruit-tart-filling",
+      "name": "Fruit tart filling",
+      "chainId": "fruit",
+      "tier": 6,
+      "spriteKey": "fruit-tart-filling",
+      "sellValue": 32,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "cookie",
+      "name": "Cookie",
+      "chainId": "cookie",
+      "tier": 1,
+      "spriteKey": "cookie",
+      "sellValue": 22,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "cookie-stack",
+      "name": "Cookie stack",
+      "chainId": "cookie",
+      "tier": 2,
+      "spriteKey": "cookie-stack",
+      "sellValue": 44,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "cookie-tin",
+      "name": "Cookie tin",
+      "chainId": "cookie",
+      "tier": 3,
+      "spriteKey": "cookie-tin",
+      "sellValue": 88,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "gift-hamper",
+      "name": "Gift hamper",
+      "chainId": "cookie",
+      "tier": 4,
+      "spriteKey": "gift-hamper",
+      "sellValue": 176,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "croissant",
+      "name": "Croissant",
+      "chainId": "croissant",
+      "tier": 1,
+      "spriteKey": "croissant",
+      "sellValue": 96,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "pain-au-chocolat",
+      "name": "Pain au chocolat",
+      "chainId": "croissant",
+      "tier": 2,
+      "spriteKey": "pain-au-chocolat",
+      "sellValue": 192,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "pastry-platter",
+      "name": "Pastry platter",
+      "chainId": "croissant",
+      "tier": 3,
+      "spriteKey": "pastry-platter",
+      "sellValue": 384,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "cupcake",
+      "name": "Cupcake",
+      "chainId": "cupcake",
+      "tier": 1,
+      "spriteKey": "cupcake",
+      "sellValue": 28,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "cake-slice",
+      "name": "Cake slice",
+      "chainId": "cupcake",
+      "tier": 2,
+      "spriteKey": "cake-slice",
+      "sellValue": 56,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "layer-cake",
+      "name": "Layer cake",
+      "chainId": "cupcake",
+      "tier": 3,
+      "spriteKey": "layer-cake",
+      "sellValue": 112,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "wedding-cake",
+      "name": "Wedding cake",
+      "chainId": "cupcake",
+      "tier": 4,
+      "spriteKey": "wedding-cake",
+      "sellValue": 224,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "flour-mill-1",
+      "name": "Flour Mill",
+      "chainId": "flour-mill",
+      "tier": 1,
+      "spriteKey": "flour-mill-1",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "flour-mill-2",
+      "name": "Flour Mill II",
+      "chainId": "flour-mill",
+      "tier": 2,
+      "spriteKey": "flour-mill-2",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "flour-mill-3",
+      "name": "Flour Mill III",
+      "chainId": "flour-mill",
+      "tier": 3,
+      "spriteKey": "flour-mill-3",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "dairy-fridge-1",
+      "name": "Dairy Fridge",
+      "chainId": "dairy-fridge",
+      "tier": 1,
+      "spriteKey": "dairy-fridge-1",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "dairy-fridge-2",
+      "name": "Dairy Fridge II",
+      "chainId": "dairy-fridge",
+      "tier": 2,
+      "spriteKey": "dairy-fridge-2",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "dairy-fridge-3",
+      "name": "Dairy Fridge III",
+      "chainId": "dairy-fridge",
+      "tier": 3,
+      "spriteKey": "dairy-fridge-3",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "energy-jar",
+      "name": "Energy jar",
+      "chainId": "energy-jar",
+      "tier": 1,
+      "spriteKey": "energy-jar",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": {
+        "energy": 20,
+        "coins": 0
+      }
+    },
+    {
+      "id": "coin-pouch",
+      "name": "Coin pouch",
+      "chainId": "coin-pouch",
+      "tier": 1,
+      "spriteKey": "coin-pouch",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": {
+        "energy": 0,
+        "coins": 25
+      }
+    },
+    {
+      "id": "golden-whisk",
+      "name": "Golden Whisk",
+      "chainId": "golden-whisk",
+      "tier": 1,
+      "spriteKey": "golden-whisk",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    }
+  ]
+}

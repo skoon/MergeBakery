@@ -1,0 +1,72 @@
+{
+  "generators": [
+    {
+      "itemId": "flour-mill-1",
+      "spawnTable": [
+        { "itemId": "wheat-stalk", "weight": 85 },
+        { "itemId": "wheat-bundle", "weight": 15 }
+      ],
+      "charges": 12,
+      "cooldownSec": 300
+    },
+    {
+      "itemId": "flour-mill-2",
+      "spawnTable": [
+        { "itemId": "wheat-stalk", "weight": 60 },
+        { "itemId": "wheat-bundle", "weight": 30 },
+        { "itemId": "flour-scoop", "weight": 10 }
+      ],
+      "charges": 16,
+      "cooldownSec": 240
+    },
+    {
+      "itemId": "flour-mill-3",
+      "spawnTable": [
+        { "itemId": "wheat-stalk", "weight": 40 },
+        { "itemId": "wheat-bundle", "weight": 35 },
+        { "itemId": "flour-scoop", "weight": 20 },
+        { "itemId": "flour-bag", "weight": 5 }
+      ],
+      "charges": 20,
+      "cooldownSec": 180
+    },
+    {
+      "itemId": "dairy-fridge-1",
+      "spawnTable": [
+        { "itemId": "milk-splash", "weight": 85 },
+        { "itemId": "milk-bottle", "weight": 15 }
+      ],
+      "charges": 12,
+      "cooldownSec": 300
+    },
+    {
+      "itemId": "dairy-fridge-2",
+      "spawnTable": [
+        { "itemId": "milk-splash", "weight": 60 },
+        { "itemId": "milk-bottle", "weight": 30 },
+        { "itemId": "cream-jug", "weight": 10 }
+      ],
+      "charges": 16,
+      "cooldownSec": 240
+    },
+    {
+      "itemId": "dairy-fridge-3",
+      "spawnTable": [
+        { "itemId": "milk-splash", "weight": 40 },
+        { "itemId": "milk-bottle", "weight": 35 },
+        { "itemId": "cream-jug", "weight": 20 },
+        { "itemId": "butter-pat", "weight": 5 }
+      ],
+      "charges": 20,
+      "cooldownSec": 180
+    }
+  ],
+  "rareDrops": {
+    "chancePercent": 3,
+    "table": [
+      { "itemId": "energy-jar", "weight": 45 },
+      { "itemId": "coin-pouch", "weight": 45 },
+      { "itemId": "golden-whisk", "weight": 10 }
+    ]
+  }
+}

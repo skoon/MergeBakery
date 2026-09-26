@@ -1,0 +1,74 @@
+{
+  "customers": [
+    {
+      "id": "gus",
+      "name": "Gus the Fisherman",
+      "kind": "regular",
+      "portraitKey": "portrait-gus",
+      "favoriteItems": ["bread-loaf", "sourdough-boule", "cheese-wedge"]
+    },
+    {
+      "id": "edith",
+      "name": "Miss Edith",
+      "kind": "regular",
+      "portraitKey": "portrait-edith",
+      "favoriteItems": ["croissant", "cream-jug", "butter-block"]
+    },
+    {
+      "id": "dex",
+      "name": "Dex",
+      "kind": "regular",
+      "portraitKey": "portrait-dex",
+      "favoriteItems": ["croissant", "pain-au-chocolat", "dough-ball"]
+    },
+    {
+      "id": "mina",
+      "name": "Mina",
+      "kind": "regular",
+      "portraitKey": "portrait-mina",
+      "favoriteItems": ["flour-sack", "milk-bottle", "cheese-wheel"]
+    },
+    {
+      "id": "walkin-hiker",
+      "name": "Hiker",
+      "kind": "walkIn",
+      "portraitKey": "portrait-walkin-hiker",
+      "favoriteItems": []
+    },
+    {
+      "id": "walkin-tourist",
+      "name": "Tourist",
+      "kind": "walkIn",
+      "portraitKey": "portrait-walkin-tourist",
+      "favoriteItems": []
+    },
+    {
+      "id": "walkin-student",
+      "name": "Student",
+      "kind": "walkIn",
+      "portraitKey": "portrait-walkin-student",
+      "favoriteItems": []
+    },
+    {
+      "id": "walkin-jogger",
+      "name": "Jogger",
+      "kind": "walkIn",
+      "portraitKey": "portrait-walkin-jogger",
+      "favoriteItems": []
+    },
+    {
+      "id": "walkin-neighbor",
+      "name": "Neighbor",
+      "kind": "walkIn",
+      "portraitKey": "portrait-walkin-neighbor",
+      "favoriteItems": []
+    },
+    {
+      "id": "walkin-painter",
+      "name": "Painter",
+      "kind": "walkIn",
+      "portraitKey": "portrait-walkin-painter",
+      "favoriteItems": []
+    }
+  ]
+}

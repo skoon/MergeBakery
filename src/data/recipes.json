@@ -1,0 +1,25 @@
+{
+  "recipes": [
+    {
+      "id": "bake-cookie",
+      "name": "Cookie",
+      "inputs": ["flour-bag", "sugar-bowl", "egg"],
+      "output": "cookie",
+      "bakeSec": 60
+    },
+    {
+      "id": "bake-croissant",
+      "name": "Croissant",
+      "inputs": ["dough-ball", "butter-block"],
+      "output": "croissant",
+      "bakeSec": 300
+    },
+    {
+      "id": "bake-cupcake",
+      "name": "Cupcake",
+      "inputs": ["flour-bag", "egg-pair", "cream-jug"],
+      "output": "cupcake",
+      "bakeSec": 900
+    }
+  ]
+}

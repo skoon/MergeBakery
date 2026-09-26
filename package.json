@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "art:placeholders": "node scripts/gen-placeholder-art.js"
   },
   "dependencies": {
     "pixi.js": "^8.21.0",

@@ -1,0 +1,101 @@
+/* HUD bar: top bar showing game status (T3.10) */
+
+.hud-container {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  padding: 0 var(--space-2);
+  gap: var(--space-1);
+  background: linear-gradient(
+    to bottom,
+    var(--color-butter),
+    var(--color-cream)
+  );
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hud-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.hud-label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-ink);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.hud-value {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-crust);
+  text-align: center;
+  min-height: 1em;
+}
+
+.hud-energy {
+  min-width: 50px;
+}
+
+.hud-currency {
+  min-width: 40px;
+}
+
+.hud-level {
+  min-width: 45px;
+}
+
+/* Energy countdown timer */
+.hud-countdown {
+  font-size: var(--font-size-sm);
+  color: var(--color-crust);
+  height: 1em;
+  white-space: nowrap;
+}
+
+/* Level progress bar */
+.hud-progress-bar {
+  width: 100%;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 1px;
+  margin-top: var(--space-1);
+  overflow: hidden;
+}
+
+.hud-progress-fill {
+  height: 100%;
+  background: var(--color-strawberry);
+  border-radius: 1px;
+  transition: width 0.3s ease-out;
+  width: 0%;
+}
+
+/* Mobile optimization: smaller text for narrow screens */
+@media (max-width: 380px) {
+  .hud-label {
+    font-size: calc(0.75rem * var(--text-scale));
+  }
+
+  .hud-value {
+    font-size: var(--font-size-md);
+  }
+
+  .hud-container {
+    padding: 0 var(--space-1);
+    gap: 0;
+  }
+
+  .hud-section {
+    gap: 2px;
+  }
+}

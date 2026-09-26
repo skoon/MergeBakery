@@ -1,0 +1,7 @@
+<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Light grey rounded square background -->
+  <rect x="8" y="8" width="112" height="112" rx="24" ry="24" fill="#d3d3d3" />
+
+  <!-- Dark grey question mark -->
+  <text x="64" y="85" font-size="64" font-weight="bold" text-anchor="middle" fill="#555555" font-family="Arial, sans-serif">?</text>
+</svg>

@@ -1,0 +1,105 @@
+/* Pantry drop-zone button and drawer (T3.11). */
+
+.pantry-toggle {
+  flex: 0 0 auto;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  color: var(--color-ink);
+  background: var(--color-cream);
+  border: 1px solid var(--color-crust);
+  border-radius: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+}
+
+.pantry-toggle[data-dragging] {
+  background: var(--color-butter);
+  border-color: var(--color-ink);
+}
+
+.pantry-drawer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--tray-height);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: var(--color-cream);
+  border-top: 1px solid var(--color-crust);
+  padding: var(--space-4);
+  box-sizing: border-box;
+}
+
+.pantry-drawer[hidden] {
+  display: none;
+}
+
+.pantry-drawer[data-dragging] {
+  outline: 2px solid var(--color-butter);
+  outline-offset: -2px;
+}
+
+.pantry-drawer__tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2);
+}
+
+.pantry-tile {
+  aspect-ratio: 1 / 1;
+  border-radius: var(--space-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+}
+
+.pantry-tile--empty {
+  border: 1px dashed var(--color-crust);
+}
+
+.pantry-tile--filled {
+  border: 1px solid var(--color-crust);
+  background: var(--color-cream);
+  cursor: grab;
+}
+
+.pantry-tile__art {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.pantry-drawer__buy {
+  align-self: flex-start;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  color: var(--color-ink);
+  background: var(--color-butter);
+  border: 1px solid var(--color-crust);
+  border-radius: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+}
+
+.pantry-drawer__buy[hidden] {
+  display: none;
+}
+
+.pantry-drawer__buy:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pantry-drag-preview {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 48px;
+  height: 48px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}

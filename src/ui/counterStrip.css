@@ -1,0 +1,134 @@
+/* Counter strip: open orders shown above the board (T3.9) */
+
+.counter-strip {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: var(--space-1);
+  height: 100%;
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  box-sizing: border-box;
+  overflow: hidden;
+  background: var(--color-cream);
+  border-bottom: 1px solid var(--color-crust);
+}
+
+.counter-card {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 25%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    'portrait name'
+    'wants wants'
+    'reward reward'
+    'deliver deliver';
+  align-items: center;
+  justify-items: center;
+  column-gap: var(--space-1);
+  row-gap: 2px;
+  padding: var(--space-1);
+  background: var(--color-butter);
+  border: 1px solid var(--color-crust);
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.counter-card-portrait {
+  grid-area: portrait;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--color-cream);
+  border: 1px solid var(--color-crust);
+}
+
+.counter-card-name {
+  grid-area: name;
+  justify-self: start;
+  font-size: calc(0.75rem * var(--text-scale));
+  font-weight: 600;
+  color: var(--color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.counter-card-wants {
+  grid-area: wants;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px;
+}
+
+.counter-card-want {
+  position: relative;
+  width: 18px;
+  height: 18px;
+}
+
+.counter-card-want-art {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.counter-card-want[data-ready='false'] .counter-card-want-art {
+  opacity: 0.5;
+}
+
+.counter-card-want-check {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  font-size: 9px;
+  line-height: 1;
+  color: var(--color-cream);
+  background: var(--color-mint);
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.counter-card-reward {
+  grid-area: reward;
+  font-size: calc(0.75rem * var(--text-scale));
+  line-height: 1.2;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+.counter-card-deliver {
+  grid-area: deliver;
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  padding: 1px var(--space-1);
+  font-family: var(--font-body);
+  font-size: calc(0.75rem * var(--text-scale));
+  line-height: 1.4;
+  background: var(--color-mint);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.counter-card-deliver:disabled {
+  background: var(--color-crust);
+  color: var(--color-cream);
+  opacity: 0.5;
+  cursor: default;
+}
+
+@media (max-width: 380px) {
+  .counter-card {
+    padding: 2px;
+  }
+}

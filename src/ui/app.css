@@ -10,6 +10,10 @@ body {
 }
 
 #app {
+  --hud-height: 56px;
+  --counter-height: 104px;
+  --tray-height: 80px;
+
   position: relative;
   width: 100%;
   max-width: 480px;
@@ -35,4 +39,31 @@ body {
 
 #overlay-root > * {
   pointer-events: auto;
+}
+
+#hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--hud-height);
+}
+
+#counter {
+  position: absolute;
+  top: var(--hud-height);
+  left: 0;
+  right: 0;
+  height: var(--counter-height);
+}
+
+#tray {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--tray-height);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-4);
 }

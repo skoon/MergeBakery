@@ -1,0 +1,60 @@
+/* Sell bin UI (T2.10) */
+
+.sell-bin {
+  margin-left: auto;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-strawberry);
+  color: var(--color-cream);
+  border: none;
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: var(--font-size-md);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.sell-bin:hover {
+  opacity: 0.9;
+}
+
+.sell-bin:active {
+  opacity: 0.8;
+}
+
+/* Highlight when dragging over it */
+.sell-bin[data-dragging] {
+  background: var(--color-strawberry);
+  opacity: 0.7;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.sell-bin-undo-container {
+  display: flex;
+  align-items: center;
+  margin-left: var(--space-2);
+}
+
+.sell-bin-undo {
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-butter);
+  color: var(--color-ink);
+  border: none;
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.sell-bin-undo:hover {
+  opacity: 0.9;
+}
+
+.sell-bin-undo:active {
+  opacity: 0.8;
+}
+
+.sell-bin-countdown {
+  display: inline;
+}

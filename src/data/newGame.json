@@ -1,0 +1,40 @@
+{
+  "cols": 7,
+  "rows": 9,
+  "locks": [
+    { "cell": 42, "lock": "crate" },
+    { "cell": 43, "lock": "crate" },
+    { "cell": 44, "lock": "crate" },
+    { "cell": 45, "lock": "crate" },
+    { "cell": 46, "lock": "crate" },
+    { "cell": 47, "lock": "crate" },
+    { "cell": 48, "lock": "crate" },
+    { "cell": 49, "lock": "flourSack" },
+    { "cell": 50, "lock": "flourSack" },
+    { "cell": 51, "lock": "flourSack" },
+    { "cell": 52, "lock": "flourSack" },
+    { "cell": 53, "lock": "flourSack" },
+    { "cell": 54, "lock": "flourSack" },
+    { "cell": 55, "lock": "flourSack" },
+    { "cell": 56, "lock": "flourSack" },
+    { "cell": 57, "lock": "flourSack" },
+    { "cell": 58, "lock": "flourSack" },
+    { "cell": 59, "lock": "flourSack" },
+    { "cell": 60, "lock": "flourSack" },
+    { "cell": 61, "lock": "flourSack" },
+    { "cell": 62, "lock": "flourSack" }
+  ],
+  "items": [
+    { "cell": 23, "itemId": "flour-mill-1", "cobwebbed": false },
+    { "cell": 25, "itemId": "dairy-fridge-1", "cobwebbed": false },
+    { "cell": 30, "itemId": "wheat-stalk", "cobwebbed": false },
+    { "cell": 32, "itemId": "milk-splash", "cobwebbed": false },
+    { "cell": 36, "itemId": "wheat-bundle", "cobwebbed": true },
+    { "cell": 40, "itemId": "milk-bottle", "cobwebbed": true }
+  ],
+  "ovens": ["toaster-oven"],
+  "coins": 50,
+  "gems": 10,
+  "chapterId": "chapter1",
+  "unlockedCustomers": []
+}
