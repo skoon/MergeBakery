@@ -1,58 +1,57 @@
-# Phases 2 and 3 — Board, merge, generators, energy, orders
+# Phase 4 — Kitchen, save, and offline timers
 
 Source: [Rise & Shine Bakery — Implementation Plan](https://claude.ai/artifact/CbuwDrEjZqWZnuhLP7pamp)
 Briefs: docs/briefs/ (rules for every session in working-rules.md)
 
 Tasks start as soon as their dependencies finish. Opus connects each core function to src/core/dispatch.ts as it lands.
 
-## Core
+## Kitchen
 
-- [x] T2.1 board.ts helpers + testing.ts `stateWith` (Haiku)
-- [x] T2.2 merge.ts `canMerge`/`nextTier` + discovery.ts `discover` (Haiku; review fix: test typecheck)
-- [x] T3.1 energy.ts (Haiku)
-- [x] T3.5 customers.json (Haiku)
-- [x] T3.8 level.ts `addXp` (Haiku)
-- [x] T2.5 locks.ts `clearAdjacentLocks` (Haiku) — after T2.1
-- [x] T3.4 pantry.ts (Haiku) — after T2.1
-- [x] T3.6 orders.ts `generateOrder`/`refillOrders` (Sonnet) — after T3.5, T2.1
-- [x] T3.2 generators.ts `tapGenerator`/`collectBonus` (Sonnet) — after T2.1, T2.2, T3.1
-- [x] T2.3 drop.ts `applyDrop` (Sonnet) — after T2.1, T2.2, T2.5, T3.8
-- [x] T3.7 deliver.ts `deliverOrder` (Haiku) — after T3.6
-- [x] T2.4 five-merge bonus in drop.ts (Sonnet) — after T2.3
-- [x] T3.3 Golden Whisk in drop.ts (Haiku) — after T2.4
-- [x] Wire handlers into dispatch.ts (Opus): drop, tapGenerator, collectBonus, sell, undoSell, storeInPantry, takeFromPantry, buyPantrySlot, deliverOrder, tick. Still stubs (Phases 4–5): loadRecipe, collectBake, rushBake, mergeOvens, completeTask, dismissDiscovery, setTutorialStep
+- [x] T4.1 kitchen.ts `loadRecipe`, `getBake`/`setBake`, `bakeDurationMs` (Haiku)
+- [x] T4.2 bakes.ts `bakeStatus`, `collectBake`, `rushBake` (Haiku) — after T4.1
+- [x] T4.3 ovens.ts `mergeOvens` (Sonnet) — after T4.1
+- [ ] Wire loadRecipe, collectBake, rushBake, mergeOvens into dispatch.ts (Opus) — `loadRecipe` is wired; `collectBake`, `rushBake` and `mergeOvens` are still `notImplemented`
+- [ ] T4.4 Kitchen overlay: Oven button, sheet, drag-to-Oven (Sonnet) — after T4.2, T4.3, wiring
 
-## Rendering and UI
+## Save and offline
 
-- [x] T2.6 assets.ts registry + \_missing.svg (Haiku)
-- [x] T2.7 placeholder SVGs + scripts/gen-placeholder-art.js (Haiku)
-- [x] T2.8 store, layout, drop zones, BoardView, main.ts (Sonnet) — after T2.3, T2.6, drop wired
-- [x] T2.9 merge and sell animations (Sonnet) — after T2.8
-- [x] T2.10 sell/undoSell + sell bin (Haiku) — after T2.8
-- [x] T3.9 counter strip (Sonnet) — after T2.8, T3.7
-- [x] T3.10 top bar (Haiku) — after T2.8
-- [x] T3.11 Pantry drawer (Sonnet) — after T2.8, T3.4
+- [x] T4.5 save.ts format + saveStorage.ts (Sonnet; plan said Haiku, but the GameState schema is large)
+- [ ] T4.6 migrate.ts scaffold (Haiku) — after T4.5
+- [ ] T4.7 autosave + load on start (Haiku) — after T4.5
+- [ ] T4.8 offline catch-up + "While you were away" card (Sonnet) — after T4.7, T4.2
+- [ ] T4.9 settings.ts + bake notifications (Haiku) — after T4.4
 
 ## Phase-end review (T-O2)
 
-- [x] Lint, typecheck, 395 tests in 28 files, build
-- [x] Browser (375 × 812 and 1280 × 800): tap, merge, deliver, new order after 5 s; sell and undo; Pantry store, take out, buy slot; HUD countdown; no console errors. Not checked: 60 fps and the merge pop's feel (the pane was hidden)
-- [ ] Milestone 1 playtest (T-O5, Scott) after T2.9
+- [ ] Lint, typecheck, all tests, build
+- [ ] Browser: load, bake, rush, collect a croissant; reload restores the board exactly; away card after a simulated absence
 
-## Review fixes
+## Decisions made in the briefs
 
-- assets.ts `setImageArt`: images rebuilt after a key had failed stayed broken; known-missing keys now go straight to the placeholder
-- counterStrip.css: cards overflowed the 104 px strip and the portrait covered the name; now a compact grid (about 96 px)
-- boardView.ts: flour sacks looked like empty tiles; now butter-filled with a tie
-- pantryDrawer.ts: dragging a tile out never reached the board (pointer capture didn't hold, and a failed drag left stale state); drag now tracked on window, native image drag blocked
-- main.ts: removed stopgap `export`s
+- Oven button sits in the center of the tray, not on the board's edge: on a 480 × 800 desktop column the board fills the height and leaves no room below it.
+- Loading a recipe: "Send to Oven" per recipe in the sheet, or drop an ingredient on the Oven button (loads the first fully available recipe using it, else opens the sheet).
+- Collected bakes land on the empty cell nearest the board's middle, else the Pantry, else stay waiting.
+- Merging two busy ovens is rejected ('slotBusy') when their bakes outnumber the new oven's slots.
+- Rushing a finished bake is free and changes nothing.
+- The example v1 → v2 migration lives only in the test; production MIGRATIONS stays empty at version 1.
+- Corrupt saves are kept under a backup key and logged, then the game starts fresh.
+- Notification toggle lives in the Kitchen sheet until Settings (T5.9) exists.
 
-## Notes
+## Generators
 
-- 2026-09-25 17:07: node_modules was reinstalled for Linux from outside this session; reinstalled for Windows at Scott's OK.
-- Haiku sessions have twice reported a clean typecheck that wasn't; every report gets rechecked.
+- [x] Per-generator cooldown timer on the board: a spent generator dims and counts down m:ss to its refill, redrawn once a second in `src/render/boardView.ts`. Cooldowns are 5 min at tier 1, 4 min at tier 2, 3 min at tier 3 (`generators.json`). Charges refill lazily inside the next tap, so a cell whose `cooldownEndsAt` has passed shows nothing and is already usable.
+- [ ] No way to gain a generator during play. Spawn tables only drop ingredients, the rare table is energy-jar/coin-pouch/golden-whisk, and `newGame.json` seeds exactly one mill and one fridge. Merging consumes two to make one, so upgrading permanently costs a generator with no replacement. `Unlock` already has `{ kind: 'generator', itemId }` — give the early renovation tasks in T5.1 a generator unlock, or add another source.
+- [ ] Rushing a generator cooldown with gems: the GDD lists it as a gem sink and `Economy.rushGemsPerMinute` exists, but `ActionBody` has only `rushBake`. Needs a contract change to the frozen `types.ts`, so it goes through T-O1.
+- [ ] Show remaining charges on a generator, not just the cooldown. Nothing tells the player how many taps are left before the wait starts.
+
+## Added outside the plan
+
+- [x] Pixel art: flour chain (8) and dairy chain (7) as 16 x 16 PNGs in `public/art/`. `assetUrl()` in `src/render/assets.ts` now picks `.png` over `.svg` for any key with one, and PixiJS textures load with nearest-neighbour scaling.
+- [x] "?" button in the tray opening a How to play dialog (`src/ui/helpDialog.ts`), with a placeholder Baking section to fill in once T4.4 lands.
 
 ## Open from earlier phases
 
+- [ ] Milestone 1 playtest (T-O5, Scott)
 - [ ] T0.4 "three passing checks" needs a GitHub remote and a first pull request
 - [ ] T0.3 live window resize not yet checked in a visible browser tab
+- [ ] Pixel art for the sugar, egg, and fruit chains, 16 items still on the generated SVG: sugar (sugar-cube, syrup-bottle, caramel, cocoa-bean, chocolate-bar, truffle-box); egg (egg-pair, egg-carton, whisked-eggs, custard-cup, creme-brulee); fruit (berry, berry-bunch, apple-basket, jam-jar, fruit-tart-filling). 16 x 16 PNGs in public/art/, ink outline #3a2414, chain colors from items.json. Flour and dairy are done; `assetUrl()` picks up any new .png automatically.

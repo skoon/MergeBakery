@@ -31,7 +31,7 @@ Every brief's Rules line points here. Follow all of these.
 Run all of these and report each result:
 
 1. `npx vitest run <your test files>`
-2. `npm run typecheck`: fix errors in your files; list any errors in other files without fixing them
+2. `npm run typecheck`: it must print no errors in your files (Vitest doesn't typecheck, so passing tests aren't enough). The project uses `noUncheckedIndexedAccess`, so indexing an array gives `T | undefined`. List any errors in other files without fixing them
 3. `npx eslint <your files>`
 4. `npx prettier --write <your files>`, then `npx prettier --check <your files>`
 

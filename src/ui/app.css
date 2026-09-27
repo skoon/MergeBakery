@@ -32,6 +32,11 @@ body {
   display: block;
 }
 
+/* Item art is 16x16 pixel art; keep it crisp when scaled up. */
+img {
+  image-rendering: pixelated;
+}
+
 /* The overlay covers the canvas; only its children take input. */
 #overlay-root {
   pointer-events: none;

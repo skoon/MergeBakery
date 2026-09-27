@@ -3,8 +3,19 @@ import { Assets, Texture } from 'pixi.js';
 export const PLACEHOLDER_KEY = '_missing';
 
 /**
- * `${import.meta.env.BASE_URL}art/${spriteKey}.svg`. Throws when the key has
- * characters other than a-z, A-Z, 0-9, "-" and "_".
+ * Sprite keys with a file in public/art, by extension. A key with pixel art
+ * (.png) uses it; everything else falls back to the generated .svg placeholder.
+ */
+const pngKeys = new Set(
+  Object.keys(import.meta.glob('/public/art/*.png')).map((path) =>
+    path.slice('/public/art/'.length, -'.png'.length),
+  ),
+);
+
+/**
+ * `${import.meta.env.BASE_URL}art/${spriteKey}.png` for keys that have pixel
+ * art, `.svg` otherwise. Throws when the key has characters other than
+ * a-z, A-Z, 0-9, "-" and "_".
  */
 export function assetUrl(spriteKey: string): string {
   if (!/^[a-zA-Z0-9_-]+$/.test(spriteKey)) {
@@ -13,7 +24,8 @@ export function assetUrl(spriteKey: string): string {
     );
   }
   const base = import.meta.env.BASE_URL || '/';
-  return `${base}art/${spriteKey}.svg`;
+  const extension = pngKeys.has(spriteKey) ? 'png' : 'svg';
+  return `${base}art/${spriteKey}.${extension}`;
 }
 
 /**
@@ -75,8 +87,15 @@ export function setImageArt(img: HTMLImageElement, spriteKey: string): void {
   img.src = assetUrl(spriteKey);
 }
 
-// Internal: shared cache for PixiJS textures
-const textureCache = createAssetCache((url: string) => Assets.load(url));
+// Internal: shared cache for PixiJS textures. Pixel art needs nearest-neighbour
+// scaling; PixiJS would otherwise blur it at board size.
+const textureCache = createAssetCache(async (url: string) => {
+  const texture = await Assets.load<Texture>(url);
+  if (url.endsWith('.png')) {
+    texture.source.scaleMode = 'nearest';
+  }
+  return texture;
+});
 
 // Internal: track which sprite keys we've already warned about for setImageArt
 const imageFailed = new Set<string>();

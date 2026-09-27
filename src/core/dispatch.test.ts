@@ -165,6 +165,7 @@ const WIRED: ReadonlySet<ActionType> = new Set<ActionType>([
   'takeFromPantry',
   'buyPantrySlot',
   'deliverOrder',
+  'loadRecipe',
   'tick',
 ]);
 
@@ -361,6 +362,24 @@ describe('dispatch (wired)', () => {
     expect(undone.board.cells[12]).toMatchObject({
       kind: 'item',
       item: { itemId: 'wheat-bundle' },
+    });
+  });
+
+  it('loads a recipe into the Toaster Oven', () => {
+    const start = stateWith({ 3: 'dough-ball', 4: 'butter-block' });
+    const next = expectOk(
+      dispatch(testData, start, {
+        type: 'loadRecipe',
+        slot: { oven: 0, slot: 0 },
+        recipeId: 'bake-croissant',
+        cells: [3, 4],
+        now: NOW,
+      }),
+    );
+    expect(next.board.cells[3]).toEqual({ kind: 'empty' });
+    expect(next.kitchen.ovens[0]?.slots[0]).toMatchObject({
+      recipeId: 'bake-croissant',
+      startedAt: NOW,
     });
   });
 });

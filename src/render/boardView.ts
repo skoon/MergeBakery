@@ -7,6 +7,7 @@ import {
   Container,
   Graphics,
   Sprite,
+  Text,
   type Application,
   type FederatedPointerEvent,
   type Texture,
@@ -31,6 +32,16 @@ const ITEM_SCALE = 0.86;
 const DRAG_SCALE = 1.15;
 /** Pointer movement, in canvas px, before a press becomes a drag. */
 const DRAG_THRESHOLD = 6;
+/** How often the generator cooldown countdowns are redrawn. */
+const COOLDOWN_TICK_MS = 1000;
+
+/** Remaining cooldown as m:ss, rounded up so it never shows 0:00 while still cooling. */
+function formatRemaining(ms: number): string {
+  const totalSeconds = Math.ceil(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes.toString()}:${seconds.toString().padStart(2, '0')}`;
+}
 
 export interface BoardView {
   cellAt(clientX: number, clientY: number): CellIndex | null;
@@ -66,10 +77,17 @@ export async function createBoardView(
   );
 
   const boardLayer = new Container();
+  const cooldownLayer = new Container();
   const highlightLayer = new Container();
   const dragLayer = new Container();
   const effectsLayer = new Container();
-  app.stage.addChild(boardLayer, highlightLayer, dragLayer, effectsLayer);
+  app.stage.addChild(
+    boardLayer,
+    cooldownLayer,
+    highlightLayer,
+    dragLayer,
+    effectsLayer,
+  );
 
   app.stage.eventMode = 'static';
   app.stage.hitArea = app.screen;
@@ -188,6 +206,59 @@ export async function createBoardView(
     return sprite;
   }
 
+  /**
+   * Dims every generator that has run out of charges and counts down to its
+   * refill. Charges refill lazily, inside the next tap, so a cell whose
+   * cooldownEndsAt has passed is already usable and gets no overlay.
+   */
+  function drawCooldowns(): void {
+    cooldownLayer.removeChildren();
+
+    const { board } = store.getState();
+    const now = Date.now();
+
+    for (let i = 0; i < board.cells.length; i++) {
+      const cell = board.cells[i];
+      if (cell?.kind !== 'item') continue;
+
+      const charge = cell.item.generator;
+      if (!charge || charge.charges > 0 || charge.cooldownEndsAt === null) {
+        continue;
+      }
+      const remaining = charge.cooldownEndsAt - now;
+      if (remaining <= 0) continue;
+
+      const { x, y } = cellTopLeft(i, board.cols);
+      const size = layout.cellSize;
+      const inset = size * 0.08;
+
+      cooldownLayer.addChild(
+        new Graphics()
+          .roundRect(
+            x + inset,
+            y + inset,
+            size - inset * 2,
+            size - inset * 2,
+            size * 0.15,
+          )
+          .fill({ color: COLOR_INK, alpha: 0.55 }),
+      );
+
+      const label = new Text({
+        text: formatRemaining(remaining),
+        style: {
+          fontFamily: 'ui-rounded, system-ui, sans-serif',
+          fontSize: Math.max(10, size * 0.26),
+          fontWeight: '700',
+          fill: COLOR_CREAM,
+        },
+      });
+      label.anchor.set(0.5);
+      label.position.set(x + size / 2, y + size / 2);
+      cooldownLayer.addChild(label);
+    }
+  }
+
   function redraw(): void {
     const { board } = store.getState();
     layout = computeBoardLayout(
@@ -228,6 +299,8 @@ export async function createBoardView(
         sprites.set(i, sprite);
       }
     }
+
+    drawCooldowns();
   }
 
   function showMergeHighlights(draggedItemId: ItemId): void {
@@ -368,6 +441,9 @@ export async function createBoardView(
 
   store.subscribe(() => redraw());
   app.renderer.on('resize', () => redraw());
+  // The countdown has to tick between state changes; a tick action that changes
+  // nothing does not notify the store.
+  window.setInterval(drawCooldowns, COOLDOWN_TICK_MS);
 
   redraw();
 

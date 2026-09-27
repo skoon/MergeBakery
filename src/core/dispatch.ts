@@ -6,6 +6,7 @@
 import { deliverOrder } from './deliver';
 import { applyDrop } from './drop';
 import { collectBonus, tapGenerator } from './generators';
+import { loadRecipe } from './kitchen';
 import { refillOrders } from './orders';
 import { buyPantrySlot, storeInPantry, takeFromPantry } from './pantry';
 import { createRng } from './rng';
@@ -116,7 +117,15 @@ export const dispatch: Dispatch = createDispatch({
   buyPantrySlot: (data, state) => buyPantrySlot(data, state),
   deliverOrder: (data, state, action) =>
     deliverOrder(data, state, action.orderId, action.now),
-  loadRecipe: (_data, _state, action) => notImplemented(action.type),
+  loadRecipe: (data, state, action) =>
+    loadRecipe(
+      data,
+      state,
+      action.slot,
+      action.recipeId,
+      action.cells,
+      action.now,
+    ),
   collectBake: (_data, _state, action) => notImplemented(action.type),
   rushBake: (_data, _state, action) => notImplemented(action.type),
   mergeOvens: (_data, _state, action) => notImplemented(action.type),

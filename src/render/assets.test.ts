@@ -12,6 +12,11 @@ describe('assetUrl', () => {
     expect(url).toBe('/art/my_sprite-name123.svg');
   });
 
+  it('uses .png for keys that have pixel art in public/art', () => {
+    expect(assetUrl('cookie')).toBe('/art/cookie.png');
+    expect(assetUrl('dairy-fridge-1')).toBe('/art/dairy-fridge-1.png');
+  });
+
   it('throws on invalid characters', () => {
     expect(() => assetUrl('sprite@invalid')).toThrow();
     expect(() => assetUrl('sprite.invalid')).toThrow();

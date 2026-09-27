@@ -11,6 +11,7 @@ import { mountPantryDrawer } from './ui/pantryDrawer';
 import { mountSellBin } from './ui/sellBin';
 import { mountHud } from './ui/hud';
 import { mountCounterStrip } from './ui/counterStrip';
+import { mountHelpDialog } from './ui/helpDialog';
 
 function requireElement<T extends HTMLElement = HTMLElement>(
   selector: string,
@@ -45,4 +46,5 @@ mountPantryDrawer(tray, overlayRoot, store, boardView);
 mountHud(hud, store, () => Date.now());
 mountSellBin(tray, store);
 mountCounterStrip(counter, store);
+mountHelpDialog(tray, overlayRoot, store);
 createEffects(app, boardView, store);
