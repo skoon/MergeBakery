@@ -41,9 +41,16 @@ export function createDispatch(handlers: Handlers): Dispatch {
       return result;
     }
 
+    // Keep the state object when nothing changed, so an idle `tick` every
+    // second doesn't look like a change to every store subscriber.
+    const rngState = rng.getState();
+    if (result.state === state && rngState === state.rngState) {
+      return result;
+    }
+
     return {
       ...result,
-      state: { ...result.state, rngState: rng.getState() },
+      state: { ...result.state, rngState },
     };
   };
 }

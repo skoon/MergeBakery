@@ -17,6 +17,8 @@ import { readSave, writeSave } from './ui/saveStorage';
 import { resolveOffline, shouldShowAwayCard } from './core/offline';
 import { showAwayCard } from './ui/awayCard';
 import { mountKitchen } from './ui/kitchenSheet';
+import { startBakeNotifier } from './ui/bakeNotifier';
+import { readSettings } from './ui/settings';
 
 function requireElement<T extends HTMLElement = HTMLElement>(
   selector: string,
@@ -66,6 +68,16 @@ mountSellBin(tray, store);
 mountCounterStrip(counter, store);
 mountHelpDialog(tray, overlayRoot, store);
 mountKitchen(tray, overlayRoot, store, () => Date.now());
+startBakeNotifier(store, () => Date.now(), {
+  isHidden: () => document.visibilityState === 'hidden',
+  notificationsOn: () =>
+    typeof Notification !== 'undefined' &&
+    Notification.permission === 'granted' &&
+    readSettings(localStorage).notifications,
+  notify: (title) => {
+    new Notification(title);
+  },
+});
 
 if (caughtUp && shouldShowAwayCard(caughtUp.summary)) {
   showAwayCard(overlayRoot, data, caughtUp.summary);

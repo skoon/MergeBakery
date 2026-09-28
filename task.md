@@ -19,12 +19,20 @@ Tasks start as soon as their dependencies finish. Opus connects each core functi
 - [x] T4.6 migrate.ts scaffold (Haiku) — after T4.5
 - [x] T4.7 autosave + load on start (Haiku) — after T4.5
 - [x] T4.8 offline catch-up + "While you were away" card (Sonnet) — after T4.7, T4.2
-- [ ] T4.9 settings.ts + bake notifications (Haiku) — after T4.4
+- [x] T4.9 settings.ts + bake notifications (Haiku) — after T4.4
 
 ## Phase-end review (T-O2)
 
-- [ ] Lint, typecheck, all tests, build — typecheck, 524 tests and build pass; `prettier --check` still fails on src/core/bakes.test.ts, src/core/ovens.test.ts and the two docs/ markdown files, left alone as other sessions' files
-- [ ] Browser: load, bake, rush, collect a croissant; reload restores the board exactly; away card after a simulated absence
+- [x] Lint, typecheck, all tests, build — 39 files, 539 tests
+- [ ] Browser: load, bake, rush, collect a croissant; reload restores the board exactly; away card after a simulated absence; the notification toggle asks for permission and a bake finishing in a background tab notifies once (Scott — no browser in the WSL environment)
+
+## Phase-end review findings
+
+- Fixed: `createDispatch` always returned a new state object, even when the handler changed nothing, so the idle 1 s `tick` notified every store subscriber every second — full board redraw (a drag crossing a tick lost its preview), an autosave write per second, and a Kitchen sheet rebuild per second. It now keeps the state object when neither the state nor the rng moved.
+- Formatted `src/core/bakes.test.ts` and `src/core/ovens.test.ts` (T4.2, T4.3 handoffs).
+- The two design docs in `docs/` are now in `.prettierignore`: they mirror the claude.ai artifacts, and formatting only padded their tables, which would flip back on the next export.
+- Still stubbed in `dispatch.ts`, by plan: `completeTask` (T5.2), `dismissDiscovery` (T5.7), `setTutorialStep` (T5.12).
+- Next: Phase 5 briefs.
 
 ## Decisions made in the briefs
 

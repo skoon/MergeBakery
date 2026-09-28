@@ -107,10 +107,7 @@ describe('collectBake', () => {
         (e) => e.type === 'bakeCollected',
       );
       expect(bakeCollectedEvent).toBeDefined();
-      if (
-        bakeCollectedEvent &&
-        bakeCollectedEvent.type === 'bakeCollected'
-      ) {
+      if (bakeCollectedEvent && bakeCollectedEvent.type === 'bakeCollected') {
         expect(bakeCollectedEvent.to).not.toBe('pantry');
         if (bakeCollectedEvent.to !== 'pantry') {
           expect(bakeCollectedEvent.to.cell).toBeDefined();
@@ -157,10 +154,7 @@ describe('collectBake', () => {
         (e) => e.type === 'bakeCollected',
       );
       expect(bakeCollectedEvent).toBeDefined();
-      if (
-        bakeCollectedEvent &&
-        bakeCollectedEvent.type === 'bakeCollected'
-      ) {
+      if (bakeCollectedEvent && bakeCollectedEvent.type === 'bakeCollected') {
         expect(bakeCollectedEvent.to).toBe('pantry');
       }
       // Verify the item was added to pantry

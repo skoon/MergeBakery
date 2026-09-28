@@ -191,6 +191,21 @@ describe('dispatch (stub)', () => {
 });
 
 describe('createDispatch', () => {
+  it('returns the same state object when the handler changed nothing and used no randomness', () => {
+    const handlers: Handlers = {
+      ...makeThrowingHandlers(),
+      tick: (_data, state) => ({ ok: true, state, events: [] }),
+    };
+    const state = makeState();
+
+    const result = createDispatch(handlers)(makeGameData(), state, {
+      type: 'tick',
+      now: NOW,
+    });
+
+    expect(result.ok && result.state).toBe(state);
+  });
+
   it('stores the advanced rng state when a handler succeeds', () => {
     const handlers: Handlers = {
       ...makeThrowingHandlers(),

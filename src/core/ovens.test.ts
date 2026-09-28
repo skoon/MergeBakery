@@ -52,37 +52,41 @@ describe('ovens', () => {
       ]);
     });
 
-    it('keeps running bakes' + "' endsAt and orders slots as to's bakes then from's", () => {
-      const toBake: Bake = {
-        recipeId: 'bake-croissant',
-        startedAt: 1000,
-        endsAt: 301000,
-      };
-      const fromBake: Bake = {
-        recipeId: 'bake-cookie',
-        startedAt: 2000,
-        endsAt: 62000,
-      };
-      const ovens: OvenState[] = [
-        { ovenId: 'toaster-oven', slots: [toBake] },
-        { ovenId: 'toaster-oven', slots: [fromBake] },
-      ];
-      const state = stateWith({}, { kitchen: { ovens } });
+    it(
+      'keeps running bakes' +
+        "' endsAt and orders slots as to's bakes then from's",
+      () => {
+        const toBake: Bake = {
+          recipeId: 'bake-croissant',
+          startedAt: 1000,
+          endsAt: 301000,
+        };
+        const fromBake: Bake = {
+          recipeId: 'bake-cookie',
+          startedAt: 2000,
+          endsAt: 62000,
+        };
+        const ovens: OvenState[] = [
+          { ovenId: 'toaster-oven', slots: [toBake] },
+          { ovenId: 'toaster-oven', slots: [fromBake] },
+        ];
+        const state = stateWith({}, { kitchen: { ovens } });
 
-      const result = mergeOvens(testData, state, 1, 0);
+        const result = mergeOvens(testData, state, 1, 0);
 
-      expect(result.ok).toBe(true);
-      if (!result.ok) throw new Error('Expected ok: true');
+        expect(result.ok).toBe(true);
+        if (!result.ok) throw new Error('Expected ok: true');
 
-      const upgraded = result.state.kitchen.ovens[0];
-      expect(upgraded).toEqual({
-        ovenId: 'brick-oven',
-        slots: [toBake, fromBake],
-      });
-      // Both bakes keep their original startedAt/endsAt exactly.
-      expect(upgraded?.slots[0]).toEqual(toBake);
-      expect(upgraded?.slots[1]).toEqual(fromBake);
-    });
+        const upgraded = result.state.kitchen.ovens[0];
+        expect(upgraded).toEqual({
+          ovenId: 'brick-oven',
+          slots: [toBake, fromBake],
+        });
+        // Both bakes keep their original startedAt/endsAt exactly.
+        expect(upgraded?.slots[0]).toEqual(toBake);
+        expect(upgraded?.slots[1]).toEqual(fromBake);
+      },
+    );
 
     it('gives the merged oven a new empty slot alongside a still-running bake', () => {
       const runningBake: Bake = {
