@@ -6,6 +6,7 @@
  */
 
 import { z } from 'zod';
+import { migrate } from './migrate';
 import type {
   Bake,
   Board,
@@ -262,7 +263,16 @@ export function deserializeSave(data: GameData, text: string): LoadResult {
     };
   }
 
-  const result = saveFileSchema.safeParse(parsed);
+  // Walk an older save forward to the current format before validating it.
+  let migrated: unknown;
+  try {
+    migrated = migrate(parsed as Record<string, unknown>, SAVE_VERSION);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return { ok: false, error: `deserializeSave: ${message}` };
+  }
+
+  const result = saveFileSchema.safeParse(migrated);
   if (!result.success) {
     const messages = result.error.issues.map((issue) => {
       const path = issue.path.length > 0 ? issue.path.join('.') : '(root)';

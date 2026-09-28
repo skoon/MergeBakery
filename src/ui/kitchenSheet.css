@@ -1,0 +1,258 @@
+/* Oven button and Kitchen sheet (T4.4). */
+
+.kitchen-toggle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-ink);
+  background: var(--color-cream);
+  border: 1px solid var(--color-crust);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.kitchen-toggle[data-dragging] {
+  background: var(--color-butter);
+  border-color: var(--color-ink);
+}
+
+.kitchen-toggle[aria-expanded='true'] {
+  background: var(--color-butter);
+}
+
+.kitchen-toggle__ring {
+  position: absolute;
+  inset: 2px;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.kitchen-toggle__track,
+.kitchen-toggle__fill {
+  fill: none;
+  stroke-width: 3;
+}
+
+.kitchen-toggle__track {
+  stroke: rgba(0, 0, 0, 0.1);
+}
+
+.kitchen-toggle__fill {
+  stroke: var(--color-strawberry);
+  stroke-linecap: round;
+  transition:
+    stroke-dashoffset 0.3s linear,
+    opacity 0.2s;
+}
+
+.kitchen-toggle__label {
+  position: relative;
+}
+
+.kitchen-toggle__badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  font-size: calc(0.75rem * var(--text-scale));
+  line-height: 20px;
+  color: var(--color-cream);
+  background: var(--color-strawberry);
+  border-radius: 10px;
+}
+
+.kitchen-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--tray-height);
+  height: 50%;
+  z-index: 10;
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  color: var(--color-ink);
+  background: var(--color-cream);
+  border-top: 2px solid var(--color-crust);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.kitchen-sheet[hidden] {
+  display: none;
+}
+
+.kitchen-oven,
+.kitchen-recipes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.kitchen-oven__name {
+  margin: 0;
+  font-size: var(--font-size-md);
+  color: var(--color-crust);
+}
+
+.kitchen-slot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--color-crust);
+  border-radius: var(--space-2);
+}
+
+.kitchen-slot__empty {
+  font-size: var(--font-size-sm);
+  opacity: 0.7;
+}
+
+.kitchen-slot__info {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.kitchen-slot__name {
+  font-weight: 700;
+}
+
+.kitchen-slot__time {
+  font-variant-numeric: tabular-nums;
+}
+
+.kitchen-slot__ready {
+  font-weight: 700;
+  color: var(--color-strawberry);
+}
+
+.kitchen-slot__bar {
+  flex: 1 0 100%;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.kitchen-slot__bar-fill {
+  height: 100%;
+  background: var(--color-strawberry);
+  transition: width 1s linear;
+}
+
+.kitchen-button {
+  flex: 0 0 auto;
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-cream);
+  background: var(--color-crust);
+  border: none;
+  border-radius: var(--space-2);
+  cursor: pointer;
+}
+
+.kitchen-button--secondary {
+  color: var(--color-ink);
+  background: var(--color-butter);
+}
+
+.kitchen-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.kitchen-upgrade {
+  align-self: stretch;
+}
+
+.kitchen-recipe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-crust);
+  border-radius: var(--space-2);
+}
+
+.kitchen-recipe__head {
+  display: flex;
+  flex: 1 0 100%;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.kitchen-recipe__output {
+  width: 32px;
+  height: 32px;
+}
+
+.kitchen-recipe__name {
+  flex: 1 1 auto;
+  font-weight: 700;
+}
+
+.kitchen-recipe__time {
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.kitchen-recipe__inputs {
+  display: flex;
+  flex: 1 1 auto;
+  gap: var(--space-1);
+}
+
+.kitchen-input {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--space-1);
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.kitchen-input[data-ready='false'] .kitchen-input__art {
+  opacity: 0.35;
+}
+
+.kitchen-input__art {
+  width: 100%;
+  height: 100%;
+}
+
+.kitchen-input__check {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 14px;
+  height: 14px;
+  font-size: 10px;
+  line-height: 14px;
+  text-align: center;
+  color: var(--color-cream);
+  background: var(--color-mint);
+  border-radius: 50%;
+}

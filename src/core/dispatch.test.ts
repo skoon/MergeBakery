@@ -166,6 +166,9 @@ const WIRED: ReadonlySet<ActionType> = new Set<ActionType>([
   'buyPantrySlot',
   'deliverOrder',
   'loadRecipe',
+  'collectBake',
+  'rushBake',
+  'mergeOvens',
   'tick',
 ]);
 

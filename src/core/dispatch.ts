@@ -3,11 +3,13 @@
  * to its handler (T1.8). See types.ts `Dispatch` for the contract.
  */
 
+import { collectBake, rushBake } from './bakes';
 import { deliverOrder } from './deliver';
 import { applyDrop } from './drop';
 import { collectBonus, tapGenerator } from './generators';
 import { loadRecipe } from './kitchen';
 import { refillOrders } from './orders';
+import { mergeOvens } from './ovens';
 import { buyPantrySlot, storeInPantry, takeFromPantry } from './pantry';
 import { createRng } from './rng';
 import { sellItem, undoSell } from './sell';
@@ -126,9 +128,12 @@ export const dispatch: Dispatch = createDispatch({
       action.cells,
       action.now,
     ),
-  collectBake: (_data, _state, action) => notImplemented(action.type),
-  rushBake: (_data, _state, action) => notImplemented(action.type),
-  mergeOvens: (_data, _state, action) => notImplemented(action.type),
+  collectBake: (data, state, action) =>
+    collectBake(data, state, action.slot, action.now),
+  rushBake: (data, state, action) =>
+    rushBake(data, state, action.slot, action.now),
+  mergeOvens: (data, state, action) =>
+    mergeOvens(data, state, action.from, action.to),
   completeTask: (_data, _state, action) => notImplemented(action.type),
   dismissDiscovery: (_data, _state, action) => notImplemented(action.type),
   setTutorialStep: (_data, _state, action) => notImplemented(action.type),

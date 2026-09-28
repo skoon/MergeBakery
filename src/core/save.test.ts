@@ -146,6 +146,19 @@ describe('deserializeSave error cases', () => {
     expect(result.error).toMatch(/newer/i);
   });
 
+  it('rejects a save whose migration throws (T4.6)', () => {
+    const state = createNewGame(testData, 1, 0);
+    const parsed = parseValidSave(state);
+    // Older than anything MIGRATIONS knows how to upgrade from.
+    parsed['version'] = 0;
+
+    const result = deserializeSave(testData, JSON.stringify(parsed));
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error).toMatch(/no migration from version 0 to 1/);
+  });
+
   it('rejects a state that does not match GameState exactly (missing field)', () => {
     const state = createNewGame(testData, 1, 0);
     const parsed = parseValidSave(state);

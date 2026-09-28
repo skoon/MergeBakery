@@ -12,6 +12,11 @@ import { mountSellBin } from './ui/sellBin';
 import { mountHud } from './ui/hud';
 import { mountCounterStrip } from './ui/counterStrip';
 import { mountHelpDialog } from './ui/helpDialog';
+import { startAutosave, onPageHide } from './ui/autosave';
+import { readSave, writeSave } from './ui/saveStorage';
+import { resolveOffline, shouldShowAwayCard } from './core/offline';
+import { showAwayCard } from './ui/awayCard';
+import { mountKitchen } from './ui/kitchenSheet';
 
 function requireElement<T extends HTMLElement = HTMLElement>(
   selector: string,
@@ -31,8 +36,21 @@ const tray = requireElement('#tray');
 
 const data = loadGameData();
 const now = Date.now();
-const initial = createNewGame(data, now >>> 0, now);
+const saved = readSave(localStorage, data, now);
+const caughtUp = saved
+  ? resolveOffline(data, saved.state, saved.savedAt, now)
+  : null;
+const initial = caughtUp ? caughtUp.state : createNewGame(data, now >>> 0, now);
 const store = createStore(data, initial, dispatch, () => Date.now());
+
+startAutosave(
+  store,
+  (state) => void writeSave(localStorage, state, Date.now()),
+  {
+    delayMs: 500,
+    onHide: onPageHide,
+  },
+);
 
 const app = await createPixiApp(stage);
 const boardView = await createBoardView(app, store);
@@ -47,4 +65,9 @@ mountHud(hud, store, () => Date.now());
 mountSellBin(tray, store);
 mountCounterStrip(counter, store);
 mountHelpDialog(tray, overlayRoot, store);
+mountKitchen(tray, overlayRoot, store, () => Date.now());
+
+if (caughtUp && shouldShowAwayCard(caughtUp.summary)) {
+  showAwayCard(overlayRoot, data, caughtUp.summary);
+}
 createEffects(app, boardView, store);

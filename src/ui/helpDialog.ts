@@ -45,7 +45,10 @@ function helpSections(store: GameStore): readonly HelpSection[] {
     {
       heading: 'Baking',
       paragraphs: [
-        'Coming soon. Grandma’s ovens will turn your ingredients into croissants, cookies and cakes.',
+        'Tap Oven in the middle of the tray to open the Kitchen. Each recipe shows the ingredients it needs, with a tick on the ones already on your board. When they are all there, press Send to Oven and they go in together.',
+        'Shortcut: drag an ingredient onto the Oven button. If the rest of a recipe is on the board, it starts baking straight away; if not, the Kitchen opens so you can see what is missing.',
+        'The ring around the Oven button fills as a bake cooks, and a number appears when something is ready. Press Collect to put it on the board, or spend gems to Rush a bake that is still cooking.',
+        'Two ovens of the same kind can be upgraded into a bigger one with more slots and shorter bake times.',
       ],
     },
   ];

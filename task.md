@@ -10,20 +10,20 @@ Tasks start as soon as their dependencies finish. Opus connects each core functi
 - [x] T4.1 kitchen.ts `loadRecipe`, `getBake`/`setBake`, `bakeDurationMs` (Haiku)
 - [x] T4.2 bakes.ts `bakeStatus`, `collectBake`, `rushBake` (Haiku) — after T4.1
 - [x] T4.3 ovens.ts `mergeOvens` (Sonnet) — after T4.1
-- [ ] Wire loadRecipe, collectBake, rushBake, mergeOvens into dispatch.ts (Opus) — `loadRecipe` is wired; `collectBake`, `rushBake` and `mergeOvens` are still `notImplemented`
-- [ ] T4.4 Kitchen overlay: Oven button, sheet, drag-to-Oven (Sonnet) — after T4.2, T4.3, wiring
+- [x] Wire loadRecipe, collectBake, rushBake, mergeOvens into dispatch.ts (Opus)
+- [x] T4.4 Kitchen overlay: Oven button, sheet, drag-to-Oven (Sonnet) — after T4.2, T4.3, wiring
 
 ## Save and offline
 
 - [x] T4.5 save.ts format + saveStorage.ts (Sonnet; plan said Haiku, but the GameState schema is large)
-- [ ] T4.6 migrate.ts scaffold (Haiku) — after T4.5
-- [ ] T4.7 autosave + load on start (Haiku) — after T4.5
-- [ ] T4.8 offline catch-up + "While you were away" card (Sonnet) — after T4.7, T4.2
+- [x] T4.6 migrate.ts scaffold (Haiku) — after T4.5
+- [x] T4.7 autosave + load on start (Haiku) — after T4.5
+- [x] T4.8 offline catch-up + "While you were away" card (Sonnet) — after T4.7, T4.2
 - [ ] T4.9 settings.ts + bake notifications (Haiku) — after T4.4
 
 ## Phase-end review (T-O2)
 
-- [ ] Lint, typecheck, all tests, build
+- [ ] Lint, typecheck, all tests, build — typecheck, 524 tests and build pass; `prettier --check` still fails on src/core/bakes.test.ts, src/core/ovens.test.ts and the two docs/ markdown files, left alone as other sessions' files
 - [ ] Browser: load, bake, rush, collect a croissant; reload restores the board exactly; away card after a simulated absence
 
 ## Decisions made in the briefs
@@ -47,7 +47,7 @@ Tasks start as soon as their dependencies finish. Opus connects each core functi
 ## Added outside the plan
 
 - [x] Pixel art: flour chain (8) and dairy chain (7) as 16 x 16 PNGs in `public/art/`. `assetUrl()` in `src/render/assets.ts` now picks `.png` over `.svg` for any key with one, and PixiJS textures load with nearest-neighbour scaling.
-- [x] "?" button in the tray opening a How to play dialog (`src/ui/helpDialog.ts`), with a placeholder Baking section to fill in once T4.4 lands.
+- [x] "?" button in the tray opening a How to play dialog (`src/ui/helpDialog.ts`), including a Baking section written against T4.4's Kitchen.
 
 ## Open from earlier phases
 

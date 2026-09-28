@@ -1,0 +1,51 @@
+/* "While you were away" card (T4.8). */
+
+.away-card__backdrop {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.away-card {
+  width: min(320px, 100%);
+  box-sizing: border-box;
+  padding: var(--space-5);
+  color: var(--color-ink);
+  background: var(--color-cream);
+  border: 2px solid var(--color-crust);
+  border-radius: var(--space-3);
+  font-family: var(--font-body);
+  text-align: center;
+}
+
+.away-card__title {
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-xl);
+  color: var(--color-crust);
+}
+
+.away-card__line {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-md);
+}
+
+.away-card__ok {
+  width: 100%;
+  margin-top: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  font: inherit;
+  font-size: var(--font-size-md);
+  color: var(--color-cream);
+  background: var(--color-crust);
+  border: none;
+  border-radius: var(--space-2);
+  cursor: pointer;
+}
+
+.away-card__ok:hover {
+  opacity: 0.9;
+}
