@@ -5,6 +5,7 @@
 import { bakeStatus, rushCost, type BakeStatus } from '../core/bakes';
 import { matchOrderItems } from '../core/deliver';
 import { bakeDurationMs } from '../core/kitchen';
+import { producibleChains } from '../core/orders';
 import { nextOven } from '../core/ovens';
 import type {
   BakeSlotRef,
@@ -13,6 +14,7 @@ import type {
   GameState,
   ItemId,
   OvenId,
+  Recipe,
   RecipeId,
   Timestamp,
 } from '../core/types';
@@ -48,7 +50,7 @@ export interface RecipeView {
 
 export interface KitchenModel {
   ovens: OvenView[];
-  /** Every recipe, in data order. */
+  /** Recipes the player can make now (see recipeAvailable), in data order. */
   recipes: RecipeView[];
   /** The first empty slot, scanning ovens then slots in order; null when all are busy. */
   freeSlot: BakeSlotRef | null;
@@ -90,6 +92,27 @@ function inputCells(
 ): CellIndex[] | null {
   const matches = matchOrderItems(state, inputs);
   return matches.every((cell) => cell !== null) ? matches : null;
+}
+
+/**
+ * True when the player can get every input right now: its chain is fed by a
+ * generator they own, or the item is already on the board or in the Pantry.
+ * Recipes needing a generator the player hasn't unlocked stay hidden.
+ */
+export function recipeAvailable(
+  data: GameData,
+  state: GameState,
+  recipe: Recipe,
+): boolean {
+  const chains = producibleChains(data, state);
+  const held = new Set<ItemId>(state.pantry.items.map((item) => item.itemId));
+  for (const cell of state.board.cells) {
+    if (cell.kind === 'item') held.add(cell.item.itemId);
+  }
+  return recipe.inputs.every((itemId) => {
+    const chainId = data.items.get(itemId)?.chainId;
+    return held.has(itemId) || (chainId !== undefined && chains.has(chainId));
+  });
 }
 
 export function kitchenModel(
@@ -148,7 +171,10 @@ export function kitchenModel(
     throw new Error('kitchenModel: the kitchen has no ovens');
   }
 
-  const recipes: RecipeView[] = Array.from(data.recipes.values(), (recipe) => {
+  const available = Array.from(data.recipes.values()).filter((recipe) =>
+    recipeAvailable(data, state, recipe),
+  );
+  const recipes: RecipeView[] = available.map((recipe) => {
     const matches = matchOrderItems(state, recipe.inputs);
     const cells = matches.every((c) => c !== null) ? matches : null;
     return {

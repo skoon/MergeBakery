@@ -9,6 +9,7 @@
 import { weightedPick } from './rng';
 import type {
   ActionResult,
+  ChainId,
   Customer,
   CustomerId,
   CustomerKind,
@@ -77,6 +78,46 @@ export function orderCandidates(
 }
 
 /**
+ * Chains the player can produce right now: those with an item in the spawn
+ * table of a generator they own, on the board (not cobwebbed) or in the Pantry.
+ */
+export function producibleChains(
+  data: GameData,
+  state: GameState,
+): Set<ChainId> {
+  const generatorItemIds = new Set<ItemId>();
+  for (const cell of state.board.cells) {
+    if (
+      cell.kind === 'item' &&
+      cell.item.generator !== null &&
+      !cell.item.cobwebbed
+    ) {
+      generatorItemIds.add(cell.item.itemId);
+    }
+  }
+  for (const pantryItem of state.pantry.items) {
+    if (pantryItem.generator !== null) {
+      generatorItemIds.add(pantryItem.itemId);
+    }
+  }
+
+  const chains = new Set<ChainId>();
+  for (const generatorItemId of generatorItemIds) {
+    const generatorDef = data.generators.get(generatorItemId);
+    if (generatorDef === undefined) {
+      continue;
+    }
+    for (const entry of generatorDef.spawnTable) {
+      const spawnItem = data.items.get(entry.itemId);
+      if (spawnItem !== undefined) {
+        chains.add(spawnItem.chainId);
+      }
+    }
+  }
+  return chains;
+}
+
+/**
  * True when the item is discovered, in an ingredient chain, and some generator that is on the
  * board (not cobwebbed) or in the Pantry has a spawn table containing an item of that chain.
  */
@@ -99,36 +140,7 @@ export function isProducible(
     return false;
   }
 
-  const generatorItemIds = new Set<ItemId>();
-  for (const cell of state.board.cells) {
-    if (
-      cell.kind === 'item' &&
-      cell.item.generator !== null &&
-      !cell.item.cobwebbed
-    ) {
-      generatorItemIds.add(cell.item.itemId);
-    }
-  }
-  for (const pantryItem of state.pantry.items) {
-    if (pantryItem.generator !== null) {
-      generatorItemIds.add(pantryItem.itemId);
-    }
-  }
-
-  for (const generatorItemId of generatorItemIds) {
-    const generatorDef = data.generators.get(generatorItemId);
-    if (generatorDef === undefined) {
-      continue;
-    }
-    for (const entry of generatorDef.spawnTable) {
-      const spawnItem = data.items.get(entry.itemId);
-      if (spawnItem !== undefined && spawnItem.chainId === item.chainId) {
-        return true;
-      }
-    }
-  }
-
-  return false;
+  return producibleChains(data, state).has(item.chainId);
 }
 
 /** The first task in the current chapter, in order, that isn't complete and whose prerequisites are. Null when none. */

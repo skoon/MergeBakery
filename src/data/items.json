@@ -71,6 +71,20 @@
       "completionGems": 0
     },
     {
+      "id": "hen-coop",
+      "name": "Hen Coop",
+      "kind": "generator",
+      "color": "#d9a05c",
+      "completionGems": 0
+    },
+    {
+      "id": "sugar-tin",
+      "name": "Sugar Tin",
+      "kind": "generator",
+      "color": "#c9557c",
+      "completionGems": 0
+    },
+    {
       "id": "energy-jar",
       "name": "Energy Jar",
       "kind": "bonus",
@@ -599,6 +613,66 @@
       "chainId": "dairy-fridge",
       "tier": 3,
       "spriteKey": "dairy-fridge-3",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "hen-coop-1",
+      "name": "Hen Coop",
+      "chainId": "hen-coop",
+      "tier": 1,
+      "spriteKey": "hen-coop-1",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "hen-coop-2",
+      "name": "Hen Coop II",
+      "chainId": "hen-coop",
+      "tier": 2,
+      "spriteKey": "hen-coop-2",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "hen-coop-3",
+      "name": "Hen Coop III",
+      "chainId": "hen-coop",
+      "tier": 3,
+      "spriteKey": "hen-coop-3",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "sugar-tin-1",
+      "name": "Sugar Tin",
+      "chainId": "sugar-tin",
+      "tier": 1,
+      "spriteKey": "sugar-tin-1",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "sugar-tin-2",
+      "name": "Sugar Tin II",
+      "chainId": "sugar-tin",
+      "tier": 2,
+      "spriteKey": "sugar-tin-2",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "sugar-tin-3",
+      "name": "Sugar Tin III",
+      "chainId": "sugar-tin",
+      "tier": 3,
+      "spriteKey": "sugar-tin-3",
       "sellValue": 0,
       "note": null,
       "collectReward": null

@@ -18,6 +18,8 @@ Items are listed tier 1 first. `sellValue` is in coins.
 | `cupcake`      | Cupcakes     | baked      | `#f5a3c0` | 4              |
 | `flour-mill`   | Flour Mill   | generator  | `#9c5b2e` | 0              |
 | `dairy-fridge` | Dairy Fridge | generator  | `#9ed9c3` | 0              |
+| `hen-coop`     | Hen Coop     | generator  | `#d9a05c` | 0              |
+| `sugar-tin`    | Sugar Tin    | generator  | `#c9557c` | 0              |
 | `energy-jar`   | Energy Jar   | bonus      | `#7fc8f8` | 0              |
 | `coin-pouch`   | Coin Pouch   | bonus      | `#f2c94c` | 0              |
 | `golden-whisk` | Golden Whisk | wildcard   | `#ffd700` | 0              |
@@ -46,6 +48,8 @@ Items are listed tier 1 first. `sellValue` is in coins.
 | -------------- | ---------------------------------------------------------------------------------------------------- |
 | `flour-mill`   | `flour-mill-1` Flour Mill · `flour-mill-2` Flour Mill II · `flour-mill-3` Flour Mill III             |
 | `dairy-fridge` | `dairy-fridge-1` Dairy Fridge · `dairy-fridge-2` Dairy Fridge II · `dairy-fridge-3` Dairy Fridge III |
+| `hen-coop`     | `hen-coop-1` Hen Coop · `hen-coop-2` Hen Coop II · `hen-coop-3` Hen Coop III                         |
+| `sugar-tin`    | `sugar-tin-1` Sugar Tin · `sugar-tin-2` Sugar Tin II · `sugar-tin-3` Sugar Tin III                   |
 | `energy-jar`   | `energy-jar` Energy jar (tier 1 only)                                                                |
 | `coin-pouch`   | `coin-pouch` Coin pouch (tier 1 only)                                                                |
 | `golden-whisk` | `golden-whisk` Golden Whisk (tier 1 only)                                                            |

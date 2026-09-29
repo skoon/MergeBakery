@@ -59,6 +59,66 @@
       ],
       "charges": 20,
       "cooldownSec": 180
+    },
+    {
+      "itemId": "hen-coop-1",
+      "spawnTable": [
+        { "itemId": "egg", "weight": 85 },
+        { "itemId": "egg-pair", "weight": 15 }
+      ],
+      "charges": 12,
+      "cooldownSec": 300
+    },
+    {
+      "itemId": "hen-coop-2",
+      "spawnTable": [
+        { "itemId": "egg", "weight": 60 },
+        { "itemId": "egg-pair", "weight": 30 },
+        { "itemId": "egg-carton", "weight": 10 }
+      ],
+      "charges": 16,
+      "cooldownSec": 240
+    },
+    {
+      "itemId": "hen-coop-3",
+      "spawnTable": [
+        { "itemId": "egg", "weight": 40 },
+        { "itemId": "egg-pair", "weight": 35 },
+        { "itemId": "egg-carton", "weight": 20 },
+        { "itemId": "whisked-eggs", "weight": 5 }
+      ],
+      "charges": 20,
+      "cooldownSec": 180
+    },
+    {
+      "itemId": "sugar-tin-1",
+      "spawnTable": [
+        { "itemId": "sugar-cube", "weight": 85 },
+        { "itemId": "sugar-bowl", "weight": 15 }
+      ],
+      "charges": 12,
+      "cooldownSec": 300
+    },
+    {
+      "itemId": "sugar-tin-2",
+      "spawnTable": [
+        { "itemId": "sugar-cube", "weight": 60 },
+        { "itemId": "sugar-bowl", "weight": 30 },
+        { "itemId": "syrup-bottle", "weight": 10 }
+      ],
+      "charges": 16,
+      "cooldownSec": 240
+    },
+    {
+      "itemId": "sugar-tin-3",
+      "spawnTable": [
+        { "itemId": "sugar-cube", "weight": 40 },
+        { "itemId": "sugar-bowl", "weight": 35 },
+        { "itemId": "syrup-bottle", "weight": 20 },
+        { "itemId": "caramel", "weight": 5 }
+      ],
+      "charges": 20,
+      "cooldownSec": 180
     }
   ],
   "rareDrops": {

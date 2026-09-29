@@ -45,7 +45,7 @@ const caughtUp = saved
 const initial = caughtUp ? caughtUp.state : createNewGame(data, now >>> 0, now);
 const store = createStore(data, initial, dispatch, () => Date.now());
 
-startAutosave(
+const stopAutosave = startAutosave(
   store,
   (state) => void writeSave(localStorage, state, Date.now()),
   {
@@ -83,3 +83,9 @@ if (caughtUp && shouldShowAwayCard(caughtUp.summary)) {
   showAwayCard(overlayRoot, data, caughtUp.summary);
 }
 createEffects(app, boardView, store);
+
+// Console helpers for testing; a dynamic import keeps them out of production builds.
+if (import.meta.env.DEV) {
+  const { installDevTools } = await import('./ui/devTools');
+  installDevTools(store, stopAutosave);
+}

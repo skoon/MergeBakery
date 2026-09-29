@@ -3,9 +3,14 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { formatDuration, kitchenModel, recipeForDrop } from './kitchenModel';
+import {
+  formatDuration,
+  kitchenModel,
+  recipeAvailable,
+  recipeForDrop,
+} from './kitchenModel';
 import { testData, stateWith } from '../core/testing';
-import type { Bake, GameState, OvenState } from '../core/types';
+import type { Bake, GameState, OvenState, Recipe } from '../core/types';
 
 const MINUTE = 60_000;
 
@@ -50,7 +55,12 @@ describe('formatDuration', () => {
 
 describe('kitchenModel', () => {
   it('describes an idle kitchen', () => {
-    const model = kitchenModel(testData, withOvens([toaster([null])]), 0);
+    // The Chapter 1 starting generators.
+    const model = kitchenModel(
+      testData,
+      withOvens([toaster([null])], { 0: 'flour-mill-1', 1: 'dairy-fridge-1' }),
+      0,
+    );
 
     expect(model.ovens).toHaveLength(1);
     expect(model.ovens[0]?.name).toBe('Toaster Oven');
@@ -59,11 +69,7 @@ describe('kitchenModel', () => {
     expect(model.ringProgress).toBeNull();
     expect(model.doneCount).toBe(0);
     expect(model.upgrade).toBeNull();
-    expect(model.recipes.map((r) => r.recipeId)).toEqual([
-      'bake-cookie',
-      'bake-croissant',
-      'bake-cupcake',
-    ]);
+    expect(model.recipes.map((r) => r.recipeId)).toEqual(['bake-croissant']);
   });
 
   it('shows a croissant halfway baked', () => {
@@ -123,7 +129,12 @@ describe('kitchenModel', () => {
   });
 
   it('gives null cells and per-input readiness when an input is missing', () => {
-    const state = withOvens([toaster([null])], { 0: 'flour-bag', 1: 'egg' });
+    // The Sugar Tin makes the cookie available; the sugar bowl isn't made yet.
+    const state = withOvens([toaster([null])], {
+      0: 'flour-bag',
+      1: 'egg',
+      2: 'sugar-tin-1',
+    });
     const cookie = kitchenModel(testData, state, 0).recipes.find(
       (r) => r.recipeId === 'bake-cookie',
     );
@@ -151,6 +162,79 @@ describe('kitchenModel', () => {
     );
 
     expect(model.upgrade).toEqual({ from: 1, to: 0, nextName: 'Brick Oven' });
+  });
+});
+
+describe('recipeAvailable', () => {
+  function recipe(id: string): Recipe {
+    const found = testData.recipes.get(id);
+    if (!found) throw new Error(`no recipe ${id}`);
+    return found;
+  }
+
+  function availableIds(state: GameState): string[] {
+    return Array.from(testData.recipes.values())
+      .filter((r) => recipeAvailable(testData, state, r))
+      .map((r) => r.id);
+  }
+
+  it('offers only the croissant with the Chapter 1 generators', () => {
+    const state = stateWith({ 0: 'flour-mill-1', 1: 'dairy-fridge-1' });
+
+    expect(availableIds(state)).toEqual(['bake-croissant']);
+  });
+
+  it('offers every recipe once the Hen Coop and Sugar Tin are owned', () => {
+    const state = stateWith({
+      0: 'flour-mill-1',
+      1: 'dairy-fridge-1',
+      2: 'hen-coop-1',
+      3: 'sugar-tin-1',
+    });
+
+    expect(availableIds(state)).toEqual([
+      'bake-cookie',
+      'bake-croissant',
+      'bake-cupcake',
+    ]);
+  });
+
+  it('counts a generator kept in the Pantry', () => {
+    const base = stateWith({ 0: 'flour-mill-1' });
+    const state: GameState = {
+      ...base,
+      pantry: {
+        ...base.pantry,
+        items: [
+          {
+            itemId: 'dairy-fridge-1',
+            cobwebbed: false,
+            generator: { charges: 12, cooldownEndsAt: null },
+          },
+        ],
+      },
+    };
+
+    expect(recipeAvailable(testData, state, recipe('bake-croissant'))).toBe(
+      true,
+    );
+  });
+
+  it('does not count a cobwebbed generator', () => {
+    const state = stateWith({
+      0: 'flour-mill-1',
+      1: { itemId: 'dairy-fridge-1', cobwebbed: true },
+    });
+
+    expect(recipeAvailable(testData, state, recipe('bake-croissant'))).toBe(
+      false,
+    );
+  });
+
+  it('counts inputs already on the board without their generator', () => {
+    const state = stateWith({ 0: 'flour-bag', 1: 'egg-pair', 2: 'cream-jug' });
+
+    expect(recipeAvailable(testData, state, recipe('bake-cupcake'))).toBe(true);
   });
 });
 

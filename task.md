@@ -32,7 +32,17 @@ Tasks start as soon as their dependencies finish. Opus connects each core functi
 - Formatted `src/core/bakes.test.ts` and `src/core/ovens.test.ts` (T4.2, T4.3 handoffs).
 - The two design docs in `docs/` are now in `.prettierignore`: they mirror the claude.ai artifacts, and formatting only padded their tables, which would flip back on the next export.
 - Still stubbed in `dispatch.ts`, by plan: `completeTask` (T5.2), `dismissDiscovery` (T5.7), `setTutorialStep` (T5.12).
-- Next: Phase 5 briefs.
+- Found in the browser pass: **Cookie and Cupcake can't be made.** Both need egg-chain inputs (Cookie also needs `sugar-bowl`), and `generators.json` has only the Flour Mill and Dairy Fridge — the GDD's Hen Coop, Sugar Tin and Fruit Crate were never added, so nothing ever spawns an egg, sugar or fruit item. Fixed by hiding recipes the player can't make yet: the Kitchen lists a recipe only when every input's chain is fed by a generator the player owns, or the input is already on the board or in the Pantry (`recipeAvailable` in `src/ui/kitchenModel.ts`, built on `producibleChains` in `src/core/orders.ts`). Chapter 1 shows only the Croissant.
+- **Croissant is makeable but a grind for a first recipe:** `dough-ball` is flour tier 6 (32 wheat stalks' worth) and `butter-block` is dairy tier 5 (16 milk splashes) — about 40 taps and two Flour Mill cooldowns. For T-O3.
+- Added dev-only console helpers (`src/ui/devTools.ts`, loaded only when `import.meta.env.DEV`, confirmed absent from the production bundle): `bakery.give(...itemIds)`, `bakery.away(minutes)`, `bakery.reset()`. They write a save and reload, so they exercise the real load, migration and offline path.
+- Next: Phase 5 briefs. Written so far: T5.1, T5.2.
+
+## Phase 5 decisions (Scott, Sep 28)
+
+- T5.14 final art is 16 x 16 pixel art PNGs for the remaining chains, not flat vector SVGs.
+- T5.13 may add `vite-plugin-pwa`, the one approved new dependency.
+- Dialogue types (T5.4) live in the dialogue module; `types.ts` stays unchanged.
+- Recipes only use items the player can currently get. Chapter 1's generators are the Flour Mill and Dairy Fridge; the Hen Coop and Sugar Tin wait for Chapter 2.
 
 ## Decisions made in the briefs
 
@@ -48,8 +58,11 @@ Tasks start as soon as their dependencies finish. Opus connects each core functi
 ## Generators
 
 - [x] Per-generator cooldown timer on the board: a spent generator dims and counts down m:ss to its refill, redrawn once a second in `src/render/boardView.ts`. Cooldowns are 5 min at tier 1, 4 min at tier 2, 3 min at tier 3 (`generators.json`). Charges refill lazily inside the next tap, so a cell whose `cooldownEndsAt` has passed shows nothing and is already usable.
-- [ ] No way to gain a generator during play. Spawn tables only drop ingredients, the rare table is energy-jar/coin-pouch/golden-whisk, and `newGame.json` seeds exactly one mill and one fridge. Merging consumes two to make one, so upgrading permanently costs a generator with no replacement. `Unlock` already has `{ kind: 'generator', itemId }` — give the early renovation tasks in T5.1 a generator unlock, or add another source.
+- [ ] No way to gain a generator during play. Spawn tables only drop ingredients, the rare table is energy-jar/coin-pouch/golden-whisk, and `newGame.json` seeds exactly one mill and one fridge. Merging consumes two to make one, so upgrading permanently costs a generator with no replacement. `Unlock` already has `{ kind: 'generator', itemId }` — give the early renovation tasks in T5.1 a generator unlock, or add another source. The T5.1 brief does this: a second Dairy Fridge at task 5, Flour Mills at 9 and 18, and a second Toaster Oven at 12.
 - [ ] Rushing a generator cooldown with gems: the GDD lists it as a gem sink and `Economy.rushGemsPerMinute` exists, but `ActionBody` has only `rushBake`. Needs a contract change to the frozen `types.ts`, so it goes through T-O1.
+- [x] Hen Coop and Sugar Tin, three tiers each, in `items.json` and `generators.json`. Spawn tables, charges and cooldowns mirror the Flour Mill and Dairy Fridge tier for tier. Not on the starting board: per the GDD they arrive in Chapter 2, and until then the Kitchen hides Cookie and Cupcake. Placeholder SVGs only. To test the other recipes now: `bakery.give('hen-coop-1', 'sugar-tin-1')`.
+- [ ] Chapter 2: unlock the Hen Coop and Sugar Tin through its renovation tasks.
+- [ ] Fruit Crate: no recipe uses fruit yet, so it waits for a recipe that does.
 - [ ] Show remaining charges on a generator, not just the cooldown. Nothing tells the player how many taps are left before the wait starts.
 
 ## Added outside the plan
