@@ -1,9 +1,50 @@
-# Phase 4 — Kitchen, save, and offline timers
+# Phase 5 — Chapter 1, UI, audio, and polish
 
 Source: [Rise & Shine Bakery — Implementation Plan](https://claude.ai/artifact/CbuwDrEjZqWZnuhLP7pamp)
 Briefs: docs/briefs/ (rules for every session in working-rules.md)
 
-Tasks start as soon as their dependencies finish. Opus connects each core function to src/core/dispatch.ts as it lands.
+Tasks start as soon as their dependencies finish. Opus connects each core function to src/core/dispatch.ts as it lands. Phase 4's open items are further down.
+
+## Wave 1 — start now, in parallel
+
+- [ ] T5.1 chapter1.json: the 20 Corner Shop renovation tasks (Haiku)
+- [ ] T5.4 Dialogue player (Sonnet)
+- [ ] T5.8 Bottom nav bar and screen router (Haiku)
+- [ ] T5.10 Audio manager and merge chime (Sonnet)
+- [ ] T5.13 Installable app, adds `vite-plugin-pwa` (Haiku) — runs `npm install`, so no other session may run npm while it does
+- [ ] T5.14 Pixel art for the remaining 37 items, six batches (Sonnet with PixelLab) — any time; Scott approves each batch
+
+## Wave 2
+
+- [ ] T5.2 renovation.ts `completeTask` (Haiku) — after T5.1
+- [ ] Wire `completeTask` into dispatch.ts (Opus) — after T5.2
+- [ ] T5.6 Recipe Book, and chain-completion gems in `discover` (Sonnet) — after T5.8
+- [ ] T5.7 Discovery card and `dismissDiscovery` (Haiku) — after T5.6 (both edit discovery.ts)
+- [ ] Wire `dismissDiscovery` into dispatch.ts (Opus) — after T5.7
+- [ ] T5.11 Sound effects in sfx.json (Haiku) — after T5.10
+- [ ] T5.5 Chapter 1 dialogue (Sonnet) — after T5.1 and T5.4; Scott approves the script
+
+## Wave 3
+
+- [ ] T5.3 Bakery location view (Sonnet) — after T5.2 and T5.8
+- [ ] T5.9 Settings (Sonnet; the plan said Haiku, but it reaches effects, the board, audio and the Kitchen) — after T5.7, T5.8 and T5.10
+- [ ] T5.12 First-time flow (Sonnet) — after T5.3 and T5.7
+- [ ] Wire `setTutorialStep` into dispatch.ts (Opus) — after T5.12
+
+## Phase-end review (T-O2)
+
+- [ ] Lint, typecheck, all tests, build
+- [ ] Browser: every tab opens its screen; all 20 renovation tasks complete in order (`bakery.stars(200)`); the intro plays on a new game only; discovery cards show once per item; each setting applies and persists; every GDD sound plays; the app installs and plays offline
+- [ ] T-O3 balancing pass (overdue since Phase 3): the 106-star chapter against the 2–3 day target, and the Croissant grind
+- [ ] T-O5 Chapter 1 playtest (Scott)
+
+## Phase 5 notes
+
+- Several tasks add a line to src/main.ts; each edits it with small Edit calls (working-rules.md).
+- No audio files exist: every sound is synthesized with Web Audio, and sfx.json describes tones. Music has a volume channel but no track.
+- App icons are in public/icons/, drawn from the croissant pixel art.
+
+# Phase 4 — Kitchen, save, and offline timers
 
 ## Kitchen
 
@@ -35,7 +76,7 @@ Tasks start as soon as their dependencies finish. Opus connects each core functi
 - Found in the browser pass: **Cookie and Cupcake can't be made.** Both need egg-chain inputs (Cookie also needs `sugar-bowl`), and `generators.json` has only the Flour Mill and Dairy Fridge — the GDD's Hen Coop, Sugar Tin and Fruit Crate were never added, so nothing ever spawns an egg, sugar or fruit item. Fixed by hiding recipes the player can't make yet: the Kitchen lists a recipe only when every input's chain is fed by a generator the player owns, or the input is already on the board or in the Pantry (`recipeAvailable` in `src/ui/kitchenModel.ts`, built on `producibleChains` in `src/core/orders.ts`). Chapter 1 shows only the Croissant.
 - **Croissant is makeable but a grind for a first recipe:** `dough-ball` is flour tier 6 (32 wheat stalks' worth) and `butter-block` is dairy tier 5 (16 milk splashes) — about 40 taps and two Flour Mill cooldowns. For T-O3.
 - Added dev-only console helpers (`src/ui/devTools.ts`, loaded only when `import.meta.env.DEV`, confirmed absent from the production bundle): `bakery.give(...itemIds)`, `bakery.away(minutes)`, `bakery.reset()`. They write a save and reload, so they exercise the real load, migration and offline path.
-- Next: Phase 5 briefs. Written so far: T5.1, T5.2.
+- Phase 5 briefs: all 14 written (docs/briefs/T5.1.md to T5.14.md).
 
 ## Phase 5 decisions (Scott, Sep 28)
 
@@ -75,4 +116,3 @@ Tasks start as soon as their dependencies finish. Opus connects each core functi
 - [ ] Milestone 1 playtest (T-O5, Scott)
 - [ ] T0.4 "three passing checks" needs a GitHub remote and a first pull request
 - [ ] T0.3 live window resize not yet checked in a visible browser tab
-- [ ] Pixel art for the sugar, egg, and fruit chains, 16 items still on the generated SVG: sugar (sugar-cube, syrup-bottle, caramel, cocoa-bean, chocolate-bar, truffle-box); egg (egg-pair, egg-carton, whisked-eggs, custard-cup, creme-brulee); fruit (berry, berry-bunch, apple-basket, jam-jar, fruit-tart-filling). 16 x 16 PNGs in public/art/, ink outline #3a2414, chain colors from items.json. Flour and dairy are done; `assetUrl()` picks up any new .png automatically.
