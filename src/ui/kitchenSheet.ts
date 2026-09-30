@@ -17,7 +17,6 @@ import { setImageArt } from '../render/assets';
 import type { Timestamp } from '../core/types';
 import { registerDropZone } from './dropZones';
 import { kitchenModel, recipeForDrop, type KitchenModel } from './kitchenModel';
-import { readSettings, writeSettings } from './settings';
 import type { GameStore } from './store';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -52,42 +51,6 @@ function art(spriteKey: string, className: string): HTMLImageElement {
   img.alt = '';
   setImageArt(img, spriteKey);
   return img;
-}
-
-/**
- * "Notify me when bakes finish" (T4.9). Built once and re-attached on every
- * render, so a rebuild can't drop the answer to a pending permission prompt.
- * Null when the browser has no Notification API.
- */
-function notificationToggle(): HTMLElement | null {
-  if (typeof Notification === 'undefined') return null;
-
-  const label = el('label', 'kitchen-toggle-setting');
-  const checkbox = el('input', 'kitchen-toggle-setting__input');
-  checkbox.type = 'checkbox';
-  checkbox.checked =
-    readSettings(localStorage).notifications &&
-    Notification.permission === 'granted';
-  label.append(
-    checkbox,
-    document.createTextNode('Notify me when bakes finish'),
-  );
-
-  checkbox.addEventListener('change', () => {
-    void (async () => {
-      let on = checkbox.checked;
-      if (on && Notification.permission !== 'granted') {
-        on = (await Notification.requestPermission()) === 'granted';
-      }
-      checkbox.checked = on;
-      writeSettings(localStorage, {
-        ...readSettings(localStorage),
-        notifications: on,
-      });
-    })();
-  });
-
-  return label;
 }
 
 export function mountKitchen(
@@ -131,9 +94,6 @@ export function mountKitchen(
 
   let lastKey = '';
   let open = false;
-  const extras = el('div', 'kitchen-extras');
-  const toggle = notificationToggle();
-  if (toggle) extras.appendChild(toggle);
 
   function setOpen(next: boolean): void {
     open = next;
@@ -289,8 +249,6 @@ export function mountKitchen(
       recipes.appendChild(card);
     }
     sheet.appendChild(recipes);
-
-    sheet.appendChild(extras);
   }
 
   function tick(): void {

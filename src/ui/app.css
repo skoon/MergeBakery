@@ -13,6 +13,7 @@ body {
   --hud-height: 56px;
   --counter-height: 104px;
   --tray-height: 80px;
+  --nav-height: 56px;
 
   position: relative;
   width: 100%;
@@ -64,11 +65,38 @@ img {
 
 #tray {
   position: absolute;
-  bottom: 0;
+  bottom: var(--nav-height);
   left: 0;
   right: 0;
   height: var(--tray-height);
   display: flex;
   align-items: center;
   padding: 0 var(--space-4);
+}
+
+#nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  display: flex;
+  background: var(--color-butter);
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Full-height screens cover everything between the HUD and the nav bar,
+   including the Pantry drawer and Kitchen sheet. */
+#screens {
+  position: absolute;
+  top: var(--hud-height);
+  bottom: var(--nav-height);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: var(--color-cream);
+}
+
+#screens[hidden] {
+  display: none;
 }

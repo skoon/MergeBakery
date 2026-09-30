@@ -18,6 +18,7 @@ import { canMerge } from '../core/merge';
 import { computeBoardLayout, type BoardLayout } from '../ui/layout';
 import { dropZoneAt, setDragActive } from '../ui/dropZones';
 import type { GameStore } from '../ui/store';
+import type { SettingsStore } from '../ui/settings';
 import { loadTexture } from './assets';
 
 // Colors from the palette in src/ui/tokens.css.
@@ -68,6 +69,7 @@ interface PointerTracking {
 export async function createBoardView(
   app: Application,
   store: GameStore,
+  settings: SettingsStore,
 ): Promise<BoardView> {
   const textures = new Map<ItemId, Texture>();
   await Promise.all(
@@ -259,6 +261,38 @@ export async function createBoardView(
     }
   }
 
+  /** A small ink-on-cream tier number in the cell's bottom-right corner (T5.9). */
+  function drawTierBadge(
+    tier: number,
+    x: number,
+    y: number,
+    size: number,
+  ): Container {
+    const badgeSize = Math.max(12, size * 0.3);
+    const left = x + size - badgeSize - size * 0.04;
+    const top = y + size - badgeSize - size * 0.04;
+    const badge = new Container();
+    badge.addChild(
+      new Graphics()
+        .roundRect(left, top, badgeSize, badgeSize, badgeSize * 0.3)
+        .fill(COLOR_CREAM)
+        .stroke({ width: 1, color: COLOR_INK }),
+    );
+    const label = new Text({
+      text: tier.toString(),
+      style: {
+        fontFamily: 'ui-rounded, system-ui, sans-serif',
+        fontSize: badgeSize * 0.75,
+        fontWeight: '700',
+        fill: COLOR_INK,
+      },
+    });
+    label.anchor.set(0.5);
+    label.position.set(left + badgeSize / 2, top + badgeSize / 2);
+    badge.addChild(label);
+    return badge;
+  }
+
   function redraw(): void {
     const { board } = store.getState();
     layout = computeBoardLayout(
@@ -295,6 +329,12 @@ export async function createBoardView(
         boardLayer.addChild(sprite);
         if (cell.item.cobwebbed) {
           boardLayer.addChild(drawWebOverlay(x, y, layout.cellSize));
+        }
+        if (settings.get().tierNumbers) {
+          const tier = store.data.items.get(cell.item.itemId)?.tier;
+          if (tier !== undefined) {
+            boardLayer.addChild(drawTierBadge(tier, x, y, layout.cellSize));
+          }
         }
         sprites.set(i, sprite);
       }
@@ -440,6 +480,7 @@ export async function createBoardView(
   app.stage.on('pointerupoutside', onPointerUp);
 
   store.subscribe(() => redraw());
+  settings.subscribe(() => redraw());
   app.renderer.on('resize', () => redraw());
   // The countdown has to tick between state changes; a tick action that changes
   // nothing does not notify the store.

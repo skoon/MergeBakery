@@ -78,7 +78,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: var(--tray-height);
+  bottom: calc(var(--tray-height) + var(--nav-height));
   height: 50%;
   z-index: 10;
   box-sizing: border-box;

@@ -7,33 +7,46 @@ Tasks start as soon as their dependencies finish. Opus connects each core functi
 
 ## Wave 1 — start now, in parallel
 
-- [ ] T5.1 chapter1.json: the 20 Corner Shop renovation tasks (Haiku)
-- [ ] T5.4 Dialogue player (Sonnet)
-- [ ] T5.8 Bottom nav bar and screen router (Haiku)
-- [ ] T5.10 Audio manager and merge chime (Sonnet)
-- [ ] T5.13 Installable app, adds `vite-plugin-pwa` (Haiku) — runs `npm install`, so no other session may run npm while it does
-- [ ] T5.14 Pixel art for the remaining 37 items, six batches (Sonnet with PixelLab) — any time; Scott approves each batch
+- [x] T5.1 chapter1.json: the 20 Corner Shop renovation tasks (Haiku)
+- [x] T5.4 Dialogue player (Sonnet)
+- [x] T5.8 Bottom nav bar and screen router (Haiku)
+- [x] T5.10 Audio manager and merge chime (Sonnet)
+- [x] T5.13 Installable app, adds `vite-plugin-pwa` (Haiku) — the build precaches 154 files (821 KB), including all 60 item PNGs
+- [x] T5.14 Pixel art for the remaining 37 items, six batches — approved by Scott; every item now has a PNG
 
 ## Wave 2
 
-- [ ] T5.2 renovation.ts `completeTask` (Haiku) — after T5.1
-- [ ] Wire `completeTask` into dispatch.ts (Opus) — after T5.2
-- [ ] T5.6 Recipe Book, and chain-completion gems in `discover` (Sonnet) — after T5.8
-- [ ] T5.7 Discovery card and `dismissDiscovery` (Haiku) — after T5.6 (both edit discovery.ts)
-- [ ] Wire `dismissDiscovery` into dispatch.ts (Opus) — after T5.7
-- [ ] T5.11 Sound effects in sfx.json (Haiku) — after T5.10
-- [ ] T5.5 Chapter 1 dialogue (Sonnet) — after T5.1 and T5.4; Scott approves the script
+- [x] T5.2 renovation.ts `completeTask` (Haiku) — after T5.1
+- [x] Wire `completeTask` into dispatch.ts (Opus) — after T5.2
+- [x] T5.6 Recipe Book, and chain-completion gems in `discover` (Sonnet) — after T5.8
+- [x] T5.7 Discovery card and `dismissDiscovery` (Haiku) — after T5.6 (both edit discovery.ts)
+- [x] Wire `dismissDiscovery` into dispatch.ts (Opus) — after T5.7
+- [x] T5.11 Sound effects in sfx.json (Haiku) — after T5.10
+- [x] T5.5 Chapter 1 dialogue (Sonnet) — after T5.1 and T5.4 — written; waiting on Scott's approval of the script (src/data/dialogue/chapter1.json)
 
 ## Wave 3
 
-- [ ] T5.3 Bakery location view (Sonnet) — after T5.2 and T5.8
-- [ ] T5.9 Settings (Sonnet; the plan said Haiku, but it reaches effects, the board, audio and the Kitchen) — after T5.7, T5.8 and T5.10
-- [ ] T5.12 First-time flow (Sonnet) — after T5.3 and T5.7
-- [ ] Wire `setTutorialStep` into dispatch.ts (Opus) — after T5.12
+- [x] T5.3 Bakery location view (Sonnet) — after T5.2 and T5.8
+- [x] T5.9 Settings (Sonnet; the plan said Haiku, but it reaches effects, the board, audio and the Kitchen) — after T5.7, T5.8 and T5.10
+- [x] T5.12 First-time flow (Sonnet) — after T5.3 and T5.7
+- [x] Wire `setTutorialStep` into dispatch.ts (Opus) — after T5.12
+
+## Art still needed
+
+Every key below is referenced by the game but has no file in `public/art/`, so it shows the `_missing` placeholder today. Same style as the item art (1 px `#3a2414` outline, a few colors per object, highlight top-left, shade bottom-right), saved as `public/art/<key>.png`; `assetUrl()` picks each one up with no code change. Show Scott each batch at 8× before it goes in, as with T5.14.
+
+- [ ] **Shop scene, 1 file:** `corner-shop`, the Bakery screen's background. The box is 3:4, so 96 x 128 px; it's drawn at 35% opacity behind the spots, so keep it simple and light.
+- [ ] **Renovation before/after, 40 files, 32 x 32 px:** `corner-shop-<task>-before` and `-after` for each of the 20 tasks in chapter1.json (sweep-cobwebs, wash-window, clear-counter, fix-stool, patch-roof, repaint-door, recipe-board, shop-bell, flour-bins, scrub-tiles, mend-awning, second-oven, display-case, fix-lights, varnish-shelves, window-boxes, repaint-sign, cafe-table, first-recipe-page, reopening-day). Each is drawn at 22% of the scene's width over its spot; before is shabby, after is fixed, same framing so the cross-fade lines up.
+- [ ] **Regular portraits, 16 files, 32 x 32 px:** for Gus, Miss Edith, Dex and Mina, a counter portrait (`portrait-gus`, `portrait-edith`, `portrait-dex`, `portrait-mina`) plus `-neutral`, `-happy` and `-impatient` for each (the GDD's three expressions; the Chapter 1 script uses 9 of the 12). Bust portraits, readable at the counter's small size and at 64 px in the dialogue box. The counter portrait could simply reuse `-neutral` with a one-line change in counterModel.ts, which would drop 4 files.
+- [ ] **Grandma, 3 files, 32 x 32 px:** `portrait-grandma-neutral`, `-happy` and `-impatient`. She appears only through her letters, so a portrait framed like a photo on the wall would suit.
+- [ ] **Walk-in portraits, 6 files, 32 x 32 px:** `portrait-walkin-hiker`, `-tourist`, `-student`, `-jogger`, `-neighbor`, `-painter`. Counter only, one expression each.
+- [ ] **Ovens, 3 files, 16 x 16 px:** `toaster-oven`, `brick-oven`, `deck-oven`. Nothing draws them yet; the Kitchen sheet could show each oven's art beside its name, with tiers that read at a glance like the generators.
+
+That's 69 files, or 65 if the counter reuses the neutral portraits.
 
 ## Phase-end review (T-O2)
 
-- [ ] Lint, typecheck, all tests, build
+- [x] Lint, typecheck, all tests, build — 50 files, 657 tests; the build precaches 154 files (865 KB)
 - [ ] Browser: every tab opens its screen; all 20 renovation tasks complete in order (`bakery.stars(200)`); the intro plays on a new game only; discovery cards show once per item; each setting applies and persists; every GDD sound plays; the app installs and plays offline
 - [ ] T-O3 balancing pass (overdue since Phase 3): the 106-star chapter against the 2–3 day target, and the Croissant grind
 - [ ] T-O5 Chapter 1 playtest (Scott)
@@ -43,6 +56,14 @@ Tasks start as soon as their dependencies finish. Opus connects each core functi
 - Several tasks add a line to src/main.ts; each edits it with small Edit calls (working-rules.md).
 - No audio files exist: every sound is synthesized with Web Audio, and sfx.json describes tones. Music has a volume channel but no track.
 - App icons are in public/icons/, drawn from the croissant pixel art.
+- Wave 1 browser checks, still to do: each nav tab opens its screen and Back/Escape return; the board, tray, Pantry drawer and Kitchen sheet fit above the nav bar; the merge chime climbs with tier after the first tap; the app installs from `npm run preview` and plays offline.
+- `npm install` on /mnt/d took 47 minutes and printed TAR_ENTRY_ERROR warnings for workbox-build's nested ajv. The build works regardless; if a clean install is ever needed, run it from a Linux filesystem or a Windows shell.
+- Wave 2 browser checks, still to do: completing a task with stars (via the Bakery once T5.3 lands, or `completeTask` from the console) unlocks and plays its scene; the intro plays on a new game only; Recipes shows every chain with silhouettes; a discovery card per new item (an existing save will show a run of them first, one per item made before the card existed); every GDD sound plays.
+- Wave 3 browser checks, still to do: the Bakery screen completes all 20 tasks in order (`bakery.stars(200)`), with the before/after swap; each setting applies at once and survives a reload (volume, reduced motion, tier numbers, 100/125/150% text, notifications), and Start over asks first; a new save walks through tap, merge, order and renovation hints, and Skip ends them for good.
+- The Bakery scene and its 40 before/after pictures have no art yet, so every spot shows the placeholder. That's separate work from T5.14.
+- T5.3 and T5.12 also follow the reduced-motion setting, though only T5.9's brief listed it, so every animation honors one switch.
+- T5.11 adds one thing to its brief: a bake already finished when the game loads doesn't ding, since it didn't finish just now.
+- The T5.14 art was drawn as Python pixel grids rendered with PIL rather than through PixelLab: the same 16 x 16 output, but checkable by script.
 
 # Phase 4 — Kitchen, save, and offline timers
 
@@ -72,7 +93,7 @@ Tasks start as soon as their dependencies finish. Opus connects each core functi
 - Fixed: `createDispatch` always returned a new state object, even when the handler changed nothing, so the idle 1 s `tick` notified every store subscriber every second — full board redraw (a drag crossing a tick lost its preview), an autosave write per second, and a Kitchen sheet rebuild per second. It now keeps the state object when neither the state nor the rng moved.
 - Formatted `src/core/bakes.test.ts` and `src/core/ovens.test.ts` (T4.2, T4.3 handoffs).
 - The two design docs in `docs/` are now in `.prettierignore`: they mirror the claude.ai artifacts, and formatting only padded their tables, which would flip back on the next export.
-- Still stubbed in `dispatch.ts`, by plan: `completeTask` (T5.2), `dismissDiscovery` (T5.7), `setTutorialStep` (T5.12).
+- Every action in `dispatch.ts` is now connected; the `notImplemented` stub is gone (Phase 5).
 - Found in the browser pass: **Cookie and Cupcake can't be made.** Both need egg-chain inputs (Cookie also needs `sugar-bowl`), and `generators.json` has only the Flour Mill and Dairy Fridge — the GDD's Hen Coop, Sugar Tin and Fruit Crate were never added, so nothing ever spawns an egg, sugar or fruit item. Fixed by hiding recipes the player can't make yet: the Kitchen lists a recipe only when every input's chain is fed by a generator the player owns, or the input is already on the board or in the Pantry (`recipeAvailable` in `src/ui/kitchenModel.ts`, built on `producibleChains` in `src/core/orders.ts`). Chapter 1 shows only the Croissant.
 - **Croissant is makeable but a grind for a first recipe:** `dough-ball` is flour tier 6 (32 wheat stalks' worth) and `butter-block` is dairy tier 5 (16 milk splashes) — about 40 taps and two Flour Mill cooldowns. For T-O3.
 - Added dev-only console helpers (`src/ui/devTools.ts`, loaded only when `import.meta.env.DEV`, confirmed absent from the production bundle): `bakery.give(...itemIds)`, `bakery.away(minutes)`, `bakery.reset()`. They write a save and reload, so they exercise the real load, migration and offline path.
@@ -94,7 +115,7 @@ Tasks start as soon as their dependencies finish. Opus connects each core functi
 - Rushing a finished bake is free and changes nothing.
 - The example v1 → v2 migration lives only in the test; production MIGRATIONS stays empty at version 1.
 - Corrupt saves are kept under a backup key and logged, then the game starts fresh.
-- Notification toggle lives in the Kitchen sheet until Settings (T5.9) exists.
+- The notification toggle lived in the Kitchen sheet until T5.9 moved it to Settings.
 
 ## Generators
 

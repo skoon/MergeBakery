@@ -1,14 +1,15 @@
 /**
  * Board layout math: fits the board's cells into the space between the
- * counter strip and the tray (T2.8).
+ * counter strip and the tray (T2.8), with the nav bar below the tray (T5.8).
  *
  * The pixel constants here must match the CSS custom properties in app.css
- * (`--hud-height`, `--counter-height`, `--tray-height`).
+ * (`--hud-height`, `--counter-height`, `--tray-height`, `--nav-height`).
  */
 
 export const HUD_HEIGHT = 56;
 export const COUNTER_HEIGHT = 104;
 export const TRAY_HEIGHT = 80;
+export const NAV_HEIGHT = 56;
 export const BOARD_PADDING = 12;
 
 /** Canvas px: board top-left, square cell size. */
@@ -30,7 +31,7 @@ export function computeBoardLayout(
   rows: number,
 ): BoardLayout {
   const top = HUD_HEIGHT + COUNTER_HEIGHT;
-  const bottom = height - TRAY_HEIGHT;
+  const bottom = height - TRAY_HEIGHT - NAV_HEIGHT;
 
   const availableWidth = width - BOARD_PADDING * 2;
   const availableHeight = bottom - top - BOARD_PADDING * 2;

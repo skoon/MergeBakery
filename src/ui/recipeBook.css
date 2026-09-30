@@ -1,0 +1,81 @@
+/* Recipe Book screen (T5.6). */
+
+.book-tabs {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.book-tab {
+  flex: 0 0 auto;
+  padding: var(--space-1) var(--space-3);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--color-ink);
+  background: var(--color-cream);
+  border: 2px solid var(--chain-color, var(--color-crust));
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.book-tab[aria-selected='true'] {
+  background: var(--chain-color, var(--color-butter));
+}
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: var(--space-2);
+}
+
+.book-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--color-crust);
+  border-radius: var(--space-2);
+}
+
+.book-tile__art {
+  width: 48px;
+  height: 48px;
+}
+
+.book-tile[data-discovered='false'] .book-tile__art {
+  filter: brightness(0);
+  opacity: 0.25;
+}
+
+.book-tile__name {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.book-tile__tier {
+  margin: 0;
+  font-size: calc(0.75rem * var(--text-scale));
+  opacity: 0.7;
+}
+
+.book-tile__note {
+  margin: 0;
+  font-size: calc(0.75rem * var(--text-scale));
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.book-footer {
+  margin: var(--space-4) 0 0;
+  text-align: center;
+  font-weight: 700;
+  color: var(--color-crust);
+}

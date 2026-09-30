@@ -5,11 +5,14 @@
 
 import { collectBake, rushBake } from './bakes';
 import { deliverOrder } from './deliver';
+import { dismissDiscovery } from './discovery';
 import { applyDrop } from './drop';
 import { collectBonus, tapGenerator } from './generators';
 import { loadRecipe } from './kitchen';
 import { refillOrders } from './orders';
 import { mergeOvens } from './ovens';
+import { completeTask } from './renovation';
+import { setTutorialStep } from './tutorial';
 import { buyPantrySlot, storeInPantry, takeFromPantry } from './pantry';
 import { createRng } from './rng';
 import { sellItem, undoSell } from './sell';
@@ -106,10 +109,6 @@ function assertNever(action: never): never {
   throw new Error(`Unhandled action type: ${JSON.stringify(action)}`);
 }
 
-function notImplemented(type: ActionType): never {
-  throw new Error(`Not implemented: ${type}`);
-}
-
 export const dispatch: Dispatch = createDispatch({
   drop: (data, state, action) =>
     applyDrop(data, state, action.from, action.to, action.now),
@@ -141,9 +140,12 @@ export const dispatch: Dispatch = createDispatch({
     rushBake(data, state, action.slot, action.now),
   mergeOvens: (data, state, action) =>
     mergeOvens(data, state, action.from, action.to),
-  completeTask: (_data, _state, action) => notImplemented(action.type),
-  dismissDiscovery: (_data, _state, action) => notImplemented(action.type),
-  setTutorialStep: (_data, _state, action) => notImplemented(action.type),
+  completeTask: (data, state, action) =>
+    completeTask(data, state, action.taskId),
+  dismissDiscovery: (data, state, action) =>
+    dismissDiscovery(data, state, action.itemId),
+  setTutorialStep: (data, state, action) =>
+    setTutorialStep(data, state, action.step),
   tick: (data, state, action, rng) =>
     refillOrders(data, state, rng, action.now),
 });

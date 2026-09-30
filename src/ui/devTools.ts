@@ -5,6 +5,7 @@
  *
  *   bakery.give('dough-ball', 'butter-block')  put items on the board
  *   bakery.away(90)                            pretend 90 minutes passed
+ *   bakery.stars(200)                          set the star count
  *   bakery.reset()                             delete the save, start over
  *
  * Each one writes a save and reloads, so it goes through the real load path:
@@ -120,6 +121,9 @@ export function installDevTools(
         Date.now(),
       );
     },
+    stars(n: number): void {
+      saveAndReload({ ...store.getState(), stars: n }, Date.now());
+    },
     away(minutes: number): void {
       const ms = minutes * 60_000;
       saveAndReload(rewindState(store.getState(), ms), Date.now() - ms);
@@ -133,6 +137,6 @@ export function installDevTools(
 
   Object.assign(window, { bakery: tools });
   console.info(
-    "Dev tools: bakery.give('dough-ball', 'butter-block'), bakery.away(90), bakery.reset()",
+    "Dev tools: bakery.give('dough-ball', 'butter-block'), bakery.stars(200), bakery.away(90), bakery.reset()",
   );
 }

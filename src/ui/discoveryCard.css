@@ -1,0 +1,111 @@
+/* "New discovery!" card (T5.7). */
+
+/* Covers the column so a tap can't fall through to a board item. */
+.discovery {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.discovery[hidden] {
+  display: none;
+}
+
+.discovery__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: min(300px, 100%);
+  box-sizing: border-box;
+  padding: var(--space-5);
+  text-align: center;
+  color: var(--color-ink);
+  background: var(--color-cream);
+  border: 3px solid var(--color-butter);
+  border-radius: var(--space-4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.discovery__card--enter[data-motion='pop'] {
+  animation: discovery-pop 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.discovery__card--enter[data-motion='fade'] {
+  animation: discovery-fade 200ms ease-out;
+}
+
+@keyframes discovery-pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes discovery-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.discovery__heading {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--color-strawberry);
+}
+
+.discovery__art {
+  width: 96px;
+  height: 96px;
+}
+
+.discovery__name {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  color: var(--color-crust);
+}
+
+.discovery__chain {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  opacity: 0.75;
+}
+
+.discovery__note {
+  margin: 0;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.discovery__note[hidden] {
+  display: none;
+}
+
+.discovery__button {
+  width: 100%;
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  font: inherit;
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-cream);
+  background: var(--color-crust);
+  border: none;
+  border-radius: var(--space-2);
+  cursor: pointer;
+}

@@ -1,0 +1,251 @@
+{
+  "scenes": [
+    {
+      "id": "ch1-intro",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The key sticks, then gives. Grandma's Corner Shop smells of dust, old flour and, somehow, still a little of cinnamon."
+        },
+        {
+          "speaker": "narrator",
+          "text": "On the counter, under a jar of wooden spoons, sits an envelope with your name on it in her loopy handwriting."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "My dear, if you're reading this, the shop is yours. Don't let the cobwebs frighten you. They're mostly decorative."
+        },
+        {
+          "speaker": "grandma",
+          "text": "My recipes are scattered about. I never did like keeping things in one place. Bake, and you'll find them."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Start small. Wheat from the mill, milk from the fridge. Put two good things together and they become something better."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Taped to the window is a glossy flyer: \"MegaBun Corp is EXCITED to explore SYNERGIES with this Premium Location!\""
+        },
+        {
+          "speaker": "grandma",
+          "text": "P.S. If a man in a suit offers to buy the place, offer him a scone instead. It confuses them."
+        },
+        {
+          "speaker": "narrator",
+          "text": "You roll up your sleeves. First things first: those cobwebs."
+        }
+      ]
+    },
+    {
+      "id": "ch1-gus",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "A man in a salt-stiff coat stops at the freshly washed window and peers in, like he's checking the weather."
+        },
+        {
+          "speaker": "gus",
+          "text": "Lights on, window clean. Thought I was seeing things. Nobody's baked in here since your gran."
+        },
+        {
+          "speaker": "gus",
+          "text": "I'm Gus. Boat's the green one by the harbor wall. Out at four, back by ten, hungry as a gull."
+        },
+        {
+          "speaker": "gus",
+          "expression": "happy",
+          "text": "Your gran kept a loaf by for me every morning. Never asked. Just knew."
+        },
+        {
+          "speaker": "gus",
+          "expression": "happy",
+          "text": "If there's bread again, I'll be back. Every day. You can set your clock by me."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Gus is now a regular. He'll place orders at the counter."
+        }
+      ]
+    },
+    {
+      "id": "ch1-edith",
+      "lines": [
+        {
+          "speaker": "edith",
+          "text": "Is that stool fixed? Good. It wobbled for eleven years. I counted. Old habit, from teaching."
+        },
+        {
+          "speaker": "edith",
+          "expression": "happy",
+          "text": "Forty years of eighth graders, and I survived every one of them on your grandmother's croissants."
+        },
+        {
+          "speaker": "edith",
+          "text": "She said the trick was cold butter and patience. She had plenty of one and pretended to have the other."
+        },
+        {
+          "speaker": "edith",
+          "expression": "happy",
+          "text": "I'm Edith. Miss Edith, to anyone who ever handed in homework late."
+        },
+        {
+          "speaker": "edith",
+          "expression": "happy",
+          "text": "I'll expect a croissant on Thursdays. A dough ball, a butter block, a warm oven. You'll get there."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Miss Edith is now a regular."
+        }
+      ]
+    },
+    {
+      "id": "ch1-dex",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The bell jingles. A young man in a MegaBun polo shirt freezes in the doorway, then quickly zips up his jacket."
+        },
+        {
+          "speaker": "dex",
+          "text": "Hi! Just browsing. Totally normal person. Not affiliated with any large bread-adjacent corporation."
+        },
+        {
+          "speaker": "narrator",
+          "text": "He breathes in. His eyes close. For a moment he looks like someone remembering a better childhood."
+        },
+        {
+          "speaker": "dex",
+          "expression": "happy",
+          "text": "Is that real butter? We have a flavor packet that's supposed to taste like that. It does not."
+        },
+        {
+          "speaker": "dex",
+          "expression": "impatient",
+          "text": "I'm Dex. I should go. My manager thinks I'm at a \"competitive landscape offsite.\""
+        },
+        {
+          "speaker": "dex",
+          "expression": "happy",
+          "text": "But I'll be back. For research. Strictly research. Maybe save me a croissant?"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Dex is now a regular. He seems very bad at being a spy."
+        }
+      ]
+    },
+    {
+      "id": "ch1-mina",
+      "lines": [
+        {
+          "speaker": "mina",
+          "expression": "happy",
+          "text": "The awning! You fixed the awning! I've looked at that sad, flappy thing from my window for three years."
+        },
+        {
+          "speaker": "mina",
+          "text": "I'm Mina, from the flower shop next door. Well. Flower stand. It's a very ambitious bucket."
+        },
+        {
+          "speaker": "mina",
+          "text": "A MegaBun rep came by my stand too. Asked if I'd \"consider a lifestyle partnership.\" I gave him a daisy."
+        },
+        {
+          "speaker": "mina",
+          "expression": "happy",
+          "text": "This street needs you open. When people buy bread, they buy flowers. It's science. Probably."
+        },
+        {
+          "speaker": "mina",
+          "expression": "happy",
+          "text": "Put me down for a flour sack a week. I'm learning to bake. Badly, but with feeling."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mina is now a regular."
+        }
+      ]
+    },
+    {
+      "id": "ch1-recipe-page",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Behind the frame's backing, something crinkles: a folded page, smudged with butter, in Grandma's hand."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Found it! I hid the first one well, didn't I? Your mother never found a single one. You were always the curious one."
+        },
+        {
+          "speaker": "grandma",
+          "text": "Croissants aren't difficult. They're patient. Fold the butter in, rest, fold again. Never rush the dough."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "The rest of my recipes are out there. Follow your customers. They'll lead you to them. They always led me."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The page goes into the Recipe Book, right at the front."
+        }
+      ]
+    },
+    {
+      "id": "ch1-reopening",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The sign swings in the morning breeze: RISE & SHINE BAKERY. Open."
+        },
+        {
+          "speaker": "gus",
+          "expression": "happy",
+          "text": "Ten o'clock sharp. Told you I'd be here. Is that a sourdough? Don't answer. I'm buying it."
+        },
+        {
+          "speaker": "edith",
+          "expression": "happy",
+          "text": "It smells exactly the way it used to. I may cry. I'll deny it if anyone asks."
+        },
+        {
+          "speaker": "mina",
+          "expression": "happy",
+          "text": "I brought flowers for the counter! And a friend. And her aunt. Word travels on this street."
+        },
+        {
+          "speaker": "dex",
+          "expression": "happy",
+          "text": "I brought nothing, because officially I was never here. One croissant, please."
+        },
+        {
+          "speaker": "narrator",
+          "text": "A courier arrives with an enormous gift basket. The card is printed on very expensive paper."
+        },
+        {
+          "speaker": "narrator",
+          "text": "\"MegaBun Corp congratulates this Legacy Micro-Bakery on its Relaunch Journey. We look forward to acquiring—\" The rest is smudged."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Inside the basket: six loaves of Artisanal Bread Product™. Contains up to 40% bread."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tucked under the basket is one more envelope in loopy handwriting."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Well done, dear. The corner shop is only the beginning. There's a café terrace down the lane that misses me terribly."
+        }
+      ]
+    }
+  ]
+}

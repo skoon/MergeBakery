@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import { loadGameData } from './data';
 import { createNewGame } from './newGame';
-import { discover } from './discovery';
+import { discover, dismissDiscovery } from './discovery';
 
 describe('discover with real data', () => {
   const data = loadGameData();
@@ -117,5 +117,106 @@ describe('discover with real data', () => {
     expect(finalState.pendingDiscoveries).toHaveLength(
       initialState.pendingDiscoveries.length + 2,
     );
+  });
+});
+
+describe('chain completion (T5.6)', () => {
+  const data = loadGameData();
+  const croissants = ['croissant', 'pain-au-chocolat', 'pastry-platter'];
+
+  function stateKnowing(ids: string[], gems = 0) {
+    return { ...createNewGame(data, 1, 0), discovered: ids, gems };
+  }
+
+  it('pays the chain gems once when its last item is discovered', () => {
+    const state = stateKnowing(['croissant', 'pain-au-chocolat'], 5);
+
+    const result = discover(data, state, 'pastry-platter');
+
+    expect(result.state.gems).toBe(8); // croissant chain: completionGems 3
+    expect(result.state.rewardedChains).toEqual(['croissant']);
+    expect(result.events).toEqual([
+      { type: 'discovered', itemId: 'pastry-platter' },
+      { type: 'chainCompleted', chainId: 'croissant', gems: 3 },
+    ]);
+  });
+
+  it('does not pay before the chain is complete', () => {
+    const result = discover(
+      data,
+      stateKnowing(['croissant']),
+      'pain-au-chocolat',
+    );
+
+    expect(result.state.gems).toBe(0);
+    expect(result.state.rewardedChains).toEqual([]);
+    expect(result.events).toHaveLength(1);
+  });
+
+  it('does not pay twice', () => {
+    const state = {
+      ...stateKnowing(['croissant', 'pain-au-chocolat']),
+      rewardedChains: ['croissant'],
+    };
+
+    const result = discover(data, state, 'pastry-platter');
+
+    expect(result.state.gems).toBe(0);
+    expect(result.events).toHaveLength(1);
+  });
+
+  it('does not pay again on a rediscovery', () => {
+    const result = discover(data, stateKnowing(croissants), 'croissant');
+
+    expect(result.state.gems).toBe(0);
+    expect(result.events).toEqual([]);
+  });
+
+  it('never pays or records a chain worth 0 gems', () => {
+    // The energy jar is a one-item bonus chain with completionGems 0.
+    const result = discover(data, stateKnowing([]), 'energy-jar');
+
+    expect(result.state.gems).toBe(0);
+    expect(result.state.rewardedChains).toEqual([]);
+    expect(result.events).toEqual([
+      { type: 'discovered', itemId: 'energy-jar' },
+    ]);
+  });
+});
+
+describe('dismissDiscovery (T5.7)', () => {
+  const data = loadGameData();
+  const base = createNewGame(data, 1, 0);
+
+  it('removes a pending item', () => {
+    const state = { ...base, pendingDiscoveries: ['egg'] };
+
+    const result = dismissDiscovery(data, state, 'egg');
+
+    expect(result.ok && result.state.pendingDiscoveries).toEqual([]);
+  });
+
+  it('keeps the other pending items in order', () => {
+    const state = { ...base, pendingDiscoveries: ['egg', 'berry', 'caramel'] };
+
+    const result = dismissDiscovery(data, state, 'berry');
+
+    expect(result.ok && result.state.pendingDiscoveries).toEqual([
+      'egg',
+      'caramel',
+    ]);
+  });
+
+  it('returns the same state object when the item is not pending', () => {
+    const state = { ...base, pendingDiscoveries: ['egg'] };
+
+    const result = dismissDiscovery(data, state, 'berry');
+
+    expect(result).toEqual({ ok: true, state, events: [] });
+    expect(result.ok && result.state).toBe(state);
+  });
+
+  it('throws on an unknown item', () => {
+    expect(() => dismissDiscovery(data, base, 'mystery-meat')).toThrow();
   });
 });

@@ -1,0 +1,182 @@
+/* The Bakery location view (T5.3). */
+
+.location-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.location-header__name {
+  margin: 0;
+  font-weight: 700;
+  color: var(--color-crust);
+}
+
+.location-header__progress {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.location-scene {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #fbe9c9, var(--color-cream));
+  border: 2px solid var(--color-crust);
+  border-radius: var(--space-3);
+}
+
+.location-scene__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.35;
+}
+
+.location-spots {
+  position: absolute;
+  inset: 0;
+}
+
+.location-spot {
+  position: absolute;
+  width: 22%;
+  aspect-ratio: 1;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.location-spot__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.location-spot[data-state='locked'] .location-spot__art {
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+
+.location-spot[data-state='available'] {
+  animation: location-pulse 1.6s ease-in-out infinite;
+}
+
+.location-spot[data-state='done'] {
+  cursor: default;
+}
+
+@keyframes location-pulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    filter: drop-shadow(0 0 0 var(--color-butter));
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.06);
+    filter: drop-shadow(0 0 6px var(--color-butter));
+  }
+}
+
+.location-spot__tag {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  padding: 0 var(--space-1);
+  font-size: calc(0.75rem * var(--text-scale));
+  font-weight: 700;
+  color: var(--color-ink);
+  background: var(--color-butter);
+  border: 1px solid var(--color-crust);
+  border-radius: var(--space-2);
+}
+
+.location-spot__before {
+  animation: location-crossfade 400ms ease-out forwards;
+}
+
+.location-spot--bounce {
+  animation: location-bounce 400ms ease-out;
+}
+
+@keyframes location-crossfade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes location-bounce {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  40% {
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.location-popover {
+  position: absolute;
+  z-index: 2;
+  width: 160px;
+  max-width: 60%;
+  padding: var(--space-3);
+  transform: translate(-50%, calc(-100% - 36px));
+  text-align: center;
+  color: var(--color-ink);
+  background: var(--color-cream);
+  border: 2px solid var(--color-crust);
+  border-radius: var(--space-2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.location-popover[data-below='true'] {
+  transform: translate(-50%, 36px);
+}
+
+.location-popover[hidden] {
+  display: none;
+}
+
+.location-popover__title {
+  margin: 0 0 var(--space-1);
+  font-weight: 700;
+}
+
+.location-popover__text {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+.location-popover__button {
+  width: 100%;
+  padding: var(--space-2);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-cream);
+  background: var(--color-crust);
+  border: none;
+  border-radius: var(--space-2);
+  cursor: pointer;
+}
+
+.location-popover__button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

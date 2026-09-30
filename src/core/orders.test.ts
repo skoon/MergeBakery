@@ -74,7 +74,7 @@ describe('nextTask', () => {
   const base = stateWith({});
 
   it('returns null when the chapter has no tasks', () => {
-    expect(nextTask(testData, base)).toBeNull();
+    expect(nextTask(dataWithTasks([]), base)).toBeNull();
   });
 
   it('returns the first task when none are complete', () => {

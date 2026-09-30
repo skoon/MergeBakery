@@ -1,0 +1,28 @@
+{
+  "scenes": [
+    {
+      "id": "sample",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The shop bell gives a rusty jingle. Someone is standing in the doorway."
+        },
+        {
+          "speaker": "gus",
+          "expression": "neutral",
+          "text": "Saw the lights on. Didn't think anyone would ever bake in here again."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Gus always did say that. Then he'd buy two loaves. Be nice to him, dear."
+        },
+        {
+          "speaker": "gus",
+          "expression": "happy",
+          "text": "Well. If there's bread tomorrow, I'll be back."
+        }
+      ]
+    }
+  ]
+}

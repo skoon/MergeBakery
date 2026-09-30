@@ -2,6 +2,347 @@
   "id": "chapter1",
   "name": "Grandma's Corner Shop",
   "sceneKey": "corner-shop",
-  "introSceneId": null,
-  "tasks": []
+  "introSceneId": "ch1-intro",
+  "tasks": [
+    {
+      "id": "sweep-cobwebs",
+      "name": "Sweep out the cobwebs",
+      "starCost": 3,
+      "spot": {
+        "x": 0.62,
+        "y": 0.84
+      },
+      "prerequisites": [],
+      "unlocks": [],
+      "featuredItems": ["wheat-bundle", "milk-bottle"],
+      "beforeSpriteKey": "corner-shop-sweep-cobwebs-before",
+      "afterSpriteKey": "corner-shop-sweep-cobwebs-after",
+      "sceneId": null
+    },
+    {
+      "id": "wash-window",
+      "name": "Wash the front window",
+      "starCost": 3,
+      "spot": {
+        "x": 0.14,
+        "y": 0.34
+      },
+      "prerequisites": ["sweep-cobwebs"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "gus"
+        }
+      ],
+      "featuredItems": ["flour-scoop", "milk-bottle"],
+      "beforeSpriteKey": "corner-shop-wash-window-before",
+      "afterSpriteKey": "corner-shop-wash-window-after",
+      "sceneId": "ch1-gus"
+    },
+    {
+      "id": "clear-counter",
+      "name": "Clear the counter",
+      "starCost": 3,
+      "spot": {
+        "x": 0.36,
+        "y": 0.6
+      },
+      "prerequisites": ["sweep-cobwebs"],
+      "unlocks": [],
+      "featuredItems": ["flour-scoop", "cream-jug"],
+      "beforeSpriteKey": "corner-shop-clear-counter-before",
+      "afterSpriteKey": "corner-shop-clear-counter-after",
+      "sceneId": null
+    },
+    {
+      "id": "fix-stool",
+      "name": "Fix the wobbly stool",
+      "starCost": 4,
+      "spot": {
+        "x": 0.5,
+        "y": 0.74
+      },
+      "prerequisites": ["wash-window"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "edith"
+        }
+      ],
+      "featuredItems": ["flour-bag", "cream-jug"],
+      "beforeSpriteKey": "corner-shop-fix-stool-before",
+      "afterSpriteKey": "corner-shop-fix-stool-after",
+      "sceneId": "ch1-edith"
+    },
+    {
+      "id": "patch-roof",
+      "name": "Patch the leaky roof",
+      "starCost": 4,
+      "spot": {
+        "x": 0.5,
+        "y": 0.15
+      },
+      "prerequisites": ["clear-counter"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "dairy-fridge-1"
+        }
+      ],
+      "featuredItems": ["butter-pat", "flour-bag"],
+      "beforeSpriteKey": "corner-shop-patch-roof-before",
+      "afterSpriteKey": "corner-shop-patch-roof-after",
+      "sceneId": null
+    },
+    {
+      "id": "repaint-door",
+      "name": "Repaint the door",
+      "starCost": 4,
+      "spot": {
+        "x": 0.5,
+        "y": 0.48
+      },
+      "prerequisites": ["fix-stool"],
+      "unlocks": [],
+      "featuredItems": ["flour-bag", "butter-pat"],
+      "beforeSpriteKey": "corner-shop-repaint-door-before",
+      "afterSpriteKey": "corner-shop-repaint-door-after",
+      "sceneId": null
+    },
+    {
+      "id": "recipe-board",
+      "name": "Hang Grandma's recipe board",
+      "starCost": 4,
+      "spot": {
+        "x": 0.3,
+        "y": 0.46
+      },
+      "prerequisites": ["patch-roof"],
+      "unlocks": [],
+      "featuredItems": ["dough-ball", "butter-block"],
+      "beforeSpriteKey": "corner-shop-recipe-board-before",
+      "afterSpriteKey": "corner-shop-recipe-board-after",
+      "sceneId": null
+    },
+    {
+      "id": "shop-bell",
+      "name": "Restring the shop bell",
+      "starCost": 5,
+      "spot": {
+        "x": 0.88,
+        "y": 0.56
+      },
+      "prerequisites": ["repaint-door"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "dex"
+        }
+      ],
+      "featuredItems": ["flour-sack", "butter-block"],
+      "beforeSpriteKey": "corner-shop-shop-bell-before",
+      "afterSpriteKey": "corner-shop-shop-bell-after",
+      "sceneId": "ch1-dex"
+    },
+    {
+      "id": "flour-bins",
+      "name": "Replace the flour bins",
+      "starCost": 5,
+      "spot": {
+        "x": 0.12,
+        "y": 0.56
+      },
+      "prerequisites": ["recipe-board"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "flour-mill-1"
+        }
+      ],
+      "featuredItems": ["dough-ball", "butter-block"],
+      "beforeSpriteKey": "corner-shop-flour-bins-before",
+      "afterSpriteKey": "corner-shop-flour-bins-after",
+      "sceneId": null
+    },
+    {
+      "id": "scrub-tiles",
+      "name": "Scrub the old tiles",
+      "starCost": 5,
+      "spot": {
+        "x": 0.36,
+        "y": 0.85
+      },
+      "prerequisites": ["shop-bell"],
+      "unlocks": [],
+      "featuredItems": ["croissant", "flour-sack"],
+      "beforeSpriteKey": "corner-shop-scrub-tiles-before",
+      "afterSpriteKey": "corner-shop-scrub-tiles-after",
+      "sceneId": null
+    },
+    {
+      "id": "mend-awning",
+      "name": "Mend the awning",
+      "starCost": 5,
+      "spot": {
+        "x": 0.72,
+        "y": 0.22
+      },
+      "prerequisites": ["flour-bins", "scrub-tiles"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "mina"
+        }
+      ],
+      "featuredItems": ["croissant", "cheese-wedge"],
+      "beforeSpriteKey": "corner-shop-mend-awning-before",
+      "afterSpriteKey": "corner-shop-mend-awning-after",
+      "sceneId": "ch1-mina"
+    },
+    {
+      "id": "second-oven",
+      "name": "Refurbish the spare Toaster Oven",
+      "starCost": 6,
+      "spot": {
+        "x": 0.2,
+        "y": 0.72
+      },
+      "prerequisites": ["mend-awning"],
+      "unlocks": [
+        {
+          "kind": "oven",
+          "ovenId": "toaster-oven"
+        }
+      ],
+      "featuredItems": ["croissant", "dough-ball"],
+      "beforeSpriteKey": "corner-shop-second-oven-before",
+      "afterSpriteKey": "corner-shop-second-oven-after",
+      "sceneId": null
+    },
+    {
+      "id": "display-case",
+      "name": "Restock the display case",
+      "starCost": 6,
+      "spot": {
+        "x": 0.64,
+        "y": 0.62
+      },
+      "prerequisites": ["second-oven"],
+      "unlocks": [],
+      "featuredItems": ["croissant", "bread-loaf"],
+      "beforeSpriteKey": "corner-shop-display-case-before",
+      "afterSpriteKey": "corner-shop-display-case-after",
+      "sceneId": null
+    },
+    {
+      "id": "fix-lights",
+      "name": "Fix the flickering lights",
+      "starCost": 6,
+      "spot": {
+        "x": 0.5,
+        "y": 0.32
+      },
+      "prerequisites": ["second-oven"],
+      "unlocks": [],
+      "featuredItems": ["bread-loaf", "cheese-wedge"],
+      "beforeSpriteKey": "corner-shop-fix-lights-before",
+      "afterSpriteKey": "corner-shop-fix-lights-after",
+      "sceneId": null
+    },
+    {
+      "id": "varnish-shelves",
+      "name": "Varnish the shelves",
+      "starCost": 6,
+      "spot": {
+        "x": 0.7,
+        "y": 0.46
+      },
+      "prerequisites": ["display-case", "fix-lights"],
+      "unlocks": [],
+      "featuredItems": ["pain-au-chocolat", "bread-loaf"],
+      "beforeSpriteKey": "corner-shop-varnish-shelves-before",
+      "afterSpriteKey": "corner-shop-varnish-shelves-after",
+      "sceneId": null
+    },
+    {
+      "id": "window-boxes",
+      "name": "Plant the window boxes",
+      "starCost": 7,
+      "spot": {
+        "x": 0.86,
+        "y": 0.36
+      },
+      "prerequisites": ["varnish-shelves"],
+      "unlocks": [],
+      "featuredItems": ["pain-au-chocolat", "cheese-wheel"],
+      "beforeSpriteKey": "corner-shop-window-boxes-before",
+      "afterSpriteKey": "corner-shop-window-boxes-after",
+      "sceneId": null
+    },
+    {
+      "id": "repaint-sign",
+      "name": "Repaint the sign",
+      "starCost": 7,
+      "spot": {
+        "x": 0.28,
+        "y": 0.2
+      },
+      "prerequisites": ["window-boxes"],
+      "unlocks": [],
+      "featuredItems": ["sourdough-boule", "croissant"],
+      "beforeSpriteKey": "corner-shop-repaint-sign-before",
+      "afterSpriteKey": "corner-shop-repaint-sign-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-table",
+      "name": "Set out the café table",
+      "starCost": 7,
+      "spot": {
+        "x": 0.8,
+        "y": 0.72
+      },
+      "prerequisites": ["window-boxes"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "flour-mill-1"
+        }
+      ],
+      "featuredItems": ["pain-au-chocolat", "cheese-wheel"],
+      "beforeSpriteKey": "corner-shop-cafe-table-before",
+      "afterSpriteKey": "corner-shop-cafe-table-after",
+      "sceneId": null
+    },
+    {
+      "id": "first-recipe-page",
+      "name": "Frame Grandma's first recipe page",
+      "starCost": 8,
+      "spot": {
+        "x": 0.12,
+        "y": 0.84
+      },
+      "prerequisites": ["repaint-sign", "cafe-table"],
+      "unlocks": [],
+      "featuredItems": ["sourdough-boule", "pain-au-chocolat"],
+      "beforeSpriteKey": "corner-shop-first-recipe-page-before",
+      "afterSpriteKey": "corner-shop-first-recipe-page-after",
+      "sceneId": "ch1-recipe-page"
+    },
+    {
+      "id": "reopening-day",
+      "name": "Reopening day",
+      "starCost": 8,
+      "spot": {
+        "x": 0.88,
+        "y": 0.85
+      },
+      "prerequisites": ["first-recipe-page"],
+      "unlocks": [],
+      "featuredItems": ["pastry-platter", "croissant"],
+      "beforeSpriteKey": "corner-shop-reopening-day-before",
+      "afterSpriteKey": "corner-shop-reopening-day-after",
+      "sceneId": "ch1-reopening"
+    }
+  ]
 }

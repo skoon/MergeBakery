@@ -1,0 +1,121 @@
+/* The Settings screen (T5.9). */
+
+.settings-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid rgba(156, 91, 46, 0.25);
+}
+
+.settings-row__label {
+  font-weight: 700;
+}
+
+.settings-slider {
+  flex: 1 1 140px;
+  max-width: 220px;
+  accent-color: var(--color-crust);
+}
+
+.settings-switch {
+  width: 24px;
+  height: 24px;
+  accent-color: var(--color-crust);
+}
+
+.settings-segmented {
+  display: flex;
+  border: 1px solid var(--color-crust);
+  border-radius: var(--space-2);
+  overflow: hidden;
+}
+
+.settings-segmented__option {
+  padding: var(--space-1) var(--space-3);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  color: var(--color-ink);
+  background: var(--color-cream);
+  border: none;
+  cursor: pointer;
+}
+
+.settings-segmented__option + .settings-segmented__option {
+  border-left: 1px solid var(--color-crust);
+}
+
+.settings-segmented__option[aria-checked='true'] {
+  font-weight: 700;
+  color: var(--color-cream);
+  background: var(--color-crust);
+}
+
+.settings-danger {
+  margin-top: var(--space-7);
+  text-align: center;
+}
+
+.settings-start-over {
+  padding: var(--space-2) var(--space-5);
+  font: inherit;
+  font-weight: 700;
+  color: #b3261e;
+  background: transparent;
+  border: 2px solid #b3261e;
+  border-radius: var(--space-2);
+  cursor: pointer;
+}
+
+.settings-confirm {
+  max-width: min(320px, calc(100vw - 2 * var(--space-4)));
+  padding: var(--space-5);
+  color: var(--color-ink);
+  background: var(--color-cream);
+  border: 2px solid var(--color-crust);
+  border-radius: var(--space-3);
+}
+
+.settings-confirm::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.settings-confirm p {
+  margin: 0 0 var(--space-4);
+  line-height: 1.45;
+}
+
+.settings-confirm__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.settings-confirm__cancel,
+.settings-confirm__delete {
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  font-weight: 700;
+  border-radius: var(--space-2);
+  cursor: pointer;
+}
+
+.settings-confirm__cancel {
+  color: var(--color-ink);
+  background: transparent;
+  border: 1px solid var(--color-crust);
+}
+
+.settings-confirm__delete {
+  color: #ffffff;
+  background: #b3261e;
+  border: none;
+}

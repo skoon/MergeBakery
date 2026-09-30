@@ -29,6 +29,8 @@ export function mountCounterStrip(
     for (const card of cards) {
       const cardEl = document.createElement('div');
       cardEl.className = 'counter-card';
+      // The tutorial (T5.12) finds a ready order's card by this.
+      cardEl.dataset.orderId = String(card.orderId);
 
       const portrait = document.createElement('img');
       portrait.className = 'counter-card-portrait';

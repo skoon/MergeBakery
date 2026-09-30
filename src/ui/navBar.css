@@ -1,0 +1,74 @@
+/* Bottom nav bar and full-height screens (T5.8). */
+
+.nav-tab {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0 var(--space-1);
+  /* Fixed size, unlike the rest of the UI: five tabs must fit a 320 px screen at any text scale. */
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-ink);
+  background: transparent;
+  border: none;
+  border-top: 3px solid transparent;
+  cursor: pointer;
+}
+
+.nav-tab[aria-current='page'] {
+  color: var(--color-crust);
+  border-top-color: var(--color-strawberry);
+  background: var(--color-cream);
+}
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.screen[hidden] {
+  display: none;
+}
+
+.screen__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--color-crust);
+}
+
+.screen__back {
+  flex: 0 0 auto;
+  padding: var(--space-1) var(--space-3);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-crust);
+  background: transparent;
+  border: 1px solid var(--color-crust);
+  border-radius: var(--space-2);
+  cursor: pointer;
+}
+
+.screen__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  color: var(--color-crust);
+}
+
+.screen__body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--space-4);
+}
+
+.screen__coming-soon {
+  margin: var(--space-6) 0;
+  text-align: center;
+  opacity: 0.7;
+}

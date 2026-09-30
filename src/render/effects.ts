@@ -7,6 +7,7 @@
 import { Graphics, type Application, type Sprite } from 'pixi.js';
 import type { CellIndex } from '../core/types';
 import type { GameStore } from '../ui/store';
+import { reducedMotion, type SettingsStore } from '../ui/settings';
 import type { BoardView } from './boardView';
 import { easeOutBack, easeOutCubic, tween } from './tween';
 
@@ -34,16 +35,20 @@ const CRUMB_SPEED = 60;
 const CRUMB_UPWARD_BIAS = 50;
 const CRUMB_GRAVITY = 260;
 
-function prefersReducedMotion(): boolean {
-  return matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-
 /** Subscribes to the store and plays effects for its events. Returns an unsubscribe function. */
 export function createEffects(
   app: Application,
   board: BoardView,
   store: GameStore,
+  settings: SettingsStore,
 ): () => void {
+  function prefersReducedMotion(): boolean {
+    return reducedMotion(
+      settings.get(),
+      matchMedia('(prefers-reduced-motion: reduce)').matches,
+    );
+  }
+
   function fadeSpriteIn(sprite: Sprite): void {
     sprite.alpha = 0;
 

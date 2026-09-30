@@ -8,13 +8,7 @@ import type { Handlers } from './dispatch';
 import { createNewGame } from './newGame';
 import { createRng } from './rng';
 import { stateWith, testData } from './testing';
-import type {
-  Action,
-  ActionResult,
-  ActionType,
-  GameData,
-  GameState,
-} from './types';
+import type { Action, ActionResult, GameData, GameState } from './types';
 
 const NOW = 1000;
 
@@ -154,40 +148,24 @@ const SAMPLE_ACTIONS: readonly Action[] = [
   { type: 'tick', now: NOW },
 ];
 
-/** Action types whose handlers are connected to core functions. */
-const WIRED: ReadonlySet<ActionType> = new Set<ActionType>([
-  'drop',
-  'tapGenerator',
-  'collectBonus',
-  'sell',
-  'undoSell',
-  'storeInPantry',
-  'takeFromPantry',
-  'buyPantrySlot',
-  'deliverOrder',
-  'loadRecipe',
-  'collectBake',
-  'rushBake',
-  'mergeOvens',
-  'tick',
-]);
-
-describe('dispatch (stub)', () => {
+describe('dispatch', () => {
   it('covers all 17 action types', () => {
     expect(SAMPLE_ACTIONS).toHaveLength(17);
   });
 
-  it.each(
-    SAMPLE_ACTIONS.filter((action) => !WIRED.has(action.type)).map(
-      (action) => ({ action }),
-    ),
-  )('throws "Not implemented: $action.type"', ({ action }) => {
-    const data = makeGameData();
-    const state = makeState();
-    expect(() => dispatch(data, state, action)).toThrow(
-      `Not implemented: ${action.type}`,
-    );
-  });
+  it.each(SAMPLE_ACTIONS.map((action) => ({ action })))(
+    'has a real handler for $action.type',
+    ({ action }) => {
+      // Every action is connected now: none may still hit a "Not implemented" stub.
+      let message = '';
+      try {
+        dispatch(makeGameData(), makeState(), action);
+      } catch (error) {
+        message = (error as Error).message;
+      }
+      expect(message).not.toMatch(/Not implemented/);
+    },
+  );
 });
 
 describe('createDispatch', () => {
