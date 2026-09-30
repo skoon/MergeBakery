@@ -7,7 +7,7 @@
     {
       "id": "sweep-cobwebs",
       "name": "Sweep out the cobwebs",
-      "starCost": 3,
+      "starCost": 6,
       "spot": {
         "x": 0.62,
         "y": 0.84
@@ -22,7 +22,7 @@
     {
       "id": "wash-window",
       "name": "Wash the front window",
-      "starCost": 3,
+      "starCost": 6,
       "spot": {
         "x": 0.14,
         "y": 0.34
@@ -42,7 +42,7 @@
     {
       "id": "clear-counter",
       "name": "Clear the counter",
-      "starCost": 3,
+      "starCost": 6,
       "spot": {
         "x": 0.36,
         "y": 0.6
@@ -57,7 +57,7 @@
     {
       "id": "fix-stool",
       "name": "Fix the wobbly stool",
-      "starCost": 4,
+      "starCost": 8,
       "spot": {
         "x": 0.5,
         "y": 0.74
@@ -77,7 +77,7 @@
     {
       "id": "patch-roof",
       "name": "Patch the leaky roof",
-      "starCost": 4,
+      "starCost": 8,
       "spot": {
         "x": 0.5,
         "y": 0.15
@@ -97,7 +97,7 @@
     {
       "id": "repaint-door",
       "name": "Repaint the door",
-      "starCost": 4,
+      "starCost": 8,
       "spot": {
         "x": 0.5,
         "y": 0.48
@@ -112,7 +112,7 @@
     {
       "id": "recipe-board",
       "name": "Hang Grandma's recipe board",
-      "starCost": 4,
+      "starCost": 8,
       "spot": {
         "x": 0.3,
         "y": 0.46
@@ -127,7 +127,7 @@
     {
       "id": "shop-bell",
       "name": "Restring the shop bell",
-      "starCost": 5,
+      "starCost": 10,
       "spot": {
         "x": 0.88,
         "y": 0.56
@@ -147,7 +147,7 @@
     {
       "id": "flour-bins",
       "name": "Replace the flour bins",
-      "starCost": 5,
+      "starCost": 10,
       "spot": {
         "x": 0.12,
         "y": 0.56
@@ -167,7 +167,7 @@
     {
       "id": "scrub-tiles",
       "name": "Scrub the old tiles",
-      "starCost": 5,
+      "starCost": 10,
       "spot": {
         "x": 0.36,
         "y": 0.85
@@ -182,7 +182,7 @@
     {
       "id": "mend-awning",
       "name": "Mend the awning",
-      "starCost": 5,
+      "starCost": 10,
       "spot": {
         "x": 0.72,
         "y": 0.22
@@ -202,7 +202,7 @@
     {
       "id": "second-oven",
       "name": "Refurbish the spare Toaster Oven",
-      "starCost": 6,
+      "starCost": 12,
       "spot": {
         "x": 0.2,
         "y": 0.72
@@ -222,7 +222,7 @@
     {
       "id": "display-case",
       "name": "Restock the display case",
-      "starCost": 6,
+      "starCost": 12,
       "spot": {
         "x": 0.64,
         "y": 0.62
@@ -237,7 +237,7 @@
     {
       "id": "fix-lights",
       "name": "Fix the flickering lights",
-      "starCost": 6,
+      "starCost": 12,
       "spot": {
         "x": 0.5,
         "y": 0.32
@@ -252,7 +252,7 @@
     {
       "id": "varnish-shelves",
       "name": "Varnish the shelves",
-      "starCost": 6,
+      "starCost": 12,
       "spot": {
         "x": 0.7,
         "y": 0.46
@@ -267,7 +267,7 @@
     {
       "id": "window-boxes",
       "name": "Plant the window boxes",
-      "starCost": 7,
+      "starCost": 14,
       "spot": {
         "x": 0.86,
         "y": 0.36
@@ -282,7 +282,7 @@
     {
       "id": "repaint-sign",
       "name": "Repaint the sign",
-      "starCost": 7,
+      "starCost": 14,
       "spot": {
         "x": 0.28,
         "y": 0.2
@@ -297,7 +297,7 @@
     {
       "id": "cafe-table",
       "name": "Set out the café table",
-      "starCost": 7,
+      "starCost": 14,
       "spot": {
         "x": 0.8,
         "y": 0.72
@@ -317,7 +317,7 @@
     {
       "id": "first-recipe-page",
       "name": "Frame Grandma's first recipe page",
-      "starCost": 8,
+      "starCost": 16,
       "spot": {
         "x": 0.12,
         "y": 0.84
@@ -332,7 +332,7 @@
     {
       "id": "reopening-day",
       "name": "Reopening day",
-      "starCost": 8,
+      "starCost": 16,
       "spot": {
         "x": 0.88,
         "y": 0.85

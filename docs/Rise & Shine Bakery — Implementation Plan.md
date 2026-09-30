@@ -153,12 +153,42 @@ This phase makes Chapter 1 a complete experience. Art tasks produce the final fl
 | T5.6 | Recipe Book: pages per chain, discovered items with Grandma's notes, gems on chain completion | Sonnet | T1.3 | Discovering an item fills its slot; completing a chain pays once |
 | T5.7 | Discovery card popup the first time an item is made | Haiku | T5.6 | Shows once per item, never again after reload |
 | T5.8 | Bottom nav bar and screen router: Pantry, Recipe Book, Bakery, Shop, Settings | Haiku | T0.3 | Each tab opens its screen; back returns to the board |
-| T5.9 | Settings: music and effects sliders, reduced motion, tier numbers, text scale to 150%, notifications, reset save (with confirm) | Haiku | T5.8 | Each setting persists across reloads |
+| T5.9 | Settings: music and effects sliders, reduced motion, tier numbers, text scale to 150%, notifications, reset save (with confirm) | Sonnet (was Haiku: each setting reaches a different part of the game) | T5.8 | Each setting persists across reloads |
 | T5.10 | Audio manager on Web Audio: music and effects buses, starts after first tap, merge chime pitch by tier | Sonnet | T0.1 | Chime climbs a major scale across tiers 1–8 |
 | T5.11 | `sfx.json` map and event wiring: tap, merge, deliver, oven done, renovation | Haiku | T5.10 | Every GDD sound event plays its file |
 | T5.12 | First-time flow: guided first tap, first merge, first order, first renovation, with pointer hints | Sonnet | T5.3, T3.9 | A new save reaches the first renovation without confusion in a playtest |
-| T5.13 | PWA: manifest, icons, service worker via `vite-plugin-pwa` | Haiku | T0.1 | Installable on Android and desktop Chrome; works offline |
-| T5.14 | Final flat vector SVGs, one task per chain (8 chains + generators + ovens = 10 runs), following a style sheet from T-O4 | Sonnet | T2.6 | Each chain's tiers read at 48 px; Scott approves each batch |
+| T5.13 | PWA: manifest, icons, service worker via `vite-plugin-pwa` (the one approved new dependency) | Haiku | T0.1 | Installable on Android and desktop Chrome; works offline |
+| T5.14 | Final item art as 16 × 16 pixel-art PNGs (changed from flat vector SVGs by Scott), in six batches: eggs, sugar, fruit, baked goods, generators, bonus items | Sonnet | T2.6 | Each chain's tiers read at 48 px; Scott approves each batch |
+
+## Added during the build
+
+Work that wasn't in the original task list, done while building Phases 4 and 5.
+
+| What | Why |
+| --- | --- |
+| Pixel art pipeline: `assetUrl()` prefers a key's `.png` over its `.svg`, PixiJS textures scale nearest-neighbour, HTML images use `image-rendering: pixelated`; app icons drawn from the croissant | The game's art moved to 16 × 16 pixel art; every one of the 60 items now has a PNG |
+| "?" button and How to play dialog | New players had no explanation of merging or baking |
+| Per-generator cooldown timer on the board | A spent generator looked identical to a working one |
+| Hen Coop and Sugar Tin, three tiers each, in the data but not on the starting board | Cookie and Cupcake need eggs and sugar; per the GDD these generators arrive in Chapter 2 |
+| The Kitchen lists only recipes whose inputs the player can currently get (`producibleChains` in orders.ts, shared with order generation) | Recipes shouldn't ask for items the player has no way to make |
+| Chain-completion gems in `discover` (folded into T5.6) | The GDD and `completionGems` promised them; nothing paid them |
+| `createDispatch` keeps the state object when nothing changed (T-O2 fix) | The idle one-second `tick` was redrawing the board, autosaving and rebuilding the Kitchen every second |
+| Dev-only console helpers: `bakery.give`, `bakery.stars`, `bakery.away`, `bakery.reset` (absent from production builds) | Browser checks needed items, stars and elapsed time without grinding |
+| Synthesized audio: every sound is Web Audio tones described in `sfx.json` | No audio files exist; music has a volume channel but no track yet |
+
+## Phase 6: Art and loose ends
+
+Open items found during the build. T6.1–T6.3 follow T5.14's art process: pixel art in the same style, shown to Scott at 8× per batch before it goes into `public/art/`.
+
+| ID | Task | Model | Depends on | Done when |
+| --- | --- | --- | --- | --- |
+| T6.1 | Portraits, 25 files at 32 × 32: the four regulars (a counter portrait plus neutral, happy and impatient each), Grandma (three expressions, framed like a photo), six walk-ins. Or 21 if the counter reuses each regular's neutral portrait (a one-line change in counterModel.ts) | Sonnet | T5.14 | Every portrait key in customers.json and the Chapter 1 script has a PNG; Scott approves each batch |
+| T6.2 | The Corner Shop scene (96 × 128) and its 40 renovation before/after pictures (32 × 32), same framing in each pair so the cross-fade lines up | Sonnet | T5.3, T6.1 (style) | Every `sceneKey` and task sprite key in chapter1.json has a PNG; Scott approves each batch |
+| T6.3 | Oven art (`toaster-oven`, `brick-oven`, `deck-oven`, 16 × 16) and showing it beside each oven's name in the Kitchen sheet | Sonnet | T5.14 | The Kitchen shows each oven's art; tiers read at a glance |
+| T6.4 | Remaining charges on each generator, a small count on its cell | Haiku | T5.9 (tier-badge placement) | The count drops with each tap and hides during the cooldown overlay |
+| T6.5 | Rush a generator's cooldown with gems, priced like `rushBake`. Needs a new action in the frozen `types.ts`, so it starts as a T-O1 change request | Opus (contract), then Sonnet | T-O1 approval | A spent generator can be rushed for gems; the cost matches `rushGemsPerMinute` |
+| T6.6 | Chapter 2 renovation tasks that unlock the Hen Coop and Sugar Tin (and with them Cookie and Cupcake) | Part of the next plan (T-O6) | T-O6 | — |
+| T6.7 | Fruit Crate generator, once a recipe uses fruit (Chapter 3 in the GDD) | Part of a later plan | — | — |
 
 ## Work kept for Opus or Scott
 
@@ -168,7 +198,7 @@ These tasks need judgment across the whole codebase or taste calls, so they stay
 | --- | --- | --- | --- |
 | T-O1 | Draft and freeze the type contracts (T1.1); approve any later change request | Opus drafts, Scott approves | Start of Phase 1 |
 | T-O2 | Integration review at each phase end: read merged code, fix seams between tasks, update briefs for the next phase | Opus | End of each phase |
-| T-O3 | Balancing pass: simulate 3 days of play from the JSON data and tune energy, costs, and drop rates to the GDD targets | Opus | After Phase 3, again after Phase 5 |
-| T-O4 | Art style sheet: palette per chain, outline weight, highlight style, one reference item per chain | Scott, with Opus drafting | Before T5.14 |
+| T-O3 | Balancing pass: simulate 3 days of play from the JSON data and tune energy, costs, and drop rates to the GDD targets. Done after Phase 5 with `npm run balance`: generator charges ×3, order tiers 5/7, task costs ×2 (6–16 stars, above the GDD's 3–8), level XP ×2; Chapter 1 now takes about 3–4 days. Open: a fast first session, a coin sink, orders per session above target | Opus | After Phase 3, again after Phase 5 |
+| T-O4 | Art style sheet: palette per chain, outline weight, highlight style, one reference item per chain. Settled by the switch to pixel art: the finished item PNGs are the reference (1 px `#3a2414` outline, chain-color fills, highlight top-left, shade bottom-right) | Scott, with Opus drafting | Before T5.14 |
 | T-O5 | Playtests: fun check at Milestone 1 (T2.9) and a Chapter 1 run-through at the end | Scott | After T2.9 and after Phase 5 |
 | T-O6 | Next plan: MegaBun competitive events system | Opus | After Chapter 1 playtest |

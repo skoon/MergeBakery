@@ -31,7 +31,7 @@ Tasks start as soon as their dependencies finish. Opus connects each core functi
 - [x] T5.12 First-time flow (Sonnet) — after T5.3 and T5.7
 - [x] Wire `setTutorialStep` into dispatch.ts (Opus) — after T5.12
 
-## Art still needed
+## Art still needed (plan: T6.1 portraits, T6.2 shop scene and before/after, T6.3 ovens)
 
 Every key below is referenced by the game but has no file in `public/art/`, so it shows the `_missing` placeholder today. Same style as the item art (1 px `#3a2414` outline, a few colors per object, highlight top-left, shade bottom-right), saved as `public/art/<key>.png`; `assetUrl()` picks each one up with no code change. Show Scott each batch at 8× before it goes in, as with T5.14.
 
@@ -48,7 +48,8 @@ That's 69 files, or 65 if the counter reuses the neutral portraits.
 
 - [x] Lint, typecheck, all tests, build — 50 files, 657 tests; the build precaches 154 files (865 KB)
 - [ ] Browser: every tab opens its screen; all 20 renovation tasks complete in order (`bakery.stars(200)`); the intro plays on a new game only; discovery cards show once per item; each setting applies and persists; every GDD sound plays; the app installs and plays offline
-- [ ] T-O3 balancing pass (overdue since Phase 3): the 106-star chapter against the 2–3 day target, and the Croissant grind
+- [x] T-O3 balancing pass — simulator: `npm run balance` (a bot plays the real rules and data over simulated days, 5 seeds). Before: sessions ended in ~3 minutes when generator charges ran out with most energy unused, 7–15 orders per session, the chapter done in ~6 sessions, no croissant ever baked. Applied (Scott chose option 1): generator charges ×3 (36/48/60), walk-in orders up to tier 5 and regulars up to tier 7, task star costs ×2 (6–16 each, 212 total, against the GDD's 3–8), level XP thresholds ×2. After: from the third session on, sessions run 9–11 minutes and energy runs out at 10–12; the chapter takes sessions 7, 14, 15 and 16 in four seeds and isn't finished after 3 days in the fifth (17/20), so about 3–4 days for the bot and longer for a person; a croissant is baked in 4 of 5 seeds. Logic tests that had hard-coded the old numbers now read them from the data (level.test.ts pins its own fixed threshold table).
+- [ ] Balancing follow-ups: the first session is still very fast (~30 orders and 5 tasks, because early orders can only ask for the cheap tier 1–2 items discovered so far); coins reach 4,000–8,500 by day 3 with only Pantry slots to spend them on, so the Shop (still "Coming soon") needs a coin sink; orders per session stay at ~8–15 against the GDD's 3–5. Revisit after T-O5.
 - [ ] T-O5 Chapter 1 playtest (Scott)
 
 ## Phase 5 notes
@@ -121,11 +122,11 @@ That's 69 files, or 65 if the counter reuses the neutral portraits.
 
 - [x] Per-generator cooldown timer on the board: a spent generator dims and counts down m:ss to its refill, redrawn once a second in `src/render/boardView.ts`. Cooldowns are 5 min at tier 1, 4 min at tier 2, 3 min at tier 3 (`generators.json`). Charges refill lazily inside the next tap, so a cell whose `cooldownEndsAt` has passed shows nothing and is already usable.
 - [ ] No way to gain a generator during play. Spawn tables only drop ingredients, the rare table is energy-jar/coin-pouch/golden-whisk, and `newGame.json` seeds exactly one mill and one fridge. Merging consumes two to make one, so upgrading permanently costs a generator with no replacement. `Unlock` already has `{ kind: 'generator', itemId }` — give the early renovation tasks in T5.1 a generator unlock, or add another source. The T5.1 brief does this: a second Dairy Fridge at task 5, Flour Mills at 9 and 18, and a second Toaster Oven at 12.
-- [ ] Rushing a generator cooldown with gems: the GDD lists it as a gem sink and `Economy.rushGemsPerMinute` exists, but `ActionBody` has only `rushBake`. Needs a contract change to the frozen `types.ts`, so it goes through T-O1.
+- [ ] T6.5 Rushing a generator cooldown with gems: the GDD lists it as a gem sink and `Economy.rushGemsPerMinute` exists, but `ActionBody` has only `rushBake`. Needs a contract change to the frozen `types.ts`, so it goes through T-O1.
 - [x] Hen Coop and Sugar Tin, three tiers each, in `items.json` and `generators.json`. Spawn tables, charges and cooldowns mirror the Flour Mill and Dairy Fridge tier for tier. Not on the starting board: per the GDD they arrive in Chapter 2, and until then the Kitchen hides Cookie and Cupcake. Placeholder SVGs only. To test the other recipes now: `bakery.give('hen-coop-1', 'sugar-tin-1')`.
-- [ ] Chapter 2: unlock the Hen Coop and Sugar Tin through its renovation tasks.
-- [ ] Fruit Crate: no recipe uses fruit yet, so it waits for a recipe that does.
-- [ ] Show remaining charges on a generator, not just the cooldown. Nothing tells the player how many taps are left before the wait starts.
+- [ ] T6.6 Chapter 2: unlock the Hen Coop and Sugar Tin through its renovation tasks.
+- [ ] T6.7 Fruit Crate: no recipe uses fruit yet, so it waits for a recipe that does.
+- [ ] T6.4 Show remaining charges on a generator, not just the cooldown. Nothing tells the player how many taps are left before the wait starts.
 
 ## Added outside the plan
 

@@ -38,12 +38,13 @@ describe('Chapter 1 tasks', () => {
     ]);
   });
 
-  it('costs 3–8 stars each and 106 in total', () => {
+  // Doubled from 3–8 (106) by the T-O3 balancing pass.
+  it('costs 6–16 stars each and 212 in total', () => {
     for (const task of tasks) {
-      expect(task.starCost, task.id).toBeGreaterThanOrEqual(3);
-      expect(task.starCost, task.id).toBeLessThanOrEqual(8);
+      expect(task.starCost, task.id).toBeGreaterThanOrEqual(6);
+      expect(task.starCost, task.id).toBeLessThanOrEqual(16);
     }
-    expect(tasks.reduce((sum, t) => sum + t.starCost, 0)).toBe(106);
+    expect(tasks.reduce((sum, t) => sum + t.starCost, 0)).toBe(212);
   });
 
   it('only requires earlier tasks', () => {

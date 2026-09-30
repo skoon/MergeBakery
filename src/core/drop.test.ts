@@ -203,22 +203,25 @@ describe('applyDrop: merge', () => {
   });
 
   it('awards XP and triggers a level-up when the threshold is crossed', () => {
+    // One XP short of level 2.
+    const level2 = testData.economy.levels[1];
+    if (!level2) throw new Error('economy.json has no level 2');
     const state = stateWith(
       { 0: 'wheat-stalk', 1: 'wheat-stalk' },
-      { xp: 19, level: 1, gems: 0 },
+      { xp: level2.xpTotal - 1, level: 1, gems: 0 },
     );
     const result = applyDrop(testData, state, 0, 1, 1000);
 
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     // wheat-stalk is tier 1; xpPerMergeTier is 1, so this merge adds 1 xp,
-    // reaching the level 2 threshold of 20.
-    expect(result.state.xp).toBe(20);
+    // reaching the level 2 threshold.
+    expect(result.state.xp).toBe(level2.xpTotal);
     expect(result.state.level).toBe(2);
-    expect(result.state.gems).toBe(5);
+    expect(result.state.gems).toBe(level2.gems);
     expect(result.events).toEqual([
       { type: 'merged', itemId: 'wheat-bundle', cells: [1] },
-      { type: 'levelUp', level: 2, gems: 5 },
+      { type: 'levelUp', level: 2, gems: level2.gems },
     ]);
   });
 

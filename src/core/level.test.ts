@@ -1,6 +1,29 @@
 import { describe, it, expect } from 'vitest';
 import { levelForXp, addXp } from './level';
-import { stateWith, testData } from './testing';
+import { stateWith, testData as realData } from './testing';
+import type { GameData } from './types';
+
+/**
+ * These tests check the level logic, not the tuning, so they use a fixed
+ * threshold table (the one they were written against) rather than
+ * economy.json, which the balancing pass changes.
+ */
+const THRESHOLDS = [
+  0, 20, 60, 120, 200, 300, 420, 560, 720, 900, 1100, 1320, 1560, 1820, 2100,
+  2400, 2720, 3060, 3420, 3800, 4200, 4620, 5060, 5520, 6000, 6500, 7020, 7560,
+  8120, 8700,
+];
+const testData: GameData = {
+  ...realData,
+  economy: {
+    ...realData.economy,
+    levels: THRESHOLDS.map((xpTotal, i) => ({
+      level: i + 1,
+      xpTotal,
+      gems: i === 0 ? 0 : 5,
+    })),
+  },
+};
 import { createNewGame } from './newGame';
 
 describe('levelForXp', () => {

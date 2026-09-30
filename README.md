@@ -8,14 +8,15 @@ Plan: [Rise & Shine Bakery — Implementation Plan](https://claude.ai/artifact/C
 
 ## Scripts
 
-| Command             | What it does                     |
-| ------------------- | -------------------------------- |
-| `npm run dev`       | Start the dev server             |
-| `npm test`          | Run unit tests once              |
-| `npm run lint`      | ESLint plus Prettier check       |
-| `npm run typecheck` | TypeScript with no emit          |
-| `npm run build`     | Typecheck, then production build |
-| `npm run format`    | Rewrite files with Prettier      |
+| Command             | What it does                           |
+| ------------------- | -------------------------------------- |
+| `npm run dev`       | Start the dev server                   |
+| `npm test`          | Run unit tests once                    |
+| `npm run lint`      | ESLint plus Prettier check             |
+| `npm run typecheck` | TypeScript with no emit                |
+| `npm run build`     | Typecheck, then production build       |
+| `npm run format`    | Rewrite files with Prettier            |
+| `npm run balance`   | Print the balancing simulator's report |
 
 The color token test page is at `/dev/tokens.html` while the dev server runs.
 

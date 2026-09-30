@@ -48,12 +48,13 @@ describe('locationModel', () => {
   });
 
   it('knows whether each task is affordable', () => {
-    const model = locationModel(testData, stateWith({}, { stars: 4 }));
+    const first = testData.chapters.get('chapter1')?.tasks[0]?.starCost ?? NaN;
+    const model = locationModel(testData, stateWith({}, { stars: first }));
 
-    // sweep-cobwebs costs 3; reopening-day costs 8.
+    // Exactly enough for the first task; the last task costs more.
     expect(model.spots[0]?.canAfford).toBe(true);
     expect(model.spots.at(-1)?.canAfford).toBe(false);
-    expect(model.stars).toBe(4);
+    expect(model.stars).toBe(first);
   });
 
   it('keeps chapter order', () => {

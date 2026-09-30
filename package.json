@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "balance": "vitest run src/sim --silent=false",
     "art:placeholders": "node scripts/gen-placeholder-art.js"
   },
   "dependencies": {

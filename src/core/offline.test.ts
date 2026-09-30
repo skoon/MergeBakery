@@ -13,8 +13,9 @@ const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 
-/** flour-mill-1: 12 charges, 300 s cooldown. */
+/** flour-mill-1, with a 300 s cooldown. */
 const MILL = 'flour-mill-1';
+const MILL_CHARGES = testData.generators.get(MILL)?.charges ?? NaN;
 
 /** A state with a spent generator at cell 0, its cooldown ending at `cooldownEndsAt`. */
 function stateWithCoolingMill(
@@ -104,7 +105,7 @@ describe('resolveOffline: generators', () => {
     );
 
     expect(summary.generatorsRecharged).toBe(1);
-    expect(millCharges(next)).toBe(12);
+    expect(millCharges(next)).toBe(MILL_CHARGES);
     const cell = getCell(next.board, 0);
     if (cell.kind !== 'item') throw new Error('expected an item');
     expect(cell.item.generator?.cooldownEndsAt).toBeNull();
@@ -145,7 +146,7 @@ describe('resolveOffline: generators', () => {
     // The board mill is still cooling; only the Pantry one recharged.
     expect(summary.generatorsRecharged).toBe(1);
     expect(next.pantry.items[0]?.generator).toEqual({
-      charges: 12,
+      charges: MILL_CHARGES,
       cooldownEndsAt: null,
     });
     expect(millCharges(next)).toBe(0);

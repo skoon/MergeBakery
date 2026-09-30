@@ -141,12 +141,17 @@ describe('orderCandidates', () => {
   });
 
   it('excludes items above the kind maxTier', () => {
+    // sourdough-boule is flour tier 8, above the regular maxTier.
+    const maxTier = testData.economy.orders.regular.maxTier;
+    expect(testData.items.get('sourdough-boule')?.tier).toBeGreaterThan(
+      maxTier,
+    );
     const withHighTier = {
       ...state,
-      discovered: [...state.discovered, 'cheese-wheel'], // dairy, tier 7
+      discovered: [...state.discovered, 'sourdough-boule'],
     };
-    const regular = orderCandidates(testData, withHighTier, 'regular'); // maxTier 6
-    expect(regular.some((i) => i.id === 'cheese-wheel')).toBe(false);
+    const regular = orderCandidates(testData, withHighTier, 'regular');
+    expect(regular.some((i) => i.id === 'sourdough-boule')).toBe(false);
   });
 });
 

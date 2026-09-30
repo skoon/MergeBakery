@@ -33,7 +33,9 @@ function withPrereqsFor(
 
 describe('taskById', () => {
   it('finds a task in the current chapter', () => {
-    expect(taskById(testData, stateWith({}), 'patch-roof').starCost).toBe(4);
+    expect(taskById(testData, stateWith({}), 'patch-roof').name).toBe(
+      'Patch the leaky roof',
+    );
   });
 
   it('throws for an unknown task', () => {
@@ -66,7 +68,8 @@ describe('availableTasks', () => {
 
 describe('completeTask', () => {
   it('spends the stars and records the task', () => {
-    const state = stateWith({}, { stars: 10 });
+    const cost = taskById(testData, stateWith({}), 'sweep-cobwebs').starCost;
+    const state = stateWith({}, { stars: cost + 7 });
 
     const result = completeTask(testData, state, 'sweep-cobwebs');
 

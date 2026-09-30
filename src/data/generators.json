@@ -6,7 +6,7 @@
         { "itemId": "wheat-stalk", "weight": 85 },
         { "itemId": "wheat-bundle", "weight": 15 }
       ],
-      "charges": 12,
+      "charges": 36,
       "cooldownSec": 300
     },
     {
@@ -16,7 +16,7 @@
         { "itemId": "wheat-bundle", "weight": 30 },
         { "itemId": "flour-scoop", "weight": 10 }
       ],
-      "charges": 16,
+      "charges": 48,
       "cooldownSec": 240
     },
     {
@@ -27,7 +27,7 @@
         { "itemId": "flour-scoop", "weight": 20 },
         { "itemId": "flour-bag", "weight": 5 }
       ],
-      "charges": 20,
+      "charges": 60,
       "cooldownSec": 180
     },
     {
@@ -36,7 +36,7 @@
         { "itemId": "milk-splash", "weight": 85 },
         { "itemId": "milk-bottle", "weight": 15 }
       ],
-      "charges": 12,
+      "charges": 36,
       "cooldownSec": 300
     },
     {
@@ -46,7 +46,7 @@
         { "itemId": "milk-bottle", "weight": 30 },
         { "itemId": "cream-jug", "weight": 10 }
       ],
-      "charges": 16,
+      "charges": 48,
       "cooldownSec": 240
     },
     {
@@ -57,7 +57,7 @@
         { "itemId": "cream-jug", "weight": 20 },
         { "itemId": "butter-pat", "weight": 5 }
       ],
-      "charges": 20,
+      "charges": 60,
       "cooldownSec": 180
     },
     {
@@ -66,7 +66,7 @@
         { "itemId": "egg", "weight": 85 },
         { "itemId": "egg-pair", "weight": 15 }
       ],
-      "charges": 12,
+      "charges": 36,
       "cooldownSec": 300
     },
     {
@@ -76,7 +76,7 @@
         { "itemId": "egg-pair", "weight": 30 },
         { "itemId": "egg-carton", "weight": 10 }
       ],
-      "charges": 16,
+      "charges": 48,
       "cooldownSec": 240
     },
     {
@@ -87,7 +87,7 @@
         { "itemId": "egg-carton", "weight": 20 },
         { "itemId": "whisked-eggs", "weight": 5 }
       ],
-      "charges": 20,
+      "charges": 60,
       "cooldownSec": 180
     },
     {
@@ -96,7 +96,7 @@
         { "itemId": "sugar-cube", "weight": 85 },
         { "itemId": "sugar-bowl", "weight": 15 }
       ],
-      "charges": 12,
+      "charges": 36,
       "cooldownSec": 300
     },
     {
@@ -106,7 +106,7 @@
         { "itemId": "sugar-bowl", "weight": 30 },
         { "itemId": "syrup-bottle", "weight": 10 }
       ],
-      "charges": 16,
+      "charges": 48,
       "cooldownSec": 240
     },
     {
@@ -117,7 +117,7 @@
         { "itemId": "syrup-bottle", "weight": 20 },
         { "itemId": "caramel", "weight": 5 }
       ],
-      "charges": 20,
+      "charges": 60,
       "cooldownSec": 180
     }
   ],
