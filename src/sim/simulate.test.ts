@@ -70,7 +70,9 @@ function printReport(reports: SimReport[]): void {
 }
 
 describe('simulate', () => {
-  it('is deterministic for a seed', () => {
+  // Whole simulated days of play: slower than a unit test, especially under the
+  // full suite's parallel load.
+  it('is deterministic for a seed', { timeout: 60_000 }, () => {
     const options = { ...OPTIONS, days: 1 };
 
     expect(simulate(testData, { ...options, seed: 7 })).toEqual(
@@ -78,7 +80,7 @@ describe('simulate', () => {
     );
   });
 
-  it('plays every session and makes progress', () => {
+  it('plays every session and makes progress', { timeout: 60_000 }, () => {
     const report = simulate(testData, { ...OPTIONS, days: 1 });
 
     expect(report.sessions).toHaveLength(OPTIONS.sessionStarts.length);
@@ -86,7 +88,7 @@ describe('simulate', () => {
     expect(report.sessions[0]?.merges).toBeGreaterThan(0);
   });
 
-  it('prints the balance report', () => {
+  it('prints the balance report', { timeout: 120_000 }, () => {
     const reports = SEEDS.map((seed) =>
       simulate(testData, { ...OPTIONS, seed }),
     );

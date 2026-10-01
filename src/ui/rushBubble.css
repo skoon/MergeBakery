@@ -1,0 +1,61 @@
+/* "Rush — N gems" bubble over a cooling generator (T6.5). */
+
+.rush-bubble {
+  position: absolute;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  transform: translate(-50%, -100%);
+  background: var(--color-cream);
+  border: 2px solid var(--color-crust);
+  border-radius: var(--space-3);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+.rush-bubble[hidden] {
+  display: none;
+}
+
+/* The little point under the bubble, aimed at the generator. */
+.rush-bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  border: 6px solid transparent;
+  border-top-color: var(--color-crust);
+  transform: translateX(-50%);
+}
+
+.rush-bubble__button {
+  padding: var(--space-1) var(--space-3);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--color-ink);
+  background: var(--color-butter);
+  border: none;
+  border-radius: var(--space-2);
+  cursor: pointer;
+}
+
+.rush-bubble__button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.rush-bubble__close {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  font: inherit;
+  font-size: var(--font-size-md);
+  line-height: 1;
+  color: var(--color-crust);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}

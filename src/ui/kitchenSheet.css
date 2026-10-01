@@ -105,9 +105,17 @@
 }
 
 .kitchen-oven__name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   margin: 0;
   font-size: var(--font-size-md);
   color: var(--color-crust);
+}
+
+.kitchen-oven__art {
+  width: 32px;
+  height: 32px;
 }
 
 .kitchen-slot {

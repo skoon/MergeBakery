@@ -4,6 +4,9 @@
  * FROZEN once approved. Handed-off tasks must not edit this file; if a
  * contract looks wrong, stop and describe the change needed instead.
  *
+ * Approved changes (T-O1): `rushCooldown` and `cooldownRushed`, for rushing a
+ * generator's cooldown with gems (T6.5, Scott, Sep 30).
+ *
  * Conventions every core function follows:
  * - Core functions are pure: they never mutate their inputs and return new
  *   objects. No DOM, rendering, storage, or Date.now() calls in src/core.
@@ -454,6 +457,8 @@ type ActionBody =
     }
   | { readonly type: 'collectBake'; readonly slot: BakeSlotRef }
   | { readonly type: 'rushBake'; readonly slot: BakeSlotRef }
+  /** Pay gems to end a generator's cooldown now (T6.5). */
+  | { readonly type: 'rushCooldown'; readonly cell: CellIndex }
   /** Merge kitchen.ovens[from] into kitchen.ovens[to]. */
   | { readonly type: 'mergeOvens'; readonly from: number; readonly to: number }
   | { readonly type: 'completeTask'; readonly taskId: TaskId }
@@ -550,7 +555,12 @@ export type GameEvent =
       readonly oven: number;
       readonly ovenId: OvenId;
     }
-  | { readonly type: 'taskCompleted'; readonly taskId: TaskId };
+  | { readonly type: 'taskCompleted'; readonly taskId: TaskId }
+  | {
+      readonly type: 'cooldownRushed';
+      readonly cell: CellIndex;
+      readonly gems: number;
+    };
 
 export type ActionResult =
   | {

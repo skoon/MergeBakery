@@ -20,6 +20,7 @@ import { dropZoneAt, setDragActive } from '../ui/dropZones';
 import type { GameStore } from '../ui/store';
 import type { SettingsStore } from '../ui/settings';
 import { loadTexture } from './assets';
+import { chargesToShow } from './charges';
 
 // Colors from the palette in src/ui/tokens.css.
 const COLOR_CREAM = 0xfff6e6;
@@ -53,6 +54,8 @@ export interface BoardView {
   cellSize(): number;
   /** A container drawn above the items, for effects (T2.9). */
   readonly effectsLayer: Container;
+  /** Called when the player taps a generator that is cooling down (T6.5). */
+  onCoolingTap(listener: (cell: CellIndex) => void): void;
 }
 
 /** Tracks a press that may turn into a drag, from pointerdown to pointerup. */
@@ -209,8 +212,8 @@ export async function createBoardView(
   }
 
   /**
-   * Dims every generator that has run out of charges and counts down to its
-   * refill. Charges refill lazily, inside the next tap, so a cell whose
+   * Shows each generator's taps left, or, when it has run out, dims it and
+   * counts down to its refill. Charges refill lazily, inside the next tap, so a cell whose
    * cooldownEndsAt has passed is already usable and gets no overlay.
    */
   function drawCooldowns(): void {
@@ -224,14 +227,20 @@ export async function createBoardView(
       if (cell?.kind !== 'item') continue;
 
       const charge = cell.item.generator;
-      if (!charge || charge.charges > 0 || charge.cooldownEndsAt === null) {
-        continue;
-      }
-      const remaining = charge.cooldownEndsAt - now;
-      if (remaining <= 0) continue;
+      if (!charge) continue;
 
       const { x, y } = cellTopLeft(i, board.cols);
       const size = layout.cellSize;
+
+      // Taps left (T6.4); null while cooling down, when the countdown shows instead.
+      const full = store.data.generators.get(cell.item.itemId)?.charges ?? 0;
+      const shown = chargesToShow(charge, full, now);
+      if (shown !== null) {
+        cooldownLayer.addChild(drawChargeBadge(shown, x, y, size));
+        continue;
+      }
+      if (charge.cooldownEndsAt === null) continue;
+      const remaining = charge.cooldownEndsAt - now;
       const inset = size * 0.08;
 
       cooldownLayer.addChild(
@@ -259,6 +268,39 @@ export async function createBoardView(
       label.position.set(x + size / 2, y + size / 2);
       cooldownLayer.addChild(label);
     }
+  }
+
+  /** Taps left, ink on butter, in the cell's top-left corner (T6.4). */
+  function drawChargeBadge(
+    count: number,
+    x: number,
+    y: number,
+    size: number,
+  ): Container {
+    const height = Math.max(12, size * 0.28);
+    const width = height * (count >= 10 ? 1.5 : 1);
+    const left = x + size * 0.04;
+    const top = y + size * 0.04;
+    const badge = new Container();
+    badge.addChild(
+      new Graphics()
+        .roundRect(left, top, width, height, height * 0.4)
+        .fill(COLOR_BUTTER)
+        .stroke({ width: 1, color: COLOR_INK }),
+    );
+    const label = new Text({
+      text: count.toString(),
+      style: {
+        fontFamily: 'ui-rounded, system-ui, sans-serif',
+        fontSize: height * 0.72,
+        fontWeight: '700',
+        fill: COLOR_INK,
+      },
+    });
+    label.anchor.set(0.5);
+    label.position.set(left + width / 2, top + height / 2);
+    badge.addChild(label);
+    return badge;
   }
 
   /** A small ink-on-cream tier number in the cell's bottom-right corner (T5.9). */
@@ -418,9 +460,14 @@ export async function createBoardView(
     redraw();
   }
 
+  const coolingTapListeners: ((cell: CellIndex) => void)[] = [];
+
   function handleTap(state: PointerTracking): void {
     if (store.data.generators.has(state.itemId)) {
-      store.dispatch({ type: 'tapGenerator', cell: state.cell });
+      const result = store.dispatch({ type: 'tapGenerator', cell: state.cell });
+      if (!result.ok && result.reason === 'coolingDown') {
+        for (const listener of coolingTapListeners) listener(state.cell);
+      }
     } else if (store.data.items.get(state.itemId)?.collectReward) {
       store.dispatch({ type: 'collectBonus', cell: state.cell });
     }
@@ -515,5 +562,9 @@ export async function createBoardView(
     },
 
     effectsLayer,
+
+    onCoolingTap(listener) {
+      coolingTapListeners.push(listener);
+    },
   };
 }

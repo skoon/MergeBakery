@@ -142,7 +142,12 @@ export function mountKitchen(
 
     for (const oven of model.ovens) {
       const section = el('section', 'kitchen-oven');
-      section.appendChild(el('h3', 'kitchen-oven__name', oven.name));
+      const heading = el('h3', 'kitchen-oven__name');
+      heading.append(
+        art(oven.spriteKey, 'kitchen-oven__art'),
+        document.createTextNode(oven.name),
+      );
+      section.appendChild(heading);
 
       for (const view of oven.slots) {
         const row = el('div', 'kitchen-slot');

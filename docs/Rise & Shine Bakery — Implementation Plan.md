@@ -186,7 +186,7 @@ Open items found during the build. T6.1–T6.3 follow T5.14's art process: pixel
 | T6.2 | The Corner Shop scene (96 × 128) and its 40 renovation before/after pictures (32 × 32), same framing in each pair so the cross-fade lines up | Sonnet | T5.3, T6.1 (style) | Every `sceneKey` and task sprite key in chapter1.json has a PNG; Scott approves each batch |
 | T6.3 | Oven art (`toaster-oven`, `brick-oven`, `deck-oven`, 16 × 16) and showing it beside each oven's name in the Kitchen sheet | Sonnet | T5.14 | The Kitchen shows each oven's art; tiers read at a glance |
 | T6.4 | Remaining charges on each generator, a small count on its cell | Haiku | T5.9 (tier-badge placement) | The count drops with each tap and hides during the cooldown overlay |
-| T6.5 | Rush a generator's cooldown with gems, priced like `rushBake`. Needs a new action in the frozen `types.ts`, so it starts as a T-O1 change request | Opus (contract), then Sonnet | T-O1 approval | A spent generator can be rushed for gems; the cost matches `rushGemsPerMinute` |
+| T6.5 | Rush a generator's cooldown with gems, priced like `rushBake`. Contract change approved under T-O1: `rushCooldown` action, `cooldownRushed` event. Done | Opus (contract), then Sonnet | T-O1 approval | A spent generator can be rushed for gems; the cost matches `rushGemsPerMinute` |
 | T6.6 | Chapter 2 renovation tasks that unlock the Hen Coop and Sugar Tin (and with them Cookie and Cupcake) | Part of the next plan (T-O6) | T-O6 | — |
 | T6.7 | Fruit Crate generator, once a recipe uses fruit (Chapter 3 in the GDD) | Part of a later plan | — | — |
 

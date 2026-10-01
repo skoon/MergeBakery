@@ -64,6 +64,7 @@ describe('kitchenModel', () => {
 
     expect(model.ovens).toHaveLength(1);
     expect(model.ovens[0]?.name).toBe('Toaster Oven');
+    expect(model.ovens[0]?.spriteKey).toBe('toaster-oven');
     expect(model.ovens[0]?.slots[0]?.status).toEqual({ kind: 'empty' });
     expect(model.freeSlot).toEqual({ oven: 0, slot: 0 });
     expect(model.ringProgress).toBeNull();

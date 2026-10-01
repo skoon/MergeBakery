@@ -119,6 +119,7 @@ describe('soundForEvent', () => {
         reward: { energy: 0, coins: 25 },
       }),
     ).toEqual([600]);
+    expect(play({ type: 'cooldownRushed', cell: 0, gems: 3 })).toEqual([600]);
     expect(play({ type: 'discovered', itemId: 'egg' })).toEqual([700]);
     expect(play({ type: 'levelUp', level: 2, gems: 5 })).toEqual([800]);
   });

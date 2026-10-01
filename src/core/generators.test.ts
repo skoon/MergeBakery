@@ -6,7 +6,12 @@ import { describe, it, expect } from 'vitest';
 import { stateWith, testData } from './testing';
 import { createRng } from './rng';
 import { getCell, nearestEmpty, setCell } from './board';
-import { tapGenerator, collectBonus } from './generators';
+import {
+  collectBonus,
+  cooldownRushCost,
+  rushCooldown,
+  tapGenerator,
+} from './generators';
 import type { BoardItem, GameState } from './types';
 import type { CellSpec } from './testing';
 
@@ -259,5 +264,102 @@ describe('collectBonus', () => {
     });
     const result = collectBonus(data, state, 0, 1000);
     expect(result).toEqual({ ok: false, reason: 'cobwebbed' });
+  });
+});
+
+describe('rushCooldown (T6.5)', () => {
+  const MILL = 'flour-mill-1';
+  const FULL = testData.generators.get(MILL)?.charges ?? NaN;
+  const MINUTE = 60_000;
+  const PER_MINUTE = testData.economy.rushGemsPerMinute;
+
+  /** A mill at cell 0, spent, cooling down until `endsAt`. */
+  function coolingMill(endsAt: number, gems: number): GameState {
+    const state = stateWith({ 0: MILL }, { gems });
+    const cell = getCell(state.board, 0);
+    if (cell.kind !== 'item') throw new Error('expected the mill');
+    return {
+      ...state,
+      board: setCell(state.board, 0, {
+        kind: 'item',
+        item: {
+          ...cell.item,
+          generator: { charges: 0, cooldownEndsAt: endsAt },
+        },
+      }),
+    };
+  }
+
+  it('prices the whole minutes left, rounded up', () => {
+    const charge = { charges: 0, cooldownEndsAt: 2.5 * MINUTE };
+
+    expect(cooldownRushCost(testData, charge, 0)).toBe(3 * PER_MINUTE);
+    expect(cooldownRushCost(testData, charge, 2.5 * MINUTE)).toBe(0);
+    expect(
+      cooldownRushCost(testData, { charges: 5, cooldownEndsAt: null }, 0),
+    ).toBe(0);
+  });
+
+  it('spends the gems and refills the charges', () => {
+    const state = coolingMill(4 * MINUTE, 50);
+
+    const result = rushCooldown(testData, state, 0, 0);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.state.gems).toBe(50 - 4 * PER_MINUTE);
+    const cell = getCell(result.state.board, 0);
+    expect(cell.kind === 'item' && cell.item.generator).toEqual({
+      charges: FULL,
+      cooldownEndsAt: null,
+    });
+    expect(result.events).toEqual([
+      { type: 'cooldownRushed', cell: 0, gems: 4 * PER_MINUTE },
+    ]);
+  });
+
+  it("rejects 'notEnoughGems' without changing anything", () => {
+    const state = coolingMill(4 * MINUTE, 4 * PER_MINUTE - 1);
+
+    expect(rushCooldown(testData, state, 0, 0)).toEqual({
+      ok: false,
+      reason: 'notEnoughGems',
+    });
+  });
+
+  it('changes nothing for a generator that is not cooling down', () => {
+    const ready = stateWith({ 0: MILL }, { gems: 50 });
+    const lapsed = coolingMill(MINUTE, 50);
+
+    const a = rushCooldown(testData, ready, 0, 0);
+    const b = rushCooldown(testData, lapsed, 0, 2 * MINUTE);
+
+    expect(a.ok && a.state).toBe(ready);
+    expect(b.ok && b.state).toBe(lapsed);
+    expect(a.ok && a.events).toEqual([]);
+  });
+
+  it('rejects cells that are not a usable generator', () => {
+    const state = stateWith(
+      { 0: 'wheat-stalk', 1: { itemId: MILL, cobwebbed: true }, 2: 'crate' },
+      { gems: 50 },
+    );
+
+    expect(rushCooldown(testData, state, 0, 0)).toEqual({
+      ok: false,
+      reason: 'notAGenerator',
+    });
+    expect(rushCooldown(testData, state, 1, 0)).toEqual({
+      ok: false,
+      reason: 'cobwebbed',
+    });
+    expect(rushCooldown(testData, state, 2, 0)).toEqual({
+      ok: false,
+      reason: 'locked',
+    });
+    expect(rushCooldown(testData, state, 5, 0)).toEqual({
+      ok: false,
+      reason: 'emptyCell',
+    });
   });
 });

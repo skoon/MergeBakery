@@ -114,6 +114,7 @@ function makeThrowingHandlers(): Handlers {
     loadRecipe: notCalled,
     collectBake: notCalled,
     rushBake: notCalled,
+    rushCooldown: notCalled,
     mergeOvens: notCalled,
     completeTask: notCalled,
     dismissDiscovery: notCalled,
@@ -141,6 +142,7 @@ const SAMPLE_ACTIONS: readonly Action[] = [
   },
   { type: 'collectBake', slot: { oven: 0, slot: 0 }, now: NOW },
   { type: 'rushBake', slot: { oven: 0, slot: 0 }, now: NOW },
+  { type: 'rushCooldown', cell: 0, now: NOW },
   { type: 'mergeOvens', from: 0, to: 1, now: NOW },
   { type: 'completeTask', taskId: 'task-1', now: NOW },
   { type: 'dismissDiscovery', itemId: 'wheat-stalk', now: NOW },
@@ -149,8 +151,8 @@ const SAMPLE_ACTIONS: readonly Action[] = [
 ];
 
 describe('dispatch', () => {
-  it('covers all 17 action types', () => {
-    expect(SAMPLE_ACTIONS).toHaveLength(17);
+  it('covers all 18 action types', () => {
+    expect(SAMPLE_ACTIONS).toHaveLength(18);
   });
 
   it.each(SAMPLE_ACTIONS.map((action) => ({ action })))(

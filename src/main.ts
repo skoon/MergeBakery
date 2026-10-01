@@ -25,6 +25,7 @@ import { catchUpTutorial } from './core/tutorial';
 import { mountRecipeBook } from './ui/recipeBook';
 import { mountLocationView } from './ui/locationView';
 import { mountDiscoveryCard } from './ui/discoveryCard';
+import { mountRushBubble } from './ui/rushBubble';
 import { parseScenes } from './ui/dialogue';
 import { mountDialoguePlayer } from './ui/dialoguePlayer';
 import chapter1Scenes from './data/dialogue/chapter1.json';
@@ -102,6 +103,7 @@ mountCounterStrip(counter, store);
 mountHelpDialog(tray, overlayRoot, store);
 mountKitchen(tray, overlayRoot, store, () => Date.now());
 mountDiscoveryCard(overlayRoot, store, settings);
+mountRushBubble(overlayRoot, store, boardView, () => Date.now());
 
 // Story scenes (T5.5): the chapter intro on a new game, and a scene when a
 // renovation task that has one completes. The player queues them.

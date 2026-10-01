@@ -27,7 +27,8 @@ describe('counterCards', () => {
     expect(card).toBeDefined();
     expect(card?.orderId).toBe(1);
     expect(card?.customerName).toBe('Gus the Fisherman');
-    expect(card?.portraitKey).toBe('portrait-gus');
+    // A regular shows their neutral expression portrait.
+    expect(card?.portraitKey).toBe('portrait-gus-neutral');
     expect(card?.coins).toBe(10);
     expect(card?.stars).toBe(1);
     expect(card?.wants).toEqual([
@@ -90,5 +91,19 @@ describe('counterCards', () => {
       { itemId: 'apple', name: 'Apple', spriteKey: 'apple', ready: false },
     ]);
     expect(card?.fillable).toBe(false);
+  });
+
+  it('shows a walk-in their single portrait', () => {
+    const order: Order = {
+      id: 2,
+      customerId: 'walkin-hiker',
+      wants: ['apple'],
+      reward: { coins: 4, stars: 1, xp: 1 },
+    };
+    const state = stateWith({}, { orders: [order] });
+
+    expect(counterCards(testData, state)[0]?.portraitKey).toBe(
+      'portrait-walkin-hiker',
+    );
   });
 });

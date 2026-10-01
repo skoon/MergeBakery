@@ -35,12 +35,12 @@ Tasks start as soon as their dependencies finish. Opus connects each core functi
 
 Every key below is referenced by the game but has no file in `public/art/`, so it shows the `_missing` placeholder today. Same style as the item art (1 px `#3a2414` outline, a few colors per object, highlight top-left, shade bottom-right), saved as `public/art/<key>.png`; `assetUrl()` picks each one up with no code change. Show Scott each batch at 8× before it goes in, as with T5.14.
 
-- [ ] **Shop scene, 1 file:** `corner-shop`, the Bakery screen's background. The box is 3:4, so 96 x 128 px; it's drawn at 35% opacity behind the spots, so keep it simple and light.
-- [ ] **Renovation before/after, 40 files, 32 x 32 px:** `corner-shop-<task>-before` and `-after` for each of the 20 tasks in chapter1.json (sweep-cobwebs, wash-window, clear-counter, fix-stool, patch-roof, repaint-door, recipe-board, shop-bell, flour-bins, scrub-tiles, mend-awning, second-oven, display-case, fix-lights, varnish-shelves, window-boxes, repaint-sign, cafe-table, first-recipe-page, reopening-day). Each is drawn at 22% of the scene's width over its spot; before is shabby, after is fixed, same framing so the cross-fade lines up.
-- [ ] **Regular portraits, 16 files, 32 x 32 px:** for Gus, Miss Edith, Dex and Mina, a counter portrait (`portrait-gus`, `portrait-edith`, `portrait-dex`, `portrait-mina`) plus `-neutral`, `-happy` and `-impatient` for each (the GDD's three expressions; the Chapter 1 script uses 9 of the 12). Bust portraits, readable at the counter's small size and at 64 px in the dialogue box. The counter portrait could simply reuse `-neutral` with a one-line change in counterModel.ts, which would drop 4 files.
-- [ ] **Grandma, 3 files, 32 x 32 px:** `portrait-grandma-neutral`, `-happy` and `-impatient`. She appears only through her letters, so a portrait framed like a photo on the wall would suit.
-- [ ] **Walk-in portraits, 6 files, 32 x 32 px:** `portrait-walkin-hiker`, `-tourist`, `-student`, `-jogger`, `-neighbor`, `-painter`. Counter only, one expression each.
-- [ ] **Ovens, 3 files, 16 x 16 px:** `toaster-oven`, `brick-oven`, `deck-oven`. Nothing draws them yet; the Kitchen sheet could show each oven's art beside its name, with tiers that read at a glance like the generators.
+- [x] **Shop scene (T6.2):** `corner-shop`, 96 x 128: wallpaper, ceiling beam, wainscot, floorboards.
+- [x] **Renovation before/after (T6.2):** all 40, 32 x 32. Each pair is drawn from one shape with a `fixed` flag, so they line up for the cross-fade; the before also gets a dusty, faded filter.
+- [x] **Regular portraits (T6.1):** Gus, Miss Edith, Dex and Mina, neutral/happy/impatient each (12 files, 32 x 32). The counter reuses each regular's `-neutral` portrait (counterModel.ts), so there are no separate counter portraits.
+- [x] **Grandma (T6.1):** three expressions, framed like a photo on the wall.
+- [x] **Walk-in portraits (T6.1):** hiker, tourist, student, jogger, neighbor, painter.
+- [x] **Ovens (T6.3):** toaster, brick and deck oven, 16 x 16; the Kitchen shows each oven's art beside its name.
 
 That's 69 files, or 65 if the counter reuses the neutral portraits.
 
@@ -122,11 +122,11 @@ That's 69 files, or 65 if the counter reuses the neutral portraits.
 
 - [x] Per-generator cooldown timer on the board: a spent generator dims and counts down m:ss to its refill, redrawn once a second in `src/render/boardView.ts`. Cooldowns are 5 min at tier 1, 4 min at tier 2, 3 min at tier 3 (`generators.json`). Charges refill lazily inside the next tap, so a cell whose `cooldownEndsAt` has passed shows nothing and is already usable.
 - [ ] No way to gain a generator during play. Spawn tables only drop ingredients, the rare table is energy-jar/coin-pouch/golden-whisk, and `newGame.json` seeds exactly one mill and one fridge. Merging consumes two to make one, so upgrading permanently costs a generator with no replacement. `Unlock` already has `{ kind: 'generator', itemId }` — give the early renovation tasks in T5.1 a generator unlock, or add another source. The T5.1 brief does this: a second Dairy Fridge at task 5, Flour Mills at 9 and 18, and a second Toaster Oven at 12.
-- [ ] T6.5 Rushing a generator cooldown with gems: the GDD lists it as a gem sink and `Economy.rushGemsPerMinute` exists, but `ActionBody` has only `rushBake`. Needs a contract change to the frozen `types.ts`, so it goes through T-O1.
+- [x] T6.5 Rushing a generator cooldown with gems. Contract change approved by Scott (T-O1, Sep 30): a `rushCooldown` action and a `cooldownRushed` event in types.ts. Costs whole minutes left × `rushGemsPerMinute`, like a bake; refills the charges; a generator that isn't cooling changes nothing. Tapping a resting generator opens a "Rush — N gems" bubble over it (src/ui/rushBubble.ts), greyed out when unaffordable, with the price dropping each minute. Plays the collect chime; the How to play dialog mentions it and the charge badge.
 - [x] Hen Coop and Sugar Tin, three tiers each, in `items.json` and `generators.json`. Spawn tables, charges and cooldowns mirror the Flour Mill and Dairy Fridge tier for tier. Not on the starting board: per the GDD they arrive in Chapter 2, and until then the Kitchen hides Cookie and Cupcake. Placeholder SVGs only. To test the other recipes now: `bakery.give('hen-coop-1', 'sugar-tin-1')`.
 - [ ] T6.6 Chapter 2: unlock the Hen Coop and Sugar Tin through its renovation tasks.
 - [ ] T6.7 Fruit Crate: no recipe uses fruit yet, so it waits for a recipe that does.
-- [ ] T6.4 Show remaining charges on a generator, not just the cooldown. Nothing tells the player how many taps are left before the wait starts.
+- [x] T6.4 Remaining charges on each generator: a butter badge in the cell's top-left corner (the tier badge is bottom-right), counting down with each tap, hidden while the cooldown countdown shows, and showing the full count again the moment a cooldown ends, before the lazy refill (`chargesToShow` in src/render/charges.ts).
 
 ## Added outside the plan
 

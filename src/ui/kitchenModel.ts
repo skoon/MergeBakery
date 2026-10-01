@@ -34,6 +34,8 @@ export interface OvenView {
   index: number;
   ovenId: OvenId;
   name: string;
+  /** The oven's art (T6.3). */
+  spriteKey: string;
   slots: SlotView[];
 }
 
@@ -161,6 +163,7 @@ export function kitchenModel(
       index,
       ovenId: oven.ovenId,
       name: def?.name ?? oven.ovenId,
+      spriteKey: def?.spriteKey ?? oven.ovenId,
       slots,
     };
   });

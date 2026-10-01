@@ -31,6 +31,7 @@ function helpSections(store: GameStore): readonly HelpSection[] {
       heading: 'Make more items',
       paragraphs: [
         `Tap a generator, such as the Flour Mill or the Dairy Fridge, to drop a fresh ingredient on the board. Each tap spends ${energyCost} and one of the generator's charges; when the charges run out it rests for a while before refilling.`,
+        'The number in the corner of a generator is how many taps it has left. While it rests, tap it to rush the rest for a few gems.',
         'Merging generators up makes them better: more charges, a shorter rest, and a chance at higher-tier ingredients.',
         'Tap an energy jar or a coin pouch to collect it straight away.',
       ],

@@ -47,7 +47,11 @@ export function counterCards(data: GameData, state: GameState): OrderCard[] {
     return {
       orderId: order.id,
       customerName: customer.name,
-      portraitKey: customer.portraitKey,
+      // Regulars have expression portraits (T6.1); the counter shows the neutral one.
+      portraitKey:
+        customer.kind === 'regular'
+          ? `${customer.portraitKey}-neutral`
+          : customer.portraitKey,
       wants,
       coins: order.reward.coins,
       stars: order.reward.stars,

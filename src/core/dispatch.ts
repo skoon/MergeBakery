@@ -7,7 +7,7 @@ import { collectBake, rushBake } from './bakes';
 import { deliverOrder } from './deliver';
 import { dismissDiscovery } from './discovery';
 import { applyDrop } from './drop';
-import { collectBonus, tapGenerator } from './generators';
+import { collectBonus, rushCooldown, tapGenerator } from './generators';
 import { loadRecipe } from './kitchen';
 import { refillOrders } from './orders';
 import { mergeOvens } from './ovens';
@@ -90,6 +90,8 @@ function routeAction(
       return handlers.collectBake(data, state, action, rng);
     case 'rushBake':
       return handlers.rushBake(data, state, action, rng);
+    case 'rushCooldown':
+      return handlers.rushCooldown(data, state, action, rng);
     case 'mergeOvens':
       return handlers.mergeOvens(data, state, action, rng);
     case 'completeTask':
@@ -138,6 +140,8 @@ export const dispatch: Dispatch = createDispatch({
     collectBake(data, state, action.slot, action.now),
   rushBake: (data, state, action) =>
     rushBake(data, state, action.slot, action.now),
+  rushCooldown: (data, state, action) =>
+    rushCooldown(data, state, action.cell, action.now),
   mergeOvens: (data, state, action) =>
     mergeOvens(data, state, action.from, action.to),
   completeTask: (data, state, action) =>

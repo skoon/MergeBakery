@@ -9,6 +9,7 @@ import type {
   GameData,
   GameEvent,
   GameState,
+  GeneratorCharge,
   Rng,
   Timestamp,
 } from './types';
@@ -168,5 +169,80 @@ export function collectBonus(
     ok: true,
     state: newState,
     events: [{ type: 'collected', itemId: item.itemId, reward }],
+  };
+}
+
+/**
+ * Gems to end a generator's cooldown now (T6.5): remaining whole minutes,
+ * rounded up, times `rushGemsPerMinute`, the same rule as rushing a bake.
+ * 0 when it isn't cooling down.
+ */
+export function cooldownRushCost(
+  data: GameData,
+  charge: GeneratorCharge,
+  now: Timestamp,
+): number {
+  if (charge.charges > 0 || charge.cooldownEndsAt === null) return 0;
+  const msLeft = charge.cooldownEndsAt - now;
+  if (msLeft <= 0) return 0;
+  return Math.ceil(msLeft / 60_000) * data.economy.rushGemsPerMinute;
+}
+
+/**
+ * Pays gems to end a generator's cooldown now, refilling its charges (T6.5).
+ * Rejects 'emptyCell', 'locked', 'notAGenerator', 'cobwebbed', then
+ * 'notEnoughGems'. A generator that isn't cooling down returns ok with the
+ * same state and no events, like rushing a finished bake.
+ * Event: cooldownRushed { cell, gems }.
+ */
+export function rushCooldown(
+  data: GameData,
+  state: GameState,
+  cell: CellIndex,
+  now: Timestamp,
+): ActionResult {
+  const boardCell = getCell(state.board, cell);
+  if (boardCell.kind === 'locked') {
+    return { ok: false, reason: 'locked' };
+  }
+  if (boardCell.kind === 'empty') {
+    return { ok: false, reason: 'emptyCell' };
+  }
+
+  const item = boardCell.item;
+  const generatorDef = data.generators.get(item.itemId);
+  if (!generatorDef) {
+    return { ok: false, reason: 'notAGenerator' };
+  }
+  if (item.cobwebbed) {
+    return { ok: false, reason: 'cobwebbed' };
+  }
+  const charge = item.generator;
+  if (!charge) {
+    throw new Error(
+      `rushCooldown: generator item "${item.itemId}" has no charge state`,
+    );
+  }
+
+  const cost = cooldownRushCost(data, charge, now);
+  if (cost === 0) {
+    return { ok: true, state, events: [] };
+  }
+  if (state.gems < cost) {
+    return { ok: false, reason: 'notEnoughGems' };
+  }
+
+  const refilled: BoardItem = {
+    ...item,
+    generator: { charges: generatorDef.charges, cooldownEndsAt: null },
+  };
+  return {
+    ok: true,
+    state: {
+      ...state,
+      gems: state.gems - cost,
+      board: setCell(state.board, cell, { kind: 'item', item: refilled }),
+    },
+    events: [{ type: 'cooldownRushed', cell, gems: cost }],
   };
 }
