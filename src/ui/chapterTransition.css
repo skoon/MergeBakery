@@ -1,0 +1,80 @@
+/* "Chapter complete" card (T7.5). */
+
+.chapter-card {
+  position: absolute;
+  inset: 0;
+  z-index: 28;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.chapter-card[hidden] {
+  display: none;
+}
+
+.chapter-card__card {
+  width: min(320px, 100%);
+  box-sizing: border-box;
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+  color: var(--color-ink);
+  background: var(--color-cream);
+  border: 3px solid var(--color-butter);
+  border-radius: var(--space-4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  animation: chapter-card-in 400ms ease-out;
+}
+
+@keyframes chapter-card-in {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter-card__card {
+    animation: none;
+  }
+}
+
+.chapter-card__kicker {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--color-strawberry);
+}
+
+.chapter-card__finished {
+  margin: 0 0 var(--space-3);
+  font-size: var(--font-size-xl);
+  color: var(--color-crust);
+}
+
+.chapter-card__next {
+  margin: 0;
+  font-weight: 700;
+}
+
+.chapter-card__button {
+  width: 100%;
+  margin-top: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  font: inherit;
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-cream);
+  background: var(--color-crust);
+  border: none;
+  border-radius: var(--space-2);
+  cursor: pointer;
+}

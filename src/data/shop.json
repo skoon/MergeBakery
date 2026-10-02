@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "id": "shop-flour-mill",
+      "name": "Flour Mill",
+      "kind": "generator",
+      "itemId": "flour-mill-1",
+      "price": 400,
+      "fromChapter": "chapter1"
+    },
+    {
+      "id": "shop-dairy-fridge",
+      "name": "Dairy Fridge",
+      "kind": "generator",
+      "itemId": "dairy-fridge-1",
+      "price": 400,
+      "fromChapter": "chapter1"
+    },
+    {
+      "id": "shop-hen-coop",
+      "name": "Hen Coop",
+      "kind": "generator",
+      "itemId": "hen-coop-1",
+      "price": 600,
+      "fromChapter": "chapter2"
+    },
+    {
+      "id": "shop-sugar-tin",
+      "name": "Sugar Tin",
+      "kind": "generator",
+      "itemId": "sugar-tin-1",
+      "price": 600,
+      "fromChapter": "chapter2"
+    },
+    {
+      "id": "shop-energy-small",
+      "name": "Energy snack",
+      "kind": "energy",
+      "energy": 25,
+      "price": 150,
+      "fromChapter": "chapter1"
+    },
+    {
+      "id": "shop-energy-large",
+      "name": "Energy feast",
+      "kind": "energy",
+      "energy": 100,
+      "price": 500,
+      "fromChapter": "chapter1"
+    }
+  ]
+}

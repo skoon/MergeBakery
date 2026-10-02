@@ -35,6 +35,8 @@ import type {
   Recipe,
   RecipesFile,
   RenovationTask,
+  ShopFile,
+  ShopItem,
   Unlock,
   WeightedEntry,
 } from './types';
@@ -50,6 +52,7 @@ export interface RawGameData {
   customers: unknown; // customers.json
   chapters: readonly unknown[]; // chapter1.json, later chapters appended
   newGame: unknown; // newGame.json
+  shop: unknown; // shop.json
 }
 
 // ─── Zod schemas: items and chains (items.json) ─────────────────────────────
@@ -140,6 +143,22 @@ const ovenDefSchema: z.ZodType<OvenDef> = z.strictObject({
 
 const ovensFileSchema: z.ZodType<OvensFile> = z.strictObject({
   ovens: z.array(ovenDefSchema),
+});
+
+// ─── Zod schemas: the Shop (shop.json) ──────────────────────────────────────
+
+const shopItemSchema: z.ZodType<ShopItem> = z.strictObject({
+  id: z.string(),
+  name: z.string(),
+  kind: z.enum(['generator', 'energy']),
+  itemId: z.string().optional(),
+  energy: z.number().optional(),
+  price: z.number(),
+  fromChapter: z.string(),
+});
+
+const shopFileSchema: z.ZodType<ShopFile> = z.strictObject({
+  items: z.array(shopItemSchema),
 });
 
 // ─── Zod schemas: customers (customers.json) ────────────────────────────────
@@ -291,6 +310,7 @@ interface ParsedSections {
   readonly chapters: readonly Chapter[];
   readonly economy: Economy;
   readonly newGame: NewGameConfig;
+  readonly shop: ShopFile;
 }
 
 /** Every id in `ids` must be distinct; reports each duplicate once. */
@@ -360,6 +380,7 @@ function validateCrossReferences(parsed: ParsedSections): string[] {
     chapters,
     economy,
     newGame,
+    shop,
   } = parsed;
 
   const chainById = new Map<ChainId, Chain>(items.chains.map((c) => [c.id, c]));
@@ -408,12 +429,40 @@ function validateCrossReferences(parsed: ParsedSections): string[] {
     'chapters',
     problems,
   );
-  for (const chapter of chapters) {
-    checkUnique(
-      chapter.tasks.map((t) => t.id),
-      `chapter "${chapter.id}" tasks`,
-      problems,
-    );
+  // Completed tasks are one list across chapters (GameState.completedTasks),
+  // so task ids must be unique across all of them, not just within one.
+  checkUnique(
+    chapters.flatMap((c) => c.tasks.map((t) => t.id)),
+    'tasks across all chapters',
+    problems,
+  );
+  checkUnique(
+    shop.items.map((i) => i.id),
+    'shop items',
+    problems,
+  );
+
+  // Shop rows: a generator row names a generator, an energy row adds a
+  // positive amount, prices are positive, fromChapter names a chapter.
+  for (const row of shop.items) {
+    const where = `shop item "${row.id}"`;
+    if (row.kind === 'generator') {
+      if (row.itemId === undefined) {
+        problems.push(`${where}: a generator row needs an itemId`);
+      } else if (!generators.generators.some((g) => g.itemId === row.itemId)) {
+        problems.push(`${where}: "${row.itemId}" is not a generator`);
+      }
+    } else if (row.energy === undefined || row.energy <= 0) {
+      problems.push(`${where}: an energy row needs a positive energy amount`);
+    }
+    if (row.price <= 0) {
+      problems.push(`${where}: price ${row.price} is not positive`);
+    }
+    if (!chapters.some((c) => c.id === row.fromChapter)) {
+      problems.push(
+        `${where}: fromChapter "${row.fromChapter}" names an unknown chapter`,
+      );
+    }
   }
 
   // Every chainId names a chain; each chain's tiers run 1, 2, 3, ... with no
@@ -696,6 +745,7 @@ function buildGameData(parsed: ParsedSections): GameData {
     chapters: new Map(parsed.chapters.map((c) => [c.id, c])),
     economy: parsed.economy,
     newGame: parsed.newGame,
+    shop: new Map(parsed.shop.items.map((i) => [i.id, i])),
   };
 }
 
@@ -753,6 +803,12 @@ export function parseGameData(raw: RawGameData): GameData {
     'newGame.json',
     shapeProblems,
   );
+  const shop = parseSection(
+    shopFileSchema,
+    raw.shop,
+    'shop.json',
+    shapeProblems,
+  );
 
   if (
     items === undefined ||
@@ -762,7 +818,8 @@ export function parseGameData(raw: RawGameData): GameData {
     economy === undefined ||
     customers === undefined ||
     chapters === undefined ||
-    newGame === undefined
+    newGame === undefined ||
+    shop === undefined
   ) {
     throw new Error(shapeProblems.join('\n'));
   }
@@ -776,6 +833,7 @@ export function parseGameData(raw: RawGameData): GameData {
     chapters,
     economy,
     newGame,
+    shop,
   };
 
   const crossRefProblems = validateCrossReferences(parsed);
@@ -822,5 +880,6 @@ export function loadGameData(): GameData {
     customers: readDataFile('customers.json'),
     chapters: readChapterFiles(),
     newGame: readDataFile('newGame.json'),
+    shop: readDataFile('shop.json'),
   });
 }

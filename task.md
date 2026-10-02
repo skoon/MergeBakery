@@ -1,9 +1,23 @@
-# Phase 5 — Chapter 1, UI, audio, and polish
+# Phase 7 — Chapter 2, The Café Terrace, and the Shop
 
-Source: [Rise & Shine Bakery — Implementation Plan](https://claude.ai/artifact/CbuwDrEjZqWZnuhLP7pamp)
+Source: [Rise & Shine Bakery — Implementation Plan](https://claude.ai/artifact/CbuwDrEjZqWZnuhLP7pamp) (repo copy in docs/ is the current one)
 Briefs: docs/briefs/ (rules for every session in working-rules.md)
 
-Tasks start as soon as their dependencies finish. Opus connects each core function to src/core/dispatch.ts as it lands. Phase 4's open items are further down.
+Scope decided Oct 1: Chapter 2's content plus the Shop; the MegaBun competitive events are Phase 8.
+
+- [x] T-O1 contract change, approved by Scott Oct 1: `ShopItem`/`ShopFile`/`GameData.shop`, the `buyShopItem` action, the `purchased` and `chapterStarted` events. No `GameState` change, so no save migration.
+- [x] T7.1 Contract, dispatch cases, shop.json loader and validator, task ids unique across chapters (Opus). Generator placement is now shared by renovation unlocks and the Shop (src/core/placement.ts)
+- [x] T7.2 Chapter progression: the last task moves to the next chapter and emits `chapterStarted` (Sonnet). `nextChapterId` in renovation.ts
+- [ ] T7.3 Three new Chapter 2 regulars and their 9 portraits (Sonnet) — Scott approves the portraits. Data done (priya, bramble, theo in customers.json); portraits awaiting approval in docs/art-review/
+- [x] T7.4 chapter2.json: The Café Terrace's 20 tasks, unlocking the Hen Coop and Sugar Tin early (Sonnet) — after T7.2, T7.3
+- [x] T7.5 Chapter transition UI: "Chapter complete" card, the next intro scene, the Bakery switching location (Sonnet) — after T7.2. src/ui/chapterTransition.ts; waits for the finale scene to close. `catchUpChapter` moves saves that finished Chapter 1 earlier on to Chapter 2 at load
+- [ ] T7.6 Chapter 2 dialogue (Sonnet) — after T7.3, T7.4; Scott approves the script
+- [ ] T7.7 Café Terrace art: scene and 40 before/after (Sonnet) — after T7.4; Scott approves each batch
+- [x] T7.8 The Shop: shop.json, `buyShopItem`, the Shop screen (Sonnet) — after T7.1
+- [ ] T7.9 Balance pass across both chapters with the Shop (Opus) — after T7.4, T7.8
+- [ ] T7.10 Phase-end review (T-O2), then Scott's Chapter 2 playtest (T-O5)
+
+# Phase 5 — Chapter 1, UI, audio, and polish (done)
 
 ## Wave 1 — start now, in parallel
 
@@ -22,7 +36,7 @@ Tasks start as soon as their dependencies finish. Opus connects each core functi
 - [x] T5.7 Discovery card and `dismissDiscovery` (Haiku) — after T5.6 (both edit discovery.ts)
 - [x] Wire `dismissDiscovery` into dispatch.ts (Opus) — after T5.7
 - [x] T5.11 Sound effects in sfx.json (Haiku) — after T5.10
-- [x] T5.5 Chapter 1 dialogue (Sonnet) — after T5.1 and T5.4 — written; waiting on Scott's approval of the script (src/data/dialogue/chapter1.json)
+- [x] T5.5 Chapter 1 dialogue (Sonnet) — after T5.1 and T5.4 — Scott approved the script Oct 1
 
 ## Wave 3
 
@@ -48,9 +62,10 @@ That's 69 files, or 65 if the counter reuses the neutral portraits.
 
 - [x] Lint, typecheck, all tests, build — 50 files, 657 tests; the build precaches 154 files (865 KB)
 - [ ] Browser: every tab opens its screen; all 20 renovation tasks complete in order (`bakery.stars(200)`); the intro plays on a new game only; discovery cards show once per item; each setting applies and persists; every GDD sound plays; the app installs and plays offline
-- [x] T-O3 balancing pass — simulator: `npm run balance` (a bot plays the real rules and data over simulated days, 5 seeds). Before: sessions ended in ~3 minutes when generator charges ran out with most energy unused, 7–15 orders per session, the chapter done in ~6 sessions, no croissant ever baked. Applied (Scott chose option 1): generator charges ×3 (36/48/60), walk-in orders up to tier 5 and regulars up to tier 7, task star costs ×2 (6–16 each, 212 total, against the GDD's 3–8), level XP thresholds ×2. After: from the third session on, sessions run 9–11 minutes and energy runs out at 10–12; the chapter takes sessions 7, 14, 15 and 16 in four seeds and isn't finished after 3 days in the fifth (17/20), so about 3–4 days for the bot and longer for a person; a croissant is baked in 4 of 5 seeds. Logic tests that had hard-coded the old numbers now read them from the data (level.test.ts pins its own fixed threshold table).
-- [ ] Balancing follow-ups: the first session is still very fast (~30 orders and 5 tasks, because early orders can only ask for the cheap tier 1–2 items discovered so far); coins reach 4,000–8,500 by day 3 with only Pantry slots to spend them on, so the Shop (still "Coming soon") needs a coin sink; orders per session stay at ~8–15 against the GDD's 3–5. Revisit after T-O5.
-- [ ] T-O5 Chapter 1 playtest (Scott)
+- [x] T-O3 balancing pass — simulator: `npm run balance` (a bot plays the real rules and data over simulated days, 5 seeds). Before: sessions ended in ~3 minutes when generator charges ran out with most energy unused, 7–15 orders per session, the chapter done in ~6 sessions, no croissant ever baked. Applied (Scott chose option 1): generator charges ×3 (36/48/60), walk-in orders up to tier 5 and regulars up to tier 7, task star costs ×2 (6–16 each, 212 total, against the GDD's 3–8), level XP thresholds ×2. After: from the third session on, sessions run 9–11 minutes and energy runs out at 10–12; the chapter takes sessions 7, 10, 11 and 12 in four seeds, and 19 in the fifth over a 5-day run, so about 2.5–3 days for the bot and longer for a person (corrected Oct 1: an earlier note had mis-converted day/session to session numbers); a croissant is baked in 4 of 5 seeds. Logic tests that had hard-coded the old numbers now read them from the data (level.test.ts pins its own fixed threshold table).
+- [x] Smoothing the first session (Oct 1): walk-ins now ask for 2–3 items (2 stars, `starsByItemCount` [1, 2, 2]) and orders refill 90 s after the last one is delivered, up from 5 s. The first session drops from ~31 orders, 40 stars and 5 tasks to ~8 orders, 17 stars and 2.4 tasks; day 1 now ramps 2.4 / 2.2 / 1.8 / 1.2 tasks per session. Four seeds finish the chapter by session 10–11 (day 3); the fifth by session 14. Both changes depart from the GDD's text (walk-ins "1–2 items, 1 star"; "a completed order is replaced within 5 seconds").
+- [ ] Balancing follow-ups, after T-O5: coins reach ~4,700–6,600 by day 3 with only Pantry slots to spend them on, so the Shop (still "Coming soon") needs a coin sink; orders per session stay at ~6–13 against the GDD's 3–5.
+- [x] T-O5 Chapter 1 playtest (Scott) — passed Oct 1
 
 ## Phase 5 notes
 
@@ -135,6 +150,6 @@ That's 69 files, or 65 if the counter reuses the neutral portraits.
 
 ## Open from earlier phases
 
-- [ ] Milestone 1 playtest (T-O5, Scott)
+- [x] Milestone 1 playtest (T-O5, Scott) — covered by the Chapter 1 playtest, Oct 1
 - [ ] T0.4 "three passing checks" needs a GitHub remote and a first pull request
 - [ ] T0.3 live window resize not yet checked in a visible browser tab

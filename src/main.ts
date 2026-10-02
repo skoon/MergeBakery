@@ -22,12 +22,15 @@ import { createRouter } from './ui/router';
 import { mountNavBar } from './ui/navBar';
 import { mountTutorialHints } from './ui/tutorialHints';
 import { catchUpTutorial } from './core/tutorial';
+import { catchUpChapter } from './core/renovation';
 import { mountRecipeBook } from './ui/recipeBook';
 import { mountLocationView } from './ui/locationView';
+import { mountShop } from './ui/shopScreen';
 import { mountDiscoveryCard } from './ui/discoveryCard';
 import { mountRushBubble } from './ui/rushBubble';
 import { parseScenes } from './ui/dialogue';
 import { mountDialoguePlayer } from './ui/dialoguePlayer';
+import { mountChapterTransition } from './ui/chapterTransition';
 import chapter1Scenes from './data/dialogue/chapter1.json';
 import { startBakeNotifier } from './ui/bakeNotifier';
 import { createSettingsStore } from './ui/settings';
@@ -65,7 +68,9 @@ const saved = readSave(localStorage, data, now);
 const caughtUp = saved
   ? resolveOffline(data, saved.state, saved.savedAt, now)
   : null;
-const initial = caughtUp ? caughtUp.state : createNewGame(data, now >>> 0, now);
+const loaded = caughtUp ? caughtUp.state : createNewGame(data, now >>> 0, now);
+// A save that finished its chapter before chapters could advance moves on now.
+const initial = catchUpChapter(data, loaded);
 const store = createStore(data, initial, dispatch, () => Date.now());
 
 // Settings apply at once (T5.9). Text size scales every font from one variable.
@@ -120,17 +125,13 @@ store.subscribe((state, events) => {
     if (sceneId) void dialogue.play(sceneId);
   }
 });
+const transition = mountChapterTransition(overlayRoot, store, dialogue);
+if (initial.chapterId !== loaded.chapterId) {
+  transition.announce(initial.chapterId);
+}
 const introSceneId = data.chapters.get(initial.chapterId)?.introSceneId;
 if (!saved && introSceneId) {
   void dialogue.play(introSceneId);
-}
-
-/** Placeholder until the screen's own task lands. */
-function comingSoon(container: HTMLElement): void {
-  const note = document.createElement('p');
-  note.className = 'screen__coming-soon';
-  note.textContent = 'Coming soon';
-  container.appendChild(note);
 }
 
 const router = createRouter();
@@ -149,7 +150,13 @@ mountNavBar(nav, screensRoot, router, [
       mountLocationView(container, store, settings);
     },
   },
-  { id: 'shop', label: 'Shop', mount: comingSoon },
+  {
+    id: 'shop',
+    label: 'Shop',
+    mount: (container) => {
+      mountShop(container, store);
+    },
+  },
   {
     id: 'settings',
     label: 'Settings',

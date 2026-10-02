@@ -1,13 +1,13 @@
 /**
  * Completing renovation tasks (T5.2): spending stars on the current
- * chapter's tasks and applying what they unlock.
+ * chapter's tasks and applying what they unlock. Completing a chapter's last
+ * task moves the player on to the next chapter (T7.2).
  */
 
-import { nearestEmpty, setCell, toIndex } from './board';
-import { discover } from './discovery';
+import { placeGenerator, roomForItems } from './placement';
 import type {
   ActionResult,
-  BoardItem,
+  ChapterId,
   GameData,
   GameEvent,
   GameState,
@@ -53,13 +53,14 @@ export function availableTasks(
   );
 }
 
-/** The cell collected bakes and unlocked generators aim for. */
-function middleCell(state: GameState): number {
-  return toIndex(
-    state.board,
-    Math.floor(state.board.cols / 2),
-    Math.floor(state.board.rows / 2),
-  );
+/** The chapter after `chapterId` in data (play) order, or null after the last. */
+export function nextChapterId(
+  data: GameData,
+  chapterId: ChapterId,
+): ChapterId | null {
+  const ids = Array.from(data.chapters.keys());
+  const index = ids.indexOf(chapterId);
+  return index === -1 ? null : (ids[index + 1] ?? null);
 }
 
 /**
@@ -70,7 +71,9 @@ function middleCell(state: GameState): number {
  *
  * Otherwise spends the stars, records the task, and applies its unlocks in
  * order. Events: `spawned` for each generator placed on the board, any
- * `discovered`, then `taskCompleted`.
+ * `discovered`, then `taskCompleted`. When that was the chapter's last
+ * incomplete task and another chapter follows, `chapterId` moves on to it and
+ * a `chapterStarted` event comes last; after the final chapter, it stays.
  */
 export function completeTask(
   data: GameData,
@@ -90,10 +93,7 @@ export function completeTask(
   }
 
   const generatorUnlocks = task.unlocks.filter((u) => u.kind === 'generator');
-  const room =
-    state.board.cells.filter((c) => c.kind === 'empty').length +
-    (state.pantry.capacity - state.pantry.items.length);
-  if (generatorUnlocks.length > room) {
+  if (generatorUnlocks.length > roomForItems(state)) {
     return { ok: false, reason: 'boardFull' };
   }
 
@@ -106,38 +106,12 @@ export function completeTask(
 
   for (const unlock of task.unlocks) {
     if (unlock.kind === 'generator') {
-      const def = data.generators.get(unlock.itemId);
-      if (!def) {
-        throw new Error(
-          `completeTask: "${unlock.itemId}" has no generator definition`,
-        );
+      // Room was checked above, so this always places.
+      const placed = placeGenerator(data, next, unlock.itemId);
+      if (placed) {
+        next = placed.state;
+        events.push(...placed.events);
       }
-      const item: BoardItem = {
-        itemId: unlock.itemId,
-        cobwebbed: false,
-        generator: { charges: def.charges, cooldownEndsAt: null },
-      };
-      const cell = nearestEmpty(next.board, middleCell(next));
-      if (cell !== null) {
-        next = {
-          ...next,
-          board: setCell(next.board, cell, { kind: 'item', item }),
-        };
-        events.push({
-          type: 'spawned',
-          itemId: unlock.itemId,
-          cell,
-          rare: false,
-        });
-      } else {
-        next = {
-          ...next,
-          pantry: { ...next.pantry, items: [...next.pantry.items, item] },
-        };
-      }
-      const found = discover(data, next, unlock.itemId);
-      next = found.state;
-      events.push(...found.events);
     } else if (unlock.kind === 'oven') {
       const oven = data.ovens.get(unlock.ovenId);
       if (!oven) {
@@ -164,5 +138,34 @@ export function completeTask(
   }
 
   events.push({ type: 'taskCompleted', taskId });
+
+  const chapter = data.chapters.get(next.chapterId);
+  const chapterDone =
+    chapter?.tasks.every((t) => next.completedTasks.includes(t.id)) ?? false;
+  const following = chapterDone ? nextChapterId(data, next.chapterId) : null;
+  if (following) {
+    next = { ...next, chapterId: following };
+    events.push({ type: 'chapterStarted', chapterId: following });
+  }
+
   return { ok: true, state: next, events };
+}
+
+/**
+ * For a save that finished its chapter before chapter progression existed
+ * (T7.2): while the current chapter's tasks are all complete and another
+ * chapter follows, moves `chapterId` on. Returns the same state object when
+ * there's nothing to do.
+ */
+export function catchUpChapter(data: GameData, state: GameState): GameState {
+  let next = state;
+  for (;;) {
+    const chapter = data.chapters.get(next.chapterId);
+    const done =
+      chapter !== undefined &&
+      chapter.tasks.every((t) => next.completedTasks.includes(t.id));
+    const following = done ? nextChapterId(data, next.chapterId) : null;
+    if (!following) return next;
+    next = { ...next, chapterId: following };
+  }
 }

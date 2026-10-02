@@ -3,11 +3,17 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { availableTasks, completeTask, taskById } from './renovation';
+import {
+  availableTasks,
+  catchUpChapter,
+  completeTask,
+  nextChapterId,
+  taskById,
+} from './renovation';
 import { nextTask } from './orders';
 import { getCell } from './board';
 import { stateWith, testData, type CellSpec } from './testing';
-import type { BoardItem, GameState } from './types';
+import type { BoardItem, GameData, GameState } from './types';
 
 /** Every board cell holds an egg. */
 function fullBoard(): Record<number, CellSpec> {
@@ -211,5 +217,93 @@ describe('completeTask', () => {
     completeTask(testData, state, 'patch-roof');
 
     expect(JSON.stringify(state)).toBe(before);
+  });
+});
+
+describe('chapter progression (T7.2)', () => {
+  const chapter1 = testData.chapters.get('chapter1');
+  if (!chapter1) throw new Error('chapter1 is missing');
+  const lastTask = chapter1.tasks.at(-1);
+  if (!lastTask) throw new Error('chapter1 has no tasks');
+  const allButLast = chapter1.tasks.slice(0, -1).map((t) => t.id);
+
+  /** Real data plus a one-task second chapter. */
+  const twoChapters: GameData = {
+    ...testData,
+    chapters: new Map([
+      ...testData.chapters,
+      [
+        'chapter2',
+        {
+          ...chapter1,
+          id: 'chapter2',
+          name: 'The Café Terrace',
+          tasks: [
+            { ...lastTask, id: 'cafe-first', prerequisites: [], unlocks: [] },
+          ],
+        },
+      ],
+    ]),
+  };
+
+  it('stays in the chapter while tasks remain', () => {
+    const state = stateWith({}, { stars: 99 });
+
+    const result = completeTask(twoChapters, state, 'sweep-cobwebs');
+
+    expect(result.ok && result.state.chapterId).toBe('chapter1');
+    expect(
+      result.ok && result.events.some((e) => e.type === 'chapterStarted'),
+    ).toBe(false);
+  });
+
+  it("moves on to the next chapter after the last task, with 'chapterStarted' last", () => {
+    const state = stateWith({}, { stars: 99, completedTasks: allButLast });
+
+    const result = completeTask(twoChapters, state, lastTask.id);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.state.chapterId).toBe('chapter2');
+    expect(result.events.slice(-2)).toEqual([
+      { type: 'taskCompleted', taskId: lastTask.id },
+      { type: 'chapterStarted', chapterId: 'chapter2' },
+    ]);
+    expect(nextChapterId(twoChapters, 'chapter1')).toBe('chapter2');
+  });
+
+  it('stays in the final chapter after its last task', () => {
+    // Real data, cut down to Chapter 1 alone so it is the final chapter.
+    const oneChapter: GameData = {
+      ...testData,
+      chapters: new Map([['chapter1', chapter1]]),
+    };
+    const state = stateWith({}, { stars: 99, completedTasks: allButLast });
+
+    const result = completeTask(oneChapter, state, lastTask.id);
+
+    expect(result.ok && result.state.chapterId).toBe('chapter1');
+    expect(result.ok && result.events.at(-1)).toEqual({
+      type: 'taskCompleted',
+      taskId: lastTask.id,
+    });
+    expect(nextChapterId(oneChapter, 'chapter1')).toBeNull();
+  });
+});
+
+describe('catchUpChapter (T7.2)', () => {
+  const chapter1Ids =
+    testData.chapters.get('chapter1')?.tasks.map((t) => t.id) ?? [];
+
+  it('moves a save that already finished Chapter 1 on to Chapter 2', () => {
+    const state = stateWith({}, { completedTasks: chapter1Ids });
+
+    expect(catchUpChapter(testData, state).chapterId).toBe('chapter2');
+  });
+
+  it('leaves a save mid-chapter alone, returning the same object', () => {
+    const state = stateWith({}, { completedTasks: chapter1Ids.slice(0, 5) });
+
+    expect(catchUpChapter(testData, state)).toBe(state);
   });
 });

@@ -112,6 +112,9 @@ describe('soundForEvent', () => {
       400,
     ]);
     expect(play({ type: 'sold', itemId: 'egg', coins: 1 })).toEqual([500]);
+    expect(play({ type: 'purchased', shopItemId: 'mill', coins: 400 })).toEqual(
+      [500],
+    );
     expect(
       play({
         type: 'collected',

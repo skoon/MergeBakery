@@ -142,6 +142,7 @@ function makeGameData(overrides: Partial<GameData> = {}): GameData {
     chapters: new Map<string, Chapter>(),
     economy: ECONOMY,
     newGame: NEW_GAME_CONFIG,
+    shop: new Map(),
     ...overrides,
   };
 }

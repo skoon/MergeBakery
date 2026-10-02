@@ -66,9 +66,3 @@
   overflow-y: auto;
   padding: var(--space-4);
 }
-
-.screen__coming-soon {
-  margin: var(--space-6) 0;
-  text-align: center;
-  opacity: 0.7;
-}

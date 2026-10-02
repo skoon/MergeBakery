@@ -46,14 +46,14 @@
   "goldenWhiskMaxTier": 5,
   "orders": {
     "maxOpen": 4,
-    "refillDelaySec": 5,
+    "refillDelaySec": 90,
     "regularChancePercent": 40,
     "featuredWeight": 3,
     "walkIn": {
-      "minItems": 1,
-      "maxItems": 2,
+      "minItems": 2,
+      "maxItems": 3,
       "maxTier": 5,
-      "starsByItemCount": [1, 1],
+      "starsByItemCount": [1, 2, 2],
       "coinMultiplier": 2,
       "xpPerTier": 1
     },

@@ -5,7 +5,9 @@
  * contract looks wrong, stop and describe the change needed instead.
  *
  * Approved changes (T-O1): `rushCooldown` and `cooldownRushed`, for rushing a
- * generator's cooldown with gems (T6.5, Scott, Sep 30).
+ * generator's cooldown with gems (T6.5, Scott, Sep 30). The Shop and chapter
+ * progression: `ShopItem`, `ShopFile`, `GameData.shop`, `buyShopItem`,
+ * `purchased` and `chapterStarted` (T7.1, Scott, Oct 1).
  *
  * Conventions every core function follows:
  * - Core functions are pure: they never mutate their inputs and return new
@@ -29,6 +31,7 @@ export type ChapterId = string;
 export type TaskId = string;
 export type SceneId = string;
 export type OrderId = number;
+export type ShopItemId = string;
 
 /** Milliseconds since the Unix epoch, as from Date.now(). */
 export type Timestamp = number;
@@ -151,6 +154,27 @@ export interface RecipesFile {
 
 export interface OvensFile {
   readonly ovens: readonly OvenDef[];
+}
+
+// ─── Static data: the Shop (shop.json) ──────────────────────────────────────
+
+/** Something coins can buy (T7.8). */
+export interface ShopItem {
+  readonly id: ShopItemId;
+  readonly name: string;
+  readonly kind: 'generator' | 'energy';
+  /** A generator item to place, for kind 'generator'. */
+  readonly itemId?: ItemId;
+  /** Energy added, for kind 'energy'. May go above the cap, like an energy jar. */
+  readonly energy?: number;
+  /** In coins. */
+  readonly price: number;
+  /** Hidden until the player reaches this chapter. */
+  readonly fromChapter: ChapterId;
+}
+
+export interface ShopFile {
+  readonly items: readonly ShopItem[];
 }
 
 // ─── Static data: customers (customers.json) ────────────────────────────────
@@ -303,9 +327,12 @@ export interface GameData {
   readonly recipes: ReadonlyMap<RecipeId, Recipe>;
   readonly ovens: ReadonlyMap<OvenId, OvenDef>;
   readonly customers: ReadonlyMap<CustomerId, Customer>;
+  /** Chapters in play order. */
   readonly chapters: ReadonlyMap<ChapterId, Chapter>;
   readonly economy: Economy;
   readonly newGame: NewGameConfig;
+  /** In data order. */
+  readonly shop: ReadonlyMap<ShopItemId, ShopItem>;
 }
 
 // ─── Game state ─────────────────────────────────────────────────────────────
@@ -462,6 +489,8 @@ type ActionBody =
   /** Merge kitchen.ovens[from] into kitchen.ovens[to]. */
   | { readonly type: 'mergeOvens'; readonly from: number; readonly to: number }
   | { readonly type: 'completeTask'; readonly taskId: TaskId }
+  /** Buy something from the Shop (T7.8). */
+  | { readonly type: 'buyShopItem'; readonly shopItemId: ShopItemId }
   | { readonly type: 'dismissDiscovery'; readonly itemId: ItemId }
   | { readonly type: 'setTutorialStep'; readonly step: TutorialStep }
   /** Time passing: order refills and cooldowns. Sent on an interval and on load. */
@@ -560,7 +589,14 @@ export type GameEvent =
       readonly type: 'cooldownRushed';
       readonly cell: CellIndex;
       readonly gems: number;
-    };
+    }
+  | {
+      readonly type: 'purchased';
+      readonly shopItemId: ShopItemId;
+      readonly coins: number;
+    }
+  /** The player moved on to this chapter (T7.2). */
+  | { readonly type: 'chapterStarted'; readonly chapterId: ChapterId };
 
 export type ActionResult =
   | {

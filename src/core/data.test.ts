@@ -214,6 +214,7 @@ function makeFixture(): RawGameData {
       chapterId: 'chapter1',
       unlockedCustomers: ['grandma'],
     },
+    shop: { items: [] },
   };
 }
 
@@ -599,5 +600,118 @@ describe('loadGameData', () => {
     // Other sessions are writing these files concurrently; if this fails,
     // the thrown error lists every current problem with the real data.
     expect(() => loadGameData()).not.toThrow();
+  });
+});
+
+describe('parseGameData: chapters and the Shop (T7.1)', () => {
+  /** The fixture's only task, under a new id, in a second chapter. */
+  function secondChapter(raw: RawGameData, taskId: string): void {
+    const first = list(raw.chapters)[0]!;
+    const task = { ...list(first.tasks)[0]!, id: taskId };
+    list(raw.chapters).push({ ...first, id: 'chapter2', tasks: [task] });
+  }
+
+  it('accepts a second chapter with its own task ids', () => {
+    const raw = broken((r) => secondChapter(r, 'cafe-task-1'));
+
+    expect([...parseGameData(raw).chapters.keys()]).toEqual([
+      'chapter1',
+      'chapter2',
+    ]);
+  });
+
+  it('rejects a task id reused in another chapter', () => {
+    const raw = broken((r) => secondChapter(r, 'task-1'));
+
+    expect(() => parseGameData(raw)).toThrow(/tasks across all chapters/);
+  });
+
+  it('loads shop rows in data order', () => {
+    const raw = broken((r) => {
+      obj(r.shop).items = [
+        {
+          id: 'mill',
+          name: 'Mill',
+          kind: 'generator',
+          itemId: 'flour-mill-1',
+          price: 100,
+          fromChapter: 'chapter1',
+        },
+        {
+          id: 'snack',
+          name: 'Snack',
+          kind: 'energy',
+          energy: 25,
+          price: 50,
+          fromChapter: 'chapter1',
+        },
+      ];
+    });
+
+    expect([...parseGameData(raw).shop.keys()]).toEqual(['mill', 'snack']);
+  });
+
+  it('lists every shop problem in one error', () => {
+    const raw = broken((r) => {
+      obj(r.shop).items = [
+        {
+          id: 'no-item',
+          name: 'x',
+          kind: 'generator',
+          price: 10,
+          fromChapter: 'chapter1',
+        },
+        {
+          id: 'not-gen',
+          name: 'x',
+          kind: 'generator',
+          itemId: 'wheat-stalk',
+          price: 10,
+          fromChapter: 'chapter1',
+        },
+        {
+          id: 'no-energy',
+          name: 'x',
+          kind: 'energy',
+          energy: 0,
+          price: 10,
+          fromChapter: 'chapter1',
+        },
+        {
+          id: 'free',
+          name: 'x',
+          kind: 'energy',
+          energy: 5,
+          price: 0,
+          fromChapter: 'chapter1',
+        },
+        {
+          id: 'later',
+          name: 'x',
+          kind: 'energy',
+          energy: 5,
+          price: 10,
+          fromChapter: 'chapter9',
+        },
+      ];
+    });
+
+    let message = '';
+    try {
+      parseGameData(raw);
+    } catch (error) {
+      message = (error as Error).message;
+    }
+    expect(message).toMatch(/"no-item": a generator row needs an itemId/);
+    expect(message).toMatch(/"not-gen": "wheat-stalk" is not a generator/);
+    expect(message).toMatch(
+      /"no-energy": an energy row needs a positive energy/,
+    );
+    expect(message).toMatch(/"free": price 0 is not positive/);
+    expect(message).toMatch(/"later": fromChapter "chapter9"/);
+  });
+
+  it('loads the real shop.json', () => {
+    expect(loadGameData().shop.size).toBeGreaterThan(0);
   });
 });

@@ -12,6 +12,7 @@ import { loadRecipe } from './kitchen';
 import { refillOrders } from './orders';
 import { mergeOvens } from './ovens';
 import { completeTask } from './renovation';
+import { buyShopItem } from './shop';
 import { setTutorialStep } from './tutorial';
 import { buyPantrySlot, storeInPantry, takeFromPantry } from './pantry';
 import { createRng } from './rng';
@@ -96,6 +97,8 @@ function routeAction(
       return handlers.mergeOvens(data, state, action, rng);
     case 'completeTask':
       return handlers.completeTask(data, state, action, rng);
+    case 'buyShopItem':
+      return handlers.buyShopItem(data, state, action, rng);
     case 'dismissDiscovery':
       return handlers.dismissDiscovery(data, state, action, rng);
     case 'setTutorialStep':
@@ -146,6 +149,8 @@ export const dispatch: Dispatch = createDispatch({
     mergeOvens(data, state, action.from, action.to),
   completeTask: (data, state, action) =>
     completeTask(data, state, action.taskId),
+  buyShopItem: (data, state, action) =>
+    buyShopItem(data, state, action.shopItemId, action.now),
   dismissDiscovery: (data, state, action) =>
     dismissDiscovery(data, state, action.itemId),
   setTutorialStep: (data, state, action) =>

@@ -1,0 +1,358 @@
+{
+  "id": "chapter2",
+  "name": "The Café Terrace",
+  "sceneKey": "cafe-terrace",
+  "introSceneId": null,
+  "tasks": [
+    {
+      "id": "cafe-sweep-terrace",
+      "name": "Sweep the terrace",
+      "starCost": 8,
+      "spot": {
+        "x": 0.17,
+        "y": 0.2
+      },
+      "prerequisites": [],
+      "unlocks": [],
+      "featuredItems": ["egg", "sugar-cube"],
+      "beforeSpriteKey": "cafe-terrace-sweep-terrace-before",
+      "afterSpriteKey": "cafe-terrace-sweep-terrace-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-fix-gate",
+      "name": "Fix the garden gate",
+      "starCost": 8,
+      "spot": {
+        "x": 0.35,
+        "y": 0.16
+      },
+      "prerequisites": ["cafe-sweep-terrace"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "hen-coop-1"
+        }
+      ],
+      "featuredItems": ["egg", "egg-pair"],
+      "beforeSpriteKey": "cafe-terrace-fix-gate-before",
+      "afterSpriteKey": "cafe-terrace-fix-gate-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-wipe-tables",
+      "name": "Wipe down the tables",
+      "starCost": 10,
+      "spot": {
+        "x": 0.64,
+        "y": 0.19
+      },
+      "prerequisites": ["cafe-sweep-terrace"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "priya"
+        }
+      ],
+      "featuredItems": ["sugar-cube", "egg-pair"],
+      "beforeSpriteKey": "cafe-terrace-wipe-tables-before",
+      "afterSpriteKey": "cafe-terrace-wipe-tables-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-string-lights",
+      "name": "String up the fairy lights",
+      "starCost": 10,
+      "spot": {
+        "x": 0.87,
+        "y": 0.17
+      },
+      "prerequisites": ["cafe-fix-gate"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "sugar-tin-1"
+        }
+      ],
+      "featuredItems": ["sugar-bowl", "egg-carton"],
+      "beforeSpriteKey": "cafe-terrace-string-lights-before",
+      "afterSpriteKey": "cafe-terrace-string-lights-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-paint-railings",
+      "name": "Paint the railings",
+      "starCost": 10,
+      "spot": {
+        "x": 0.15,
+        "y": 0.34
+      },
+      "prerequisites": ["cafe-wipe-tables"],
+      "unlocks": [],
+      "featuredItems": ["cookie", "sugar-bowl"],
+      "beforeSpriteKey": "cafe-terrace-paint-railings-before",
+      "afterSpriteKey": "cafe-terrace-paint-railings-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-plant-herbs",
+      "name": "Plant the herb planters",
+      "starCost": 12,
+      "spot": {
+        "x": 0.38,
+        "y": 0.33
+      },
+      "prerequisites": ["cafe-string-lights"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "bramble"
+        }
+      ],
+      "featuredItems": ["cookie", "egg-carton"],
+      "beforeSpriteKey": "cafe-terrace-plant-herbs-before",
+      "afterSpriteKey": "cafe-terrace-plant-herbs-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-umbrellas",
+      "name": "Put up the parasols",
+      "starCost": 12,
+      "spot": {
+        "x": 0.62,
+        "y": 0.34
+      },
+      "prerequisites": ["cafe-paint-railings"],
+      "unlocks": [],
+      "featuredItems": ["cupcake", "syrup-bottle"],
+      "beforeSpriteKey": "cafe-terrace-umbrellas-before",
+      "afterSpriteKey": "cafe-terrace-umbrellas-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-menu-board",
+      "name": "Chalk the menu board",
+      "starCost": 12,
+      "spot": {
+        "x": 0.87,
+        "y": 0.36
+      },
+      "prerequisites": ["cafe-plant-herbs"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "hen-coop-1"
+        }
+      ],
+      "featuredItems": ["cookie", "whisked-eggs"],
+      "beforeSpriteKey": "cafe-terrace-menu-board-before",
+      "afterSpriteKey": "cafe-terrace-menu-board-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-fix-fountain",
+      "name": "Fix the little fountain",
+      "starCost": 12,
+      "spot": {
+        "x": 0.17,
+        "y": 0.5
+      },
+      "prerequisites": ["cafe-umbrellas"],
+      "unlocks": [],
+      "featuredItems": ["cupcake", "caramel"],
+      "beforeSpriteKey": "cafe-terrace-fix-fountain-before",
+      "afterSpriteKey": "cafe-terrace-fix-fountain-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-tune-piano",
+      "name": "Tune the old piano",
+      "starCost": 14,
+      "spot": {
+        "x": 0.38,
+        "y": 0.49
+      },
+      "prerequisites": ["cafe-menu-board", "cafe-fix-fountain"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "theo"
+        }
+      ],
+      "featuredItems": ["custard-cup", "cookie-stack"],
+      "beforeSpriteKey": "cafe-terrace-tune-piano-before",
+      "afterSpriteKey": "cafe-terrace-tune-piano-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-striped-awning",
+      "name": "Hang the striped awning",
+      "starCost": 14,
+      "spot": {
+        "x": 0.59,
+        "y": 0.48
+      },
+      "prerequisites": ["cafe-tune-piano"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "sugar-tin-1"
+        }
+      ],
+      "featuredItems": ["cake-slice", "caramel"],
+      "beforeSpriteKey": "cafe-terrace-striped-awning-before",
+      "afterSpriteKey": "cafe-terrace-striped-awning-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-third-oven",
+      "name": "Wheel out another Toaster Oven",
+      "starCost": 14,
+      "spot": {
+        "x": 0.86,
+        "y": 0.49
+      },
+      "prerequisites": ["cafe-striped-awning"],
+      "unlocks": [
+        {
+          "kind": "oven",
+          "ovenId": "toaster-oven"
+        }
+      ],
+      "featuredItems": ["cupcake", "cookie-stack"],
+      "beforeSpriteKey": "cafe-terrace-third-oven-before",
+      "afterSpriteKey": "cafe-terrace-third-oven-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-cake-stand",
+      "name": "Set up the cake stand",
+      "starCost": 14,
+      "spot": {
+        "x": 0.13,
+        "y": 0.68
+      },
+      "prerequisites": ["cafe-third-oven"],
+      "unlocks": [],
+      "featuredItems": ["cake-slice", "custard-cup"],
+      "beforeSpriteKey": "cafe-terrace-cake-stand-before",
+      "afterSpriteKey": "cafe-terrace-cake-stand-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-chalk-sign",
+      "name": "Paint the sandwich board",
+      "starCost": 16,
+      "spot": {
+        "x": 0.38,
+        "y": 0.66
+      },
+      "prerequisites": ["cafe-third-oven"],
+      "unlocks": [],
+      "featuredItems": ["cookie-tin", "cocoa-bean"],
+      "beforeSpriteKey": "cafe-terrace-chalk-sign-before",
+      "afterSpriteKey": "cafe-terrace-chalk-sign-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-flower-pots",
+      "name": "Fill the flower pots",
+      "starCost": 16,
+      "spot": {
+        "x": 0.6,
+        "y": 0.64
+      },
+      "prerequisites": ["cafe-cake-stand", "cafe-chalk-sign"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "dairy-fridge-1"
+        }
+      ],
+      "featuredItems": ["layer-cake", "creme-brulee"],
+      "beforeSpriteKey": "cafe-terrace-flower-pots-before",
+      "afterSpriteKey": "cafe-terrace-flower-pots-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-lanterns",
+      "name": "Hang the paper lanterns",
+      "starCost": 16,
+      "spot": {
+        "x": 0.85,
+        "y": 0.65
+      },
+      "prerequisites": ["cafe-flower-pots"],
+      "unlocks": [],
+      "featuredItems": ["cookie-tin", "chocolate-bar"],
+      "beforeSpriteKey": "cafe-terrace-lanterns-before",
+      "afterSpriteKey": "cafe-terrace-lanterns-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-mural",
+      "name": "Paint the wall mural",
+      "starCost": 18,
+      "spot": {
+        "x": 0.14,
+        "y": 0.84
+      },
+      "prerequisites": ["cafe-lanterns"],
+      "unlocks": [],
+      "featuredItems": ["layer-cake", "truffle-box"],
+      "beforeSpriteKey": "cafe-terrace-mural-before",
+      "afterSpriteKey": "cafe-terrace-mural-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-bunting",
+      "name": "Hang the bunting",
+      "starCost": 18,
+      "spot": {
+        "x": 0.39,
+        "y": 0.81
+      },
+      "prerequisites": ["cafe-lanterns"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "flour-mill-1"
+        }
+      ],
+      "featuredItems": ["gift-hamper", "creme-brulee"],
+      "beforeSpriteKey": "cafe-terrace-bunting-before",
+      "afterSpriteKey": "cafe-terrace-bunting-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-second-recipe-page",
+      "name": "Frame Grandma's second recipe page",
+      "starCost": 20,
+      "spot": {
+        "x": 0.64,
+        "y": 0.83
+      },
+      "prerequisites": ["cafe-mural", "cafe-bunting"],
+      "unlocks": [],
+      "featuredItems": ["wedding-cake", "cookie-tin"],
+      "beforeSpriteKey": "cafe-terrace-second-recipe-page-before",
+      "afterSpriteKey": "cafe-terrace-second-recipe-page-after",
+      "sceneId": null
+    },
+    {
+      "id": "cafe-grand-opening",
+      "name": "The café terrace opens",
+      "starCost": 20,
+      "spot": {
+        "x": 0.87,
+        "y": 0.84
+      },
+      "prerequisites": ["cafe-second-recipe-page"],
+      "unlocks": [],
+      "featuredItems": ["wedding-cake", "gift-hamper"],
+      "beforeSpriteKey": "cafe-terrace-grand-opening-before",
+      "afterSpriteKey": "cafe-terrace-grand-opening-after",
+      "sceneId": null
+    }
+  ]
+}

@@ -66,6 +66,7 @@ function makeGameData(): GameData {
       chapterId: 'chapter1',
       unlockedCustomers: [],
     },
+    shop: new Map(),
   };
 }
 

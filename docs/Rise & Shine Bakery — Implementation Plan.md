@@ -190,6 +190,32 @@ Open items found during the build. T6.1–T6.3 follow T5.14's art process: pixel
 | T6.6 | Chapter 2 renovation tasks that unlock the Hen Coop and Sugar Tin (and with them Cookie and Cupcake) | Part of the next plan (T-O6) | T-O6 | — |
 | T6.7 | Fruit Crate generator, once a recipe uses fruit (Chapter 3 in the GDD) | Part of a later plan | — | — |
 
+## Phase 7: Chapter 2, The Café Terrace, and the Shop
+
+Chapter 1 passed its playtest (T-O5, Oct 1). Chapter 2 is the GDD's Café Terrace: the Hen Coop and Sugar Tin arrive, and with them the Cookie and Cupcake recipes, while the shop wins its regulars back from MegaBun. It also adds the Shop, the coin sink the T-O3 pass found missing. The MegaBun competitive events wait for Phase 8.
+
+**Contract change (T-O1), to approve before T7.2 and T7.8.** In `types.ts`:
+
+- `ShopItemId`, and `ShopItem { id, name, kind: 'generator' | 'energy', itemId?, energy?, price, fromChapter }`, with a `ShopFile` for `src/data/shop.json` and `GameData.shop: ReadonlyMap<ShopItemId, ShopItem>`.
+- Action `{ type: 'buyShopItem'; shopItemId }`. Rejects reuse `notEnoughCoins` and `boardFull`.
+- Events `{ type: 'purchased'; shopItemId; coins }` and `{ type: 'chapterStarted'; chapterId }`.
+- No change to `GameState`, so saves need no migration. Prices are fixed; a price that rises with each purchase would need a purchase count in the save and a v1 to v2 migration, so it waits until the balance pass shows a need.
+
+| ID | Task | Model | Depends on | Done when |
+| --- | --- | --- | --- | --- |
+| T7.1 | The contract change above; dispatch cases for the new action; the loader and validator for `shop.json`; task ids unique across all chapters | Opus | Scott's approval | Typecheck passes; the loader rejects a duplicate task id across chapters |
+| T7.2 | Chapter progression: completing a chapter's last task moves `chapterId` to the next chapter in data order and emits `chapterStarted`. The last chapter stays put | Sonnet | T7.1 | Tests: mid-chapter, the last task, the final chapter |
+| T7.3 | Three new regulars for Chapter 2 in `customers.json`, with favourite items from the egg, sugar, cookie and cupcake chains, plus their portraits (neutral, happy, impatient: 9 files) | Sonnet | T6.1 (style) | The loader accepts them; Scott approves the portraits |
+| T7.4 | `chapter2.json`: The Café Terrace's 20 tasks. Early tasks unlock the Hen Coop and the Sugar Tin (folds in T6.6), the rest the new regulars and a few extra generators; featured items lean on eggs, sugar, cookies and cupcakes. Ids prefixed `cafe-` so they can't collide with Chapter 1 | Sonnet | T7.2, T7.3 | The loader accepts it; a full-chapter test like chapter1.test.ts |
+| T7.5 | Chapter transition in the UI: a "Chapter complete" card when `chapterStarted` arrives, the next chapter's intro scene, the Bakery switching to the new location | Sonnet | T7.2 | A browser run from Chapter 1's last task into Chapter 2 |
+| T7.6 | Chapter 2 dialogue: the intro (MegaBun has opened a kiosk across the lane and the regulars are drifting), a scene per new regular, the four Chapter 1 regulars coming back, and a finale | Sonnet | T7.3, T7.4, T5.4 | Scott approves the script; `missingSceneIds` is empty |
+| T7.7 | Café Terrace art: the scene (96 × 128) and its 40 before/after pictures, made the T6.2 way | Sonnet | T7.4 | Every chapter 2 sprite key has a PNG; Scott approves each batch |
+| T7.8 | The Shop: `shop.json` (extra generators of each kind unlocked so far, and energy refills), core `buyShopItem` placing a generator like a renovation unlock, and the Shop screen replacing "Coming soon", with Pantry slots listed there too | Sonnet | T7.1 | Buying spends coins and places the item; unaffordable and locked rows are disabled |
+| T7.9 | Balance pass (T-O3): extend the simulator to play across chapters and use the Shop; tune Chapter 2's task costs and the Shop's prices | Opus | T7.4, T7.8 | Chapter 2 takes about 2–3 days after Chapter 1, and coins have somewhere to go |
+| T7.10 | Phase-end review (T-O2) and a Chapter 2 playtest (T-O5) | Opus, then Scott | All above | Lint, typecheck, tests and build pass; Scott plays Chapter 2 through |
+
+**Phase 8 (after Chapter 2 plays well):** the MegaBun competitive events from the GDD, starting with the Bake-Off Showdown: an event generator, Hometown Pride points, MegaBun's scripted score curve, a milestone track, and the 3–5 day timer.
+
 ## Work kept for Opus or Scott
 
 These tasks need judgment across the whole codebase or taste calls, so they stay with Opus or Scott rather than being handed off.
@@ -198,7 +224,7 @@ These tasks need judgment across the whole codebase or taste calls, so they stay
 | --- | --- | --- | --- |
 | T-O1 | Draft and freeze the type contracts (T1.1); approve any later change request | Opus drafts, Scott approves | Start of Phase 1 |
 | T-O2 | Integration review at each phase end: read merged code, fix seams between tasks, update briefs for the next phase | Opus | End of each phase |
-| T-O3 | Balancing pass: simulate 3 days of play from the JSON data and tune energy, costs, and drop rates to the GDD targets. Done after Phase 5 with `npm run balance`: generator charges ×3, order tiers 5/7, task costs ×2 (6–16 stars, above the GDD's 3–8), level XP ×2; Chapter 1 now takes about 3–4 days. Open: a fast first session, a coin sink, orders per session above target | Opus | After Phase 3, again after Phase 5 |
+| T-O3 | Balancing pass: simulate 3 days of play from the JSON data and tune energy, costs, and drop rates to the GDD targets. Done after Phase 5 with `npm run balance`: generator charges ×3, order tiers 5/7, task costs ×2 (6–16 stars, above the GDD's 3–8), level XP ×2; Then walk-ins of 2–3 items (2 stars) and a 90 s order refill to calm the first session (5 tasks down to ~2). Chapter 1 now takes about 3 days for a fast player. Open: a coin sink, orders per session above target | Opus | After Phase 3, again after Phase 5 |
 | T-O4 | Art style sheet: palette per chain, outline weight, highlight style, one reference item per chain. Settled by the switch to pixel art: the finished item PNGs are the reference (1 px `#3a2414` outline, chain-color fills, highlight top-left, shade bottom-right) | Scott, with Opus drafting | Before T5.14 |
 | T-O5 | Playtests: fun check at Milestone 1 (T2.9) and a Chapter 1 run-through at the end | Scott | After T2.9 and after Phase 5 |
-| T-O6 | Next plan: MegaBun competitive events system | Opus | After Chapter 1 playtest |
+| T-O6 | Next plan: Chapter 2 and the Shop (Phase 7, written Oct 1), then the MegaBun competitive events system (Phase 8) | Opus | After Chapter 1 playtest |

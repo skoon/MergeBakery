@@ -29,6 +29,27 @@
       "favoriteItems": ["flour-sack", "milk-bottle", "cheese-wheel"]
     },
     {
+      "id": "priya",
+      "name": "Priya",
+      "kind": "regular",
+      "portraitKey": "portrait-priya",
+      "favoriteItems": ["cupcake", "cake-slice", "truffle-box"]
+    },
+    {
+      "id": "bramble",
+      "name": "Mr. Bramble",
+      "kind": "regular",
+      "portraitKey": "portrait-bramble",
+      "favoriteItems": ["cookie", "cookie-stack", "egg-carton"]
+    },
+    {
+      "id": "theo",
+      "name": "Theo",
+      "kind": "regular",
+      "portraitKey": "portrait-theo",
+      "favoriteItems": ["custard-cup", "creme-brulee", "caramel"]
+    },
+    {
       "id": "walkin-hiker",
       "name": "Hiker",
       "kind": "walkIn",

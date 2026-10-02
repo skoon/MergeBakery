@@ -65,6 +65,7 @@ function makeGameData(): GameData {
       chapterId: 'chapter1',
       unlockedCustomers: [],
     },
+    shop: new Map(),
   };
 }
 
@@ -117,6 +118,7 @@ function makeThrowingHandlers(): Handlers {
     rushCooldown: notCalled,
     mergeOvens: notCalled,
     completeTask: notCalled,
+    buyShopItem: notCalled,
     dismissDiscovery: notCalled,
     setTutorialStep: notCalled,
     tick: notCalled,
@@ -145,14 +147,15 @@ const SAMPLE_ACTIONS: readonly Action[] = [
   { type: 'rushCooldown', cell: 0, now: NOW },
   { type: 'mergeOvens', from: 0, to: 1, now: NOW },
   { type: 'completeTask', taskId: 'task-1', now: NOW },
+  { type: 'buyShopItem', shopItemId: 'shop-1', now: NOW },
   { type: 'dismissDiscovery', itemId: 'wheat-stalk', now: NOW },
   { type: 'setTutorialStep', step: 'firstMerge', now: NOW },
   { type: 'tick', now: NOW },
 ];
 
 describe('dispatch', () => {
-  it('covers all 18 action types', () => {
-    expect(SAMPLE_ACTIONS).toHaveLength(18);
+  it('covers all 19 action types', () => {
+    expect(SAMPLE_ACTIONS).toHaveLength(19);
   });
 
   it.each(SAMPLE_ACTIONS.map((action) => ({ action })))(
