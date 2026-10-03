@@ -8,14 +8,14 @@ Scope decided Oct 1: Chapter 2's content plus the Shop; the MegaBun competitive 
 - [x] T-O1 contract change, approved by Scott Oct 1: `ShopItem`/`ShopFile`/`GameData.shop`, the `buyShopItem` action, the `purchased` and `chapterStarted` events. No `GameState` change, so no save migration.
 - [x] T7.1 Contract, dispatch cases, shop.json loader and validator, task ids unique across chapters (Opus). Generator placement is now shared by renovation unlocks and the Shop (src/core/placement.ts)
 - [x] T7.2 Chapter progression: the last task moves to the next chapter and emits `chapterStarted` (Sonnet). `nextChapterId` in renovation.ts
-- [ ] T7.3 Three new Chapter 2 regulars and their 9 portraits (Sonnet) — Scott approves the portraits. Data done (priya, bramble, theo in customers.json); portraits awaiting approval in docs/art-review/
+- [x] T7.3 Three new Chapter 2 regulars and their 9 portraits (Sonnet) — Scott approved Oct 1; `public/art/portrait-<priya|bramble|theo>-*.png`
 - [x] T7.4 chapter2.json: The Café Terrace's 20 tasks, unlocking the Hen Coop and Sugar Tin early (Sonnet) — after T7.2, T7.3
 - [x] T7.5 Chapter transition UI: "Chapter complete" card, the next intro scene, the Bakery switching location (Sonnet) — after T7.2. src/ui/chapterTransition.ts; waits for the finale scene to close. `catchUpChapter` moves saves that finished Chapter 1 earlier on to Chapter 2 at load
-- [ ] T7.6 Chapter 2 dialogue (Sonnet) — after T7.3, T7.4; Scott approves the script
-- [ ] T7.7 Café Terrace art: scene and 40 before/after (Sonnet) — after T7.4; Scott approves each batch
+- [x] T7.6 Chapter 2 dialogue (Sonnet) — Scott approved the script Oct 1. `src/data/dialogue/chapter2.json`, 7 scenes (`ch2-intro`, `ch2-priya`, `ch2-bramble`, `ch2-theo`, `ch2-neighbors`, `ch2-recipe-page`, `ch2-grand-opening`); `main.ts` merges both chapters' scenes
+- [x] T7.7 Café Terrace art: scene and 40 before/after (Sonnet) — Scott approved; 41 files `public/art/cafe-terrace*.png`, generator `scripts/art/cafe.py`
 - [x] T7.8 The Shop: shop.json, `buyShopItem`, the Shop screen (Sonnet) — after T7.1
-- [ ] T7.9 Balance pass across both chapters with the Shop (Opus) — after T7.4, T7.8
-- [ ] T7.10 Phase-end review (T-O2), then Scott's Chapter 2 playtest (T-O5)
+- [x] T7.9 Balance pass across both chapters with the Shop (Opus). The simulator now plays past Chapter 1 and buys from the Shop (bot also uses Golden Whisks, merges toward open orders, sells dead weight). Scott approved raising the energy packs from 150/500 to 300/1000 (the only repeatable coin sink). After: all 5 seeds finish Chapter 2, 2–4 bot-days after Chapter 1 (days 4–6), and the bot ends with hundreds of coins, not thousands. Chapter 2 task costs unchanged
+- [ ] T7.10 Phase-end review (T-O2), then Scott's Chapter 2 playtest (T-O5). Gate passed Oct 2 (typecheck, lint, 699 tests, `npm run build`). Playtest under way; the transition card and the Café Terrace art had not been checked in a browser before it
 
 # Phase 5 — Chapter 1, UI, audio, and polish (done)
 

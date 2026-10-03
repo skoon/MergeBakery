@@ -1,37 +1,42 @@
-# Handoff — Oct 1, 2026
+# Handoff — Oct 2, 2026
 
 Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md` (top section is Phase 7) and `docs/briefs/working-rules.md` first.
 
 ## State
 
-- **Branch** `t1.1-types`. Last commit `0a7693b` (T6.4 and T6.5). **Uncommitted:** the first-session tuning (T-O3 "smooth the first session") and all of Phase 7 so far. Scott commits — don't commit unless asked.
-- **Gate** on Oct 1: typecheck clean, eslint clean, prettier clean, 55 test files / 699 tests pass. `npm run build` was not re-run (it can take over 10 min on WSL `/mnt/d`; it passed after T6.5).
-- **Phases 1–6 done.** Scott playtested Chapter 1 (T-O5 passed, script approved).
-- **Phase 7 = Chapter 2 (The Café Terrace) + the Shop.** Plan: "Phase 7" in `docs/Rise & Shine Bakery — Implementation Plan.md`. MegaBun events are Phase 8, after Chapter 2.
+- **Branch** `t1.1-types`. Last commit `0a7693b` (T6.4 and T6.5). **Uncommitted:** the first-session tuning (T-O3 "smooth the first session") and all of Phase 7. Scott commits — don't commit unless asked.
+- **Gate** on Oct 2: typecheck clean, eslint and prettier clean, 55 test files / 699 tests pass, `npm run build` exits 0 (about 2.5 min).
+- **Phases 1–6 done.** Phase 7 (Chapter 2, The Café Terrace, and the Shop) is built and gated. **Scott's Chapter 2 playtest (T-O5) is under way and going well.** MegaBun events are Phase 8, after Chapter 2.
 
 ## Phase 7 progress
 
-| Task                    | Status                                                                                                                                                                                    |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| T-O1 contract           | Approved by Scott Oct 1. `ShopItem`/`ShopFile`/`GameData.shop`, `buyShopItem` action, `purchased` and `chapterStarted` events. No `GameState` change. `types.ts` is frozen again.         |
-| T7.1 loader             | Done. `src/data/shop.json`, zod + cross-checks in `data.ts`, task ids unique across chapters, `src/core/placement.ts` (shared generator placement).                                       |
-| T7.2 progression        | Done. Last task of a chapter sets `chapterId` and emits `chapterStarted` (`renovation.ts`). `catchUpChapter` moves old saves that already finished Chapter 1 forward at load (`main.ts`). |
-| T7.3 new regulars       | **Data done** (priya, bramble, theo in `customers.json`). **Portraits waiting on Scott's approval:** `docs/art-review/T7.3-chapter2-regulars.png`.                                        |
-| T7.4 chapter2.json      | Done. 20 `cafe-` tasks, costs 8–20 (total 274). Hen Coop and Sugar Tin unlock in the first five tasks. All `sceneId`s and `introSceneId` are still `null`.                                |
-| T7.5 transition UI      | Done in code (`src/ui/chapterTransition.ts`). **Not yet checked in a browser.**                                                                                                           |
-| T7.6 Chapter 2 script   | **Next.**                                                                                                                                                                                 |
-| T7.7 Café Terrace art   | **Next.**                                                                                                                                                                                 |
-| T7.8 Shop               | Done. `src/core/shop.ts`, `src/ui/shopScreen.ts` and `shopModel.ts`. The Pantry slot is sold there too.                                                                                   |
-| T7.9 balance            | Not started.                                                                                                                                                                              |
-| T7.10 review + playtest | Not started.                                                                                                                                                                              |
+| Task                    | Status                                                                                                                                                              |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| T-O1 contract           | Approved Oct 1. `ShopItem`/`ShopFile`/`GameData.shop`, `buyShopItem`, `purchased` and `chapterStarted`. No `GameState` change. `types.ts` is frozen again.          |
+| T7.1 loader             | Done. `shop.json`, zod and cross-checks in `data.ts`, `src/core/placement.ts`.                                                                                      |
+| T7.2 progression        | Done. `renovation.ts`; `catchUpChapter` in `main.ts` for old saves.                                                                                                 |
+| T7.3 new regulars       | Done. Priya, Bramble and Theo: data and 9 portraits in `public/art`. Approved.                                                                                      |
+| T7.4 chapter2.json      | Done. 20 `cafe-` tasks, costs 8–20 (total 274).                                                                                                                     |
+| T7.5 transition UI      | Done in code (`src/ui/chapterTransition.ts`). Being exercised in the playtest.                                                                                      |
+| T7.6 Chapter 2 script   | Done, approved. `src/data/dialogue/chapter2.json`, 7 scenes wired to `introSceneId` and the task `sceneId`s. `main.ts` merges both chapters' scenes.                |
+| T7.7 Café Terrace art   | Done, approved. `cafe-terrace.png` and 40 `cafe-terrace-<slug>-before/after.png` in `public/art`. Generator: `scripts/art/cafe.py`.                                 |
+| T7.8 Shop               | Done. `src/core/shop.ts`, `src/ui/shopScreen.ts`, `shopModel.ts`.                                                                                                   |
+| T7.9 balance            | Done. Simulator plays past Chapter 1 and buys from the Shop. Energy packs raised 150/500 to 300/1000 (Scott approved). Chapter 2 takes the bot 2–4 days. See below. |
+| T7.10 review + playtest | Gate passed. Playtest under way. The phase-end read-through of the integration seams has not been done.                                                             |
 
 ## What's next, in order
 
-1. **T7.3 portraits.** Once Scott approves the sheet, render each one at native 32×32 to `public/art/portrait-<id>-<neutral|happy|impatient>.png`: `CHARACTERS[id](expr).save(...)` in `scripts/art/portraits3.py`. Then delete `docs/art-review/`. The counter reuses `-neutral`.
-2. **T7.6 Chapter 2 script.** Write it in the same format as the Chapter 1 scenes: `ch2-intro`, a scene for each new regular's unlock, the Chapter 1 regulars dropping by, and a finale. Then set `introSceneId` and the task `sceneId`s in `chapter2.json`. `main.ts` only parses `chapter1Scenes` today, so merge Chapter 2's scenes in there. **Scott approves the script.**
-3. **T7.7 Café Terrace art.** Draw the `cafe-terrace` scene (96×128) and 40 `cafe-terrace-<slug>-before/after` sprites (32×32), following `scripts/art/scene.py` and `shop.py` (the Chapter 1 versions). Send review sheets in batches to `docs/art-review/`. **Scott approves each batch** before anything goes in `public/art/`. Missing art falls back to `_missing`, so the game still runs before then.
-4. **T7.9 balance.** Extend `src/sim/simulate.ts` so the bot can buy from the Shop and play past Chapter 1. Tune Chapter 2 task costs and the Shop prices (generators 400 / 600, energy 150 / 500, both guesses). `npm run balance`.
-5. **T7.10.** Phase-end review, the full gate including `npm run build`, then Scott's Chapter 2 playtest.
+1. **Collect Scott's playtest notes** and fix what he finds. Likely places: the chapter transition card and Chapter 2 intro scene, each task spot against the scene art, the Shop (prices, a full board when buying a generator).
+2. **T7.10 review.** Read the merged Phase 7 code for seams (dispatch cases, `main.ts` wiring, `catchUpChapter`), then update the briefs for Phase 8.
+3. **Housekeeping Scott does or approves:** delete `docs/art-review/` (an `rm` was denied in auto mode; it holds the T7.3 and T7.7 review sheets); commit the branch.
+4. **Phase 8:** MegaBun competitive events, starting with the Bake-Off Showdown (see the Implementation Plan).
+
+## Balance notes (T7.9)
+
+- Run `npm run balance`: 5 seeds, 10 days. The bot is a fast, tireless player, so people will take longer.
+- Chapter 1 finishes by day 2 for the bot (was about 2.5–3 days). The bot now buys energy, which probably explains it; the early sessions are unchanged.
+- Chapter 2: all 5 seeds finish on days 4–6. The Shop's generators (400 / 400 / 600 / 600) are bought early; energy is the repeatable coin sink.
+- Bot caveats: it leaves generators unmerged and never uses the Pantry, so it clogs the board more than a person would. It stalled in some seeds before the energy price rise.
 
 ## Standing rules from Scott
 
@@ -39,7 +44,7 @@ Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md
 - **Recipes** only use items the player can get at that point.
 - **Contract changes** to `src/core/types.ts` need Scott's T-O1 approval. Stop and explain first.
 - **Tests** that check tunables read their values from the data, not hard-coded numbers. Simulator tests have explicit timeouts (60–120 s).
-- **Python art scripts** need Pillow. `scripts/art/pixart.py` and `portraits.py` hold the shared helpers (`Canvas`, `outline`, `shaded_head`, `face`). Each script's `__main__` writes only a review sheet.
+- **Python art scripts** need Pillow. `scripts/art/pixart.py` and `portraits.py` hold the shared helpers (`Canvas`, `outline`, `shaded_head`, `face`). Each script's `__main__` writes only a review sheet (`cafe.py` takes an output folder).
 
 ## Known gotchas
 
