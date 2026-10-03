@@ -216,7 +216,7 @@ const eventsFileSchema: z.ZodType<EventsFile> = z.strictObject({
 const staffDefSchema: z.ZodType<StaffDef> = z.strictObject({
   id: z.string(),
   name: z.string(),
-  role: z.enum(['tapper', 'baker']),
+  role: z.enum(['tapper', 'baker', 'oven']),
   hireCost: z.number(),
   minReputation: z.number(),
   intervalSec: z.number().optional(),
@@ -886,10 +886,10 @@ function validateCrossReferences(parsed: ParsedSections): string[] {
     if (person.hireCost < 0 || person.minReputation < 0) {
       problems.push(`${where}: hireCost and minReputation can't be negative`);
     }
-    if (person.role === 'tapper') {
+    if (person.role === 'tapper' || person.role === 'oven') {
       if ((person.intervalSec ?? 0) <= 0 || (person.maxCatchUp ?? 0) < 1) {
         problems.push(
-          `${where}: a tapper needs a positive intervalSec and a maxCatchUp of at least 1`,
+          `${where}: a ${person.role} needs a positive intervalSec and a maxCatchUp of at least 1`,
         );
       }
     } else if (

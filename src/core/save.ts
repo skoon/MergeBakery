@@ -140,6 +140,7 @@ const tutorialStepSchema: z.ZodType<TutorialStep> = z.enum([
 const staffStateSchema: z.ZodType<StaffState> = z.strictObject({
   staffId: z.string(),
   assignedChain: z.string().nullable(),
+  assignedRecipe: z.string().nullable().optional(),
   lastActedAt: z.number(),
 });
 

@@ -21,6 +21,8 @@
  * `GameData.staff`, `Order.wholesale`, `OrderReward.reputation`,
  * `WholesaleRules`, `OrderRules.wholesale`, `hireStaff`, `assignStaff`,
  * `notEnoughReputation`, `staffHired`, `staffActed` and `wholesaleExpired`.
+ * Automation (T11.2, Scott, Oct 3): `StaffRole` 'oven', `StaffState.assignedRecipe`
+ * and `assignStaff`'s `recipeId`.
  *
  * Conventions every core function follows:
  * - Core functions are pure: they never mutate their inputs and return new
@@ -270,8 +272,10 @@ export interface EventsFile {
  * - tapper: taps one generator chain on its own every `intervalSec`, spending no
  *   energy but using the generator's charges and a free cell for each spawn.
  * - baker: every bake started takes `bakeTimeMultiplier` of its normal time.
+ * - oven: an Auto-Oven. Every `intervalSec` it collects finished bakes and, with
+ *   a slot free, reloads its assigned recipe from items on the board.
  */
-export type StaffRole = 'tapper' | 'baker';
+export type StaffRole = 'tapper' | 'baker' | 'oven';
 
 export interface StaffDef {
   readonly id: StaffId;
@@ -281,9 +285,9 @@ export interface StaffDef {
   readonly hireCost: number;
   /** Company reputation needed before this person can be hired. */
   readonly minReputation: number;
-  /** Tapper only: seconds between taps. */
+  /** Tapper and oven: seconds between actions. */
   readonly intervalSec?: number;
-  /** Tapper only: the most taps an absence can add up to when the game was closed. */
+  /** Tapper and oven: the most actions an absence can add up to when the game was closed. */
   readonly maxCatchUp?: number;
   /** Baker only: 0–1; 0.8 is bakes 20% faster. */
   readonly bakeTimeMultiplier?: number;
@@ -674,6 +678,8 @@ export interface StaffState {
   readonly staffId: StaffId;
   /** Tappers only: the generator chain they work; null when idle. */
   readonly assignedChain: ChainId | null;
+  /** Ovens only: the recipe they loop; null or absent when idle. */
+  readonly assignedRecipe?: RecipeId | null;
   /** When they last acted (or were hired); the next action is intervalSec later. */
   readonly lastActedAt: Timestamp;
 }
@@ -715,11 +721,13 @@ type ActionBody =
   | { readonly type: 'claimMilestone'; readonly index: number }
   | { readonly type: 'dismissEventResult' }
   | { readonly type: 'hireStaff'; readonly staffId: StaffId }
-  /** Point a tapper at a generator chain, or null to rest them. */
+  /** Point a tapper at a generator chain, or an Auto-Oven at a recipe; null rests them. */
   | {
       readonly type: 'assignStaff';
       readonly staffId: StaffId;
       readonly chainId: ChainId | null;
+      /** For an Auto-Oven: the recipe to loop, or null to rest it. */
+      readonly recipeId?: RecipeId | null;
     }
   | { readonly type: 'dismissDiscovery'; readonly itemId: ItemId }
   | { readonly type: 'setTutorialStep'; readonly step: TutorialStep }

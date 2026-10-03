@@ -167,7 +167,14 @@ export const dispatch: Dispatch = createDispatch({
   hireStaff: (data, state, action) =>
     hireStaff(data, state, action.staffId, action.now),
   assignStaff: (data, state, action) =>
-    assignStaff(data, state, action.staffId, action.chainId, action.now),
+    assignStaff(
+      data,
+      state,
+      action.staffId,
+      action.chainId,
+      action.now,
+      action.recipeId ?? null,
+    ),
   dismissDiscovery: (data, state, action) =>
     dismissDiscovery(data, state, action.itemId),
   setTutorialStep: (data, state, action) =>

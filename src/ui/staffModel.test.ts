@@ -74,4 +74,30 @@ describe('staffModel', () => {
     expect(row?.assignedChain).toBe('flour-mill');
     expect(row?.hireBlocked).toBeNull();
   });
+
+  it('gives an Auto-Oven the recipes the player can make', () => {
+    const withOven: GameData = {
+      ...data,
+      staff: new Map([
+        ...data.staff,
+        [
+          'oven',
+          person({ id: 'oven', name: 'Oven', role: 'oven', intervalSec: 120 }),
+        ],
+      ]),
+    };
+    const row = staffModel(
+      withOven,
+      stateWith(
+        { 0: 'flour-mill-1', 1: 'dairy-fridge-1' },
+        { chapterId: 'chapter2' },
+      ),
+    ).rows.find((r) => r.staffId === 'oven');
+    expect(row?.blurb).toBe('Collects and reloads a recipe every 2 min');
+    expect(row?.chainOptions).toEqual([]);
+    expect(row?.recipeOptions.map((r) => r.recipeId)).toEqual([
+      'bake-croissant',
+    ]);
+    expect(row?.assignedRecipe).toBeNull();
+  });
 });

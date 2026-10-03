@@ -31,6 +31,28 @@
       "maxCatchUp": 16,
       "portraitKey": "portrait-rosa",
       "minChapter": "chapter4"
+    },
+    {
+      "id": "auto-oven",
+      "name": "Auto-Oven",
+      "role": "oven",
+      "hireCost": 6000,
+      "minReputation": 100,
+      "intervalSec": 120,
+      "maxCatchUp": 6,
+      "portraitKey": "portrait-auto-oven",
+      "minChapter": "chapter4"
+    },
+    {
+      "id": "auto-oven-2",
+      "name": "Auto-Oven II",
+      "role": "oven",
+      "hireCost": 9000,
+      "minReputation": 250,
+      "intervalSec": 90,
+      "maxCatchUp": 8,
+      "portraitKey": "portrait-auto-oven",
+      "minChapter": "chapter4"
     }
   ]
 }

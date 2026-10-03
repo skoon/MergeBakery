@@ -10,9 +10,15 @@ import type {
   StaffRole,
 } from '../core/types';
 import { formatTimeLeft } from './eventModel';
+import { recipeAvailable } from './kitchenModel';
 
 export interface ChainOption {
   chainId: ChainId;
+  name: string;
+}
+
+export interface RecipeOption {
+  recipeId: string;
   name: string;
 }
 
@@ -31,6 +37,10 @@ export interface StaffRow {
   assignedChain: ChainId | null;
   /** Generator chains a tapper can be pointed at: those with a generator on the board. */
   chainOptions: ChainOption[];
+  /** An Auto-Oven's recipe; null when resting. */
+  assignedRecipe: string | null;
+  /** Recipes an Auto-Oven can loop: those whose inputs the player can get. */
+  recipeOptions: RecipeOption[];
 }
 
 export interface StaffModel {
@@ -85,12 +95,21 @@ export function staffModel(data: GameData, state: GameState): StaffModel {
       blurb:
         def.role === 'tapper'
           ? `Taps a generator every ${formatTimeLeft((def.intervalSec ?? 0) * 1000)}, no energy`
-          : `Bakes ${Math.round((1 - (def.bakeTimeMultiplier ?? 1)) * 100).toString()}% faster`,
+          : def.role === 'oven'
+            ? `Collects and reloads a recipe every ${formatTimeLeft((def.intervalSec ?? 0) * 1000)}`
+            : `Bakes ${Math.round((1 - (def.bakeTimeMultiplier ?? 1)) * 100).toString()}% faster`,
       hired: hired !== undefined,
       hireBlocked,
       hireCost: def.hireCost,
       assignedChain: hired?.assignedChain ?? null,
       chainOptions: def.role === 'tapper' ? options : [],
+      assignedRecipe: hired?.assignedRecipe ?? null,
+      recipeOptions:
+        def.role === 'oven'
+          ? [...data.recipes.values()]
+              .filter((r) => recipeAvailable(data, state, r))
+              .map((r) => ({ recipeId: r.id, name: r.name }))
+          : [],
     });
   }
   return { reputation: state.reputation, rows };

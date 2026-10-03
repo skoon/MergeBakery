@@ -75,6 +75,27 @@ export function mountStaffPanel(
         if (row.hireBlocked) {
           action.appendChild(el('p', 'staff-card__why', row.hireBlocked));
         }
+      } else if (row.role === 'oven') {
+        const select = el('select', 'staff-card__select');
+        select.setAttribute('aria-label', `${row.name}'s recipe`);
+        const rest = el('option', '', 'Resting');
+        rest.value = '';
+        select.appendChild(rest);
+        for (const option of row.recipeOptions) {
+          const o = el('option', '', option.name);
+          o.value = option.recipeId;
+          select.appendChild(o);
+        }
+        select.value = row.assignedRecipe ?? '';
+        select.addEventListener('change', () => {
+          store.dispatch({
+            type: 'assignStaff',
+            staffId: row.staffId,
+            chainId: null,
+            recipeId: select.value === '' ? null : select.value,
+          });
+        });
+        action.appendChild(select);
       } else if (row.role === 'tapper') {
         const select = el('select', 'staff-card__select');
         select.setAttribute('aria-label', `${row.name}'s generator`);

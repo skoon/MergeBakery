@@ -184,3 +184,78 @@ describe('staffBakeMultiplier', () => {
     );
   });
 });
+
+describe('Auto-Oven', () => {
+  const oven: StaffDef = {
+    ...tapper,
+    id: 'o',
+    role: 'oven',
+    intervalSec: 120,
+    maxCatchUp: 6,
+  };
+  const ovenData: GameData = {
+    ...data,
+    staff: new Map([...data.staff, ['o', oven]]),
+  };
+  const rng = () => createRng(4);
+  const working = (cells: Record<number, string>): GameState => {
+    const base = stateWith(cells, {
+      chapterId: 'chapter2',
+      coins: 500,
+      reputation: 20,
+    });
+    const h = hireStaff(ovenData, base, 'o', 0);
+    if (!h.ok) throw new Error('setup');
+    const b = assignStaff(ovenData, h.state, 'o', null, 0, 'bake-cookie');
+    if (!b.ok) throw new Error('setup');
+    return b.state;
+  };
+  const inputs = { 0: 'flour-bag', 1: 'sugar-bowl', 2: 'egg' };
+
+  it('is assigned a recipe, not a chain, and rests with null', () => {
+    const s = working({});
+    expect(s.staff[0]?.assignedRecipe).toBe('bake-cookie');
+    const r = assignStaff(ovenData, s, 'o', null, 5, null);
+    expect(r.ok && r.state.staff[0]?.assignedRecipe).toBeNull();
+    expect(() => assignStaff(ovenData, s, 'o', null, 5, 'nope')).toThrow();
+  });
+
+  it('starts its recipe when the inputs are on the board', () => {
+    const r = tickStaff(ovenData, working(inputs), rng(), 120_000);
+    if (!r.ok) throw new Error('expected ok');
+    const bake = r.state.kitchen.ovens[0]?.slots.find((b) => b !== null);
+    expect(bake?.recipeId).toBe('bake-cookie');
+    expect(
+      r.state.board.cells.slice(0, 3).every((c) => c.kind === 'empty'),
+    ).toBe(true);
+  });
+
+  it('does nothing without the inputs, and not before its interval', () => {
+    const none = working({ 0: 'flour-bag' });
+    const r = tickStaff(ovenData, none, rng(), 120_000);
+    expect(r.ok && r.state.kitchen).toEqual(none.kitchen);
+    const early = working(inputs);
+    const e = tickStaff(ovenData, early, rng(), 119_999);
+    expect(e.ok && e.state).toBe(early);
+  });
+
+  it('collects a finished bake and reloads for the next, over a longer absence', () => {
+    const first = tickStaff(
+      ovenData,
+      working({ ...inputs, 3: 'flour-bag', 4: 'sugar-bowl', 5: 'egg' }),
+      rng(),
+      120_000,
+    );
+    if (!first.ok) throw new Error('expected ok');
+    // Much later: the cookie is done; collect it and start the second batch.
+    const later = tickStaff(ovenData, first.state, rng(), 120_000 + 240_000);
+    if (!later.ok) throw new Error('expected ok');
+    const ids = later.state.board.cells.flatMap((c) =>
+      c.kind === 'item' ? [c.item.itemId] : [],
+    );
+    expect(ids).toContain('cookie');
+    expect(later.state.kitchen.ovens[0]?.slots.some((b) => b !== null)).toBe(
+      true,
+    );
+  });
+});
