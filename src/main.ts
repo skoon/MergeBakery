@@ -33,10 +33,12 @@ import { mountEventSheet } from './ui/eventSheet';
 import { parseScenes } from './ui/dialogue';
 import { mountDialoguePlayer } from './ui/dialoguePlayer';
 import { mountChapterTransition } from './ui/chapterTransition';
+import { mountEndCard } from './ui/endCard';
 import chapter1Scenes from './data/dialogue/chapter1.json';
 import chapter2Scenes from './data/dialogue/chapter2.json';
 import chapter3Scenes from './data/dialogue/chapter3.json';
 import chapter4Scenes from './data/dialogue/chapter4.json';
+import chapter5Scenes from './data/dialogue/chapter5.json';
 import eventScenes from './data/dialogue/events.json';
 import { startBakeNotifier } from './ui/bakeNotifier';
 import { createSettingsStore } from './ui/settings';
@@ -128,6 +130,7 @@ const dialogue = mountDialoguePlayer(
       ...chapter2Scenes.scenes,
       ...chapter3Scenes.scenes,
       ...chapter4Scenes.scenes,
+      ...chapter5Scenes.scenes,
       ...eventScenes.scenes,
     ],
   }),
@@ -157,6 +160,7 @@ store.subscribe((state, events) => {
   shownResult = state.eventResult;
 });
 const transition = mountChapterTransition(overlayRoot, store, dialogue);
+mountEndCard(overlayRoot, store, dialogue);
 if (initial.chapterId !== loaded.chapterId) {
   transition.announce(initial.chapterId);
 }

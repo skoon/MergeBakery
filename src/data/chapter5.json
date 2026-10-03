@@ -1,0 +1,348 @@
+{
+  "id": "chapter5",
+  "name": "Rise & Shine Factory",
+  "sceneKey": "factory",
+  "introSceneId": "ch5-intro",
+  "tasks": [
+    {
+      "id": "factory-clear-hall",
+      "name": "Clear the factory hall",
+      "starCost": 14,
+      "spot": {
+        "x": 0.17,
+        "y": 0.2
+      },
+      "prerequisites": [],
+      "unlocks": [],
+      "featuredItems": ["cookie", "brownie"],
+      "beforeSpriteKey": "factory-clear-hall-before",
+      "afterSpriteKey": "factory-clear-hall-after",
+      "sceneId": null
+    },
+    {
+      "id": "factory-power-up",
+      "name": "Switch the power back on",
+      "starCost": 14,
+      "spot": {
+        "x": 0.35,
+        "y": 0.16
+      },
+      "prerequisites": ["factory-clear-hall"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "flour-mill-1"
+        }
+      ],
+      "featuredItems": ["scone", "brownie"],
+      "beforeSpriteKey": "factory-power-up-before",
+      "afterSpriteKey": "factory-power-up-after",
+      "sceneId": null
+    },
+    {
+      "id": "factory-conveyor",
+      "name": "Mend the conveyor belt",
+      "starCost": 16,
+      "spot": {
+        "x": 0.64,
+        "y": 0.19
+      },
+      "prerequisites": ["factory-clear-hall"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "bex"
+        }
+      ],
+      "featuredItems": ["brownie", "bonbon"],
+      "beforeSpriteKey": "factory-conveyor-before",
+      "afterSpriteKey": "factory-conveyor-after",
+      "sceneId": "ch5-bex"
+    },
+    {
+      "id": "factory-mixers",
+      "name": "Fit the industrial mixers",
+      "starCost": 16,
+      "spot": {
+        "x": 0.87,
+        "y": 0.17
+      },
+      "prerequisites": ["factory-power-up"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "dairy-fridge-1"
+        }
+      ],
+      "featuredItems": ["bonbon", "cookie-stack"],
+      "beforeSpriteKey": "factory-mixers-before",
+      "afterSpriteKey": "factory-mixers-after",
+      "sceneId": null
+    },
+    {
+      "id": "factory-tempering-tanks",
+      "name": "Install the tempering tanks",
+      "starCost": 16,
+      "spot": {
+        "x": 0.15,
+        "y": 0.34
+      },
+      "prerequisites": ["factory-conveyor"],
+      "unlocks": [],
+      "featuredItems": ["brownie-tray", "bonbon"],
+      "beforeSpriteKey": "factory-tempering-tanks-before",
+      "afterSpriteKey": "factory-tempering-tanks-after",
+      "sceneId": null
+    },
+    {
+      "id": "factory-foreman-office",
+      "name": "Open the foreman office",
+      "starCost": 18,
+      "spot": {
+        "x": 0.38,
+        "y": 0.33
+      },
+      "prerequisites": ["factory-mixers"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "dill"
+        }
+      ],
+      "featuredItems": ["bonbon-box", "brownie-tray"],
+      "beforeSpriteKey": "factory-foreman-office-before",
+      "afterSpriteKey": "factory-foreman-office-after",
+      "sceneId": "ch5-dill"
+    },
+    {
+      "id": "factory-safety-rails",
+      "name": "Fit the safety rails",
+      "starCost": 18,
+      "spot": {
+        "x": 0.62,
+        "y": 0.34
+      },
+      "prerequisites": ["factory-tempering-tanks"],
+      "unlocks": [],
+      "featuredItems": ["brownie-tray", "cookie-tin"],
+      "beforeSpriteKey": "factory-safety-rails-before",
+      "afterSpriteKey": "factory-safety-rails-after",
+      "sceneId": null
+    },
+    {
+      "id": "factory-robot-arm",
+      "name": "Install the robot arm",
+      "starCost": 20,
+      "spot": {
+        "x": 0.87,
+        "y": 0.36
+      },
+      "prerequisites": ["factory-foreman-office", "factory-safety-rails"],
+      "unlocks": [],
+      "featuredItems": ["bonbon-box", "chocolate-cake"],
+      "beforeSpriteKey": "factory-robot-arm-before",
+      "afterSpriteKey": "factory-robot-arm-after",
+      "sceneId": null
+    },
+    {
+      "id": "factory-press-room",
+      "name": "Set up a press room",
+      "starCost": 20,
+      "spot": {
+        "x": 0.17,
+        "y": 0.5
+      },
+      "prerequisites": ["factory-robot-arm"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "moss"
+        }
+      ],
+      "featuredItems": ["chocolate-cake", "bonbon-box"],
+      "beforeSpriteKey": "factory-press-room-before",
+      "afterSpriteKey": "factory-press-room-after",
+      "sceneId": "ch5-moss"
+    },
+    {
+      "id": "factory-wrapping-line",
+      "name": "Run a wrapping line",
+      "starCost": 20,
+      "spot": {
+        "x": 0.38,
+        "y": 0.49
+      },
+      "prerequisites": ["factory-robot-arm"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "hen-coop-1"
+        }
+      ],
+      "featuredItems": ["bonbon-tin", "chocolate-cake"],
+      "beforeSpriteKey": "factory-wrapping-line-before",
+      "afterSpriteKey": "factory-wrapping-line-after",
+      "sceneId": null
+    },
+    {
+      "id": "factory-control-room",
+      "name": "Build the control room",
+      "starCost": 22,
+      "spot": {
+        "x": 0.59,
+        "y": 0.48
+      },
+      "prerequisites": ["factory-press-room", "factory-wrapping-line"],
+      "unlocks": [],
+      "featuredItems": ["bonbon-tin", "brownie-tray"],
+      "beforeSpriteKey": "factory-control-room-before",
+      "afterSpriteKey": "factory-control-room-after",
+      "sceneId": "ch5-automation"
+    },
+    {
+      "id": "factory-cooling-tunnel",
+      "name": "Fit a cooling tunnel",
+      "starCost": 22,
+      "spot": {
+        "x": 0.86,
+        "y": 0.49
+      },
+      "prerequisites": ["factory-control-room"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "sugar-tin-1"
+        }
+      ],
+      "featuredItems": ["chocolate-tower", "bonbon-box"],
+      "beforeSpriteKey": "factory-cooling-tunnel-before",
+      "afterSpriteKey": "factory-cooling-tunnel-after",
+      "sceneId": null
+    },
+    {
+      "id": "factory-loading-dock",
+      "name": "Widen the loading dock",
+      "starCost": 22,
+      "spot": {
+        "x": 0.13,
+        "y": 0.68
+      },
+      "prerequisites": ["factory-control-room"],
+      "unlocks": [],
+      "featuredItems": ["chocolate-cake", "bonbon-tin"],
+      "beforeSpriteKey": "factory-loading-dock-before",
+      "afterSpriteKey": "factory-loading-dock-after",
+      "sceneId": null
+    },
+    {
+      "id": "factory-sample-lab",
+      "name": "Open the sample lab",
+      "starCost": 24,
+      "spot": {
+        "x": 0.38,
+        "y": 0.66
+      },
+      "prerequisites": ["factory-cooling-tunnel", "factory-loading-dock"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "fruit-crate-1"
+        }
+      ],
+      "featuredItems": ["chocolate-tower", "bonbon-tin"],
+      "beforeSpriteKey": "factory-sample-lab-before",
+      "afterSpriteKey": "factory-sample-lab-after",
+      "sceneId": null
+    },
+    {
+      "id": "factory-chocolate-fountain",
+      "name": "Build a chocolate fountain",
+      "starCost": 24,
+      "spot": {
+        "x": 0.6,
+        "y": 0.64
+      },
+      "prerequisites": ["factory-sample-lab"],
+      "unlocks": [],
+      "featuredItems": ["chocolate-tower", "truffle-box"],
+      "beforeSpriteKey": "factory-chocolate-fountain-before",
+      "afterSpriteKey": "factory-chocolate-fountain-after",
+      "sceneId": null
+    },
+    {
+      "id": "factory-visitor-gallery",
+      "name": "Add a visitor gallery",
+      "starCost": 24,
+      "spot": {
+        "x": 0.85,
+        "y": 0.65
+      },
+      "prerequisites": ["factory-chocolate-fountain"],
+      "unlocks": [],
+      "featuredItems": ["truffle-box", "chocolate-cake"],
+      "beforeSpriteKey": "factory-visitor-gallery-before",
+      "afterSpriteKey": "factory-visitor-gallery-after",
+      "sceneId": "ch5-neighbors"
+    },
+    {
+      "id": "factory-fifth-recipe-page",
+      "name": "Find the last recipe page",
+      "starCost": 26,
+      "spot": {
+        "x": 0.14,
+        "y": 0.84
+      },
+      "prerequisites": ["factory-visitor-gallery"],
+      "unlocks": [],
+      "featuredItems": ["chocolate-tower", "bonbon-tin"],
+      "beforeSpriteKey": "factory-fifth-recipe-page-before",
+      "afterSpriteKey": "factory-fifth-recipe-page-after",
+      "sceneId": "ch5-recipe-page"
+    },
+    {
+      "id": "factory-grand-tour",
+      "name": "Give the grand tour",
+      "starCost": 26,
+      "spot": {
+        "x": 0.39,
+        "y": 0.81
+      },
+      "prerequisites": ["factory-fifth-recipe-page"],
+      "unlocks": [],
+      "featuredItems": ["truffle-box", "chocolate-tower"],
+      "beforeSpriteKey": "factory-grand-tour-before",
+      "afterSpriteKey": "factory-grand-tour-after",
+      "sceneId": null
+    },
+    {
+      "id": "factory-buyout-offer",
+      "name": "Receive the buyout offer",
+      "starCost": 28,
+      "spot": {
+        "x": 0.64,
+        "y": 0.83
+      },
+      "prerequisites": ["factory-grand-tour"],
+      "unlocks": [],
+      "featuredItems": ["truffle-box", "chocolate-tower"],
+      "beforeSpriteKey": "factory-buyout-offer-before",
+      "afterSpriteKey": "factory-buyout-offer-after",
+      "sceneId": "ch5-offer"
+    },
+    {
+      "id": "factory-final-answer",
+      "name": "Give your answer",
+      "starCost": 30,
+      "spot": {
+        "x": 0.87,
+        "y": 0.84
+      },
+      "prerequisites": ["factory-buyout-offer"],
+      "unlocks": [],
+      "featuredItems": ["truffle-box", "chocolate-tower"],
+      "beforeSpriteKey": "factory-final-answer-before",
+      "afterSpriteKey": "factory-final-answer-after",
+      "sceneId": "ch5-finale"
+    }
+  ]
+}

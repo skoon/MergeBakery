@@ -169,3 +169,15 @@ export function catchUpChapter(data: GameData, state: GameState): GameState {
     next = { ...next, chapterId: following };
   }
 }
+
+/**
+ * True once every task of the last chapter is done: the story is finished. The
+ * save shows it through `completedTasks`, so there is no state to migrate.
+ */
+export function gameFinished(data: GameData, state: GameState): boolean {
+  const last = [...data.chapters.values()].at(-1);
+  return (
+    last !== undefined &&
+    last.tasks.every((t) => state.completedTasks.includes(t.id))
+  );
+}

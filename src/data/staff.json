@@ -41,7 +41,7 @@
       "intervalSec": 120,
       "maxCatchUp": 6,
       "portraitKey": "portrait-auto-oven",
-      "minChapter": "chapter4"
+      "minChapter": "chapter5"
     },
     {
       "id": "auto-oven-2",
@@ -52,7 +52,7 @@
       "intervalSec": 90,
       "maxCatchUp": 8,
       "portraitKey": "portrait-auto-oven",
-      "minChapter": "chapter4"
+      "minChapter": "chapter5"
     }
   ]
 }

@@ -10,6 +10,7 @@ import chapter1Scenes from '../data/dialogue/chapter1.json';
 import chapter2Scenes from '../data/dialogue/chapter2.json';
 import chapter3Scenes from '../data/dialogue/chapter3.json';
 import chapter4Scenes from '../data/dialogue/chapter4.json';
+import chapter5Scenes from '../data/dialogue/chapter5.json';
 import eventScenes from '../data/dialogue/events.json';
 import {
   missingSceneIds,
@@ -31,6 +32,7 @@ function dataReferring(
   chapters.delete('chapter2');
   chapters.delete('chapter3');
   chapters.delete('chapter4');
+  chapters.delete('chapter5');
   chapters.set('chapter1', {
     ...chapter,
     introSceneId,
@@ -199,13 +201,14 @@ describe('Event scenes (T8.7)', () => {
   });
 });
 
-describe('Chapters 1 to 4 scenes (T5.5, T7.6, T9.6, T10.8)', () => {
+describe('Chapters 1 to 5 scenes (T5.5, T7.6, T9.6, T10.8, T11.5)', () => {
   const scenes = parseScenes(data, {
     scenes: [
       ...chapter1Scenes.scenes,
       ...chapter2Scenes.scenes,
       ...chapter3Scenes.scenes,
       ...chapter4Scenes.scenes,
+      ...chapter5Scenes.scenes,
     ],
   });
 

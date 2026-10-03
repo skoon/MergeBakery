@@ -1,0 +1,264 @@
+{
+  "scenes": [
+    {
+      "id": "ch5-intro",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "At the edge of town, the old Harbor Biscuit Works sits derelict. The sign still reads RISE & SHINE. Someone has been here before you."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Your grandfather and I started here, dear. One oven, one table, and a firm belief that the town deserved better toast."
+        },
+        {
+          "speaker": "grandma",
+          "text": "We outgrew it, then we lost it, and I've spent a lot of years pretending I didn't mind. I minded. Let's bring her back."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Inside, the machines sleep under a century of dust. Somewhere in the rafters a lone pigeon files an objection."
+        }
+      ]
+    },
+    {
+      "id": "ch5-bex",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "A figure in oily overalls crawls out from under the conveyor belt holding a wrench like a trophy."
+        },
+        {
+          "speaker": "bex",
+          "text": "Bex. Engineer. I've been fixing this line for free for three weeks, because nobody told me it wasn't mine."
+        },
+        {
+          "speaker": "bex",
+          "expression": "happy",
+          "text": "It wants to run. You can hear it. I just need a few things welded, a few things oiled, and a very forgiving fire inspector."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Hire her, dear. Anyone who fixes machines for free has a better reason than money."
+        },
+        {
+          "speaker": "bex",
+          "text": "Also: chocolate. I read that the old recipe book has chocolate in it. I would like to be involved in that."
+        }
+      ]
+    },
+    {
+      "id": "ch5-dill",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "A man in a white hard hat and a magnificent moustache appears in the doorway, as if the building had summoned him."
+        },
+        {
+          "speaker": "dill",
+          "text": "Foreman Dill. Thirty-four years on this floor. I'd retired. I came by to see the old girl one more time."
+        },
+        {
+          "speaker": "dill",
+          "expression": "happy",
+          "text": "...Is that a conveyor belt that moves? Who authorized that? I'll need a hat for you, and a clipboard, and a lot of coffee."
+        },
+        {
+          "speaker": "grandma",
+          "text": "Dill ran the night shift when we were kids. Nobody ever shouted louder, and nobody ever cared more."
+        },
+        {
+          "speaker": "dill",
+          "expression": "impatient",
+          "text": "Safety first, quality second, shouting third. I'll start with the shouting."
+        }
+      ]
+    },
+    {
+      "id": "ch5-moss",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "A woman with round glasses and a very full notebook sneaks around a pillar, loudly, writing as she goes."
+        },
+        {
+          "speaker": "moss",
+          "text": "Moss. Harbor Herald. Rumour is a little bakery is turning an abandoned factory into something. Also that MegaBun is 'concerned'."
+        },
+        {
+          "speaker": "moss",
+          "expression": "happy",
+          "text": "I do not take sides. I take notes. Though I did eat four of your scones, which is a form of bias, and I'll declare it."
+        },
+        {
+          "speaker": "grandma",
+          "text": "A good reporter is a customer who writes things down, dear. Be honest with her and she'll be honest with the town."
+        },
+        {
+          "speaker": "moss",
+          "text": "Quote of the week: 'MegaBun is delighted to have noticed.' I've decided that's their slogan."
+        }
+      ]
+    },
+    {
+      "id": "ch5-automation",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The control room hums. A bank of dials, a steel cabinet the size of a fridge, and a small green screen that blinks on as you walk in."
+        },
+        {
+          "speaker": "bex",
+          "expression": "happy",
+          "text": "Meet the Auto-Oven. It watches the bake, collects the batch, loads the next. It never gets bored. I've asked. It said 'beep'."
+        },
+        {
+          "speaker": "bex",
+          "expression": "happy",
+          "text": "It still needs ingredients on the board, and someone to decide what it bakes. It does the work. You do the thinking."
+        },
+        {
+          "speaker": "grandma",
+          "text": "Machines are fine, dear, so long as somebody who loves the baking decides what goes in them."
+        },
+        {
+          "speaker": "dill",
+          "expression": "impatient",
+          "text": "I'll be watching that thing. It has a very trusting face. I do not trust it."
+        }
+      ]
+    },
+    {
+      "id": "ch5-neighbors",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The visitor gallery opens and half the town files in: the fruit seller, the ferry captain, a very large fishmonger, the terrace crowd."
+        },
+        {
+          "speaker": "moss",
+          "expression": "happy",
+          "text": "I counted two hundred. Two hundred people came to see a factory. This hasn't happened since the Biscuit Works opened."
+        },
+        {
+          "speaker": "narrator",
+          "text": "A man in a trench coat and sunglasses tries to blend in with a rubber plant. It is not working. He waves."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Wren, dear. Good morning. Would you like a scone? You don't have to pretend it's for research."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Outside, a convoy of orange vans is parked at the gate. They have not been invited. They are very, very polite about it."
+        }
+      ]
+    },
+    {
+      "id": "ch5-recipe-page",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Behind the old time clock, in a biscuit tin soldered shut for forty years, the last page of Grandma's recipe book. It is a single line."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "I wondered where I'd put that. It says: 'Bake for the people who show up. The rest takes care of itself.'"
+        },
+        {
+          "speaker": "grandma",
+          "text": "I wrote it the day your grandfather and I signed the lease on this place. We didn't have a penny. We had every single person on the street."
+        },
+        {
+          "speaker": "bex",
+          "text": "That's the whole book. Every page. It's complete."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Five pages, one book, one town. The recipe book closes with a satisfied thump. A pigeon, somewhere, sighs with relief."
+        }
+      ]
+    },
+    {
+      "id": "ch5-offer",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "At noon the doors swing open. Chad Crustworth enters in a very expensive suit, with Buns-A-Lot a respectful three paces behind."
+        },
+        {
+          "speaker": "chad",
+          "text": "PRESS RELEASE: MegaBun is delighted to announce that it has noticed this factory, this brand, and this wonderful little town."
+        },
+        {
+          "speaker": "chad",
+          "text": "We would like to buy you. All of it. The recipes, the shop, the harbor stall. We'll keep the name. We'll replace the bread."
+        },
+        {
+          "speaker": "bunsalot",
+          "expression": "impatient",
+          "text": "Sorry about him. I made the cookies, and he's been telling people he did. I'd like to say I think your scones are better."
+        },
+        {
+          "speaker": "chad",
+          "text": "The offer is generous. It contains the word 'synergy' eleven times. I have counted them. Please sign by close of business."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Take your time, dear. Offers expire. Recipes don't."
+        }
+      ]
+    },
+    {
+      "id": "ch5-finale",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The factory floor is full. Every regular, every neighbour, every helper. The ferry captain is blocking the exit with her cap in her hands."
+        },
+        {
+          "speaker": "narrator",
+          "text": "You tear Chad's offer in half, then in quarters, then gently feed the pieces to the Auto-Oven. It beeps. It looks, somehow, pleased."
+        },
+        {
+          "speaker": "chad",
+          "text": "This is unprecedented. We have never been refused. I will need to consult the committee."
+        },
+        {
+          "speaker": "mrs-crustworth",
+          "expression": "impatient",
+          "text": "Charles. Sit down. I tasted their scone at the contest. It was better than yours. I told you. Go home and make something honest."
+        },
+        {
+          "speaker": "chad",
+          "expression": "happy",
+          "text": "...Mother. Yes, Mother."
+        },
+        {
+          "speaker": "bunsalot",
+          "expression": "happy",
+          "text": "I quit, by the way! Is there a job here? I can fold boxes. I'm very good at boxes."
+        },
+        {
+          "speaker": "trevor",
+          "expression": "happy",
+          "text": "Welcome to the family. There's tea."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Look at them all, dear. One little shop, one big town, and a book that's finally whole. Now put the kettle on. The ovens are warm."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The Rise & Shine Factory opens. The sun rises over the harbor, the first bake leaves the line, and the whole town smells like toast."
+        }
+      ]
+    }
+  ]
+}
