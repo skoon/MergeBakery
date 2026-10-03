@@ -91,14 +91,25 @@ export function setBake(
   };
 }
 
+/** The product of every hired baker's bakeTimeMultiplier (T10.3); 1 with none. */
+export function staffBakeMultiplier(data: GameData, state: GameState): number {
+  let multiplier = 1;
+  for (const hired of state.staff) {
+    const def = data.staff.get(hired.staffId);
+    if (def?.role === 'baker') multiplier *= def.bakeTimeMultiplier ?? 1;
+  }
+  return multiplier;
+}
+
 /**
- * recipe.bakeSec × 1000 × the oven's bakeTimeMultiplier, rounded to whole ms.
- * Throws on unknown ids.
+ * recipe.bakeSec × 1000 × the oven's bakeTimeMultiplier × the staff's (when
+ * `state` is given), rounded to whole ms. Throws on unknown ids.
  */
 export function bakeDurationMs(
   data: GameData,
   recipeId: RecipeId,
   ovenId: OvenId,
+  state?: GameState,
 ): number {
   const recipe = data.recipes.get(recipeId);
   if (!recipe) {
@@ -110,7 +121,12 @@ export function bakeDurationMs(
     throw new Error(`bakeDurationMs: unknown oven id "${ovenId}"`);
   }
 
-  return Math.round(recipe.bakeSec * 1000 * oven.bakeTimeMultiplier);
+  return Math.round(
+    recipe.bakeSec *
+      1000 *
+      oven.bakeTimeMultiplier *
+      (state ? staffBakeMultiplier(data, state) : 1),
+  );
 }
 
 /**
@@ -214,7 +230,7 @@ export function loadRecipe(
   }
 
   const ovenId = ovenState.ovenId;
-  const duration = bakeDurationMs(data, recipeId, ovenId);
+  const duration = bakeDurationMs(data, recipeId, ovenId, state);
 
   const bake: Bake = {
     recipeId,

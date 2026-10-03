@@ -102,6 +102,8 @@ function upgradeGenerator(
  * nextOrderAt to its current value or, if null, now + refillDelaySec × 1000, and adds the
  * reward's XP with addXp. Events: orderDelivered { orderId, reward }, then any levelUp events.
  * A catering order (T9.2) may also upgrade one board generator a tier, when `rng` is given.
+ * A wholesale order (T10.1) may take what the board lacks from the Pantry, and adds its
+ * reputation to the company's.
  */
 export function deliverOrder(
   data: GameData,
@@ -121,13 +123,28 @@ export function deliverOrder(
   // Match items
   const matches = matchOrderItems(state, order.wants);
 
+  // A wholesale batch can be topped up from the Pantry.
+  const pantryTaken = new Set<number>();
+  if (order.wholesale) {
+    order.wants.forEach((itemId, i) => {
+      if (matches[i] !== null) return;
+      const at = state.pantry.items.findIndex(
+        (p, j) => p.itemId === itemId && !p.cobwebbed && !pantryTaken.has(j),
+      );
+      if (at !== -1) {
+        pantryTaken.add(at);
+        matches[i] = -1; // found, but in the Pantry rather than on the board
+      }
+    });
+  }
+
   // Check for missing items
   if (matches.some((m) => m === null)) {
     return { ok: false, reason: 'missingItems' };
   }
 
   // All matches are non-null, so we can proceed
-  const matchedCells = matches as CellIndex[];
+  const matchedCells = (matches as CellIndex[]).filter((c) => c >= 0);
 
   // Empty the matched cells
   let newBoard = state.board;
@@ -148,8 +165,13 @@ export function deliverOrder(
   let newState: GameState = {
     ...state,
     board: newBoard,
+    pantry: {
+      ...state.pantry,
+      items: state.pantry.items.filter((_, j) => !pantryTaken.has(j)),
+    },
     coins: state.coins + order.reward.coins,
     stars: state.stars + order.reward.stars,
+    reputation: state.reputation + (order.reward.reputation ?? 0),
     orders: newOrders,
     nextOrderAt: newNextOrderAt,
     event:

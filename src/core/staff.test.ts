@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { assignStaff, hireStaff } from './staff';
+import { assignStaff, hireStaff, tickStaff } from './staff';
+import { staffBakeMultiplier, bakeDurationMs } from './kitchen';
+import { createRng } from './rng';
 import { stateWith, testData } from './testing';
 import type { GameData, GameState, StaffDef } from './types';
 
@@ -77,22 +79,108 @@ describe('assignStaff', () => {
   };
 
   it('points a tapper at a generator chain and rests them with null', () => {
-    const r = assignStaff(data, hired(), 't', 'flour-mill');
+    const r = assignStaff(data, hired(), 't', 'flour-mill', 5000);
     if (!r.ok) throw new Error('expected ok');
     expect(r.state.staff[0]?.assignedChain).toBe('flour-mill');
-    const back = assignStaff(data, r.state, 't', null);
+    // The clock starts at the assignment, so idle time isn't banked.
+    expect(r.state.staff[0]?.lastActedAt).toBe(5000);
+    const back = assignStaff(data, r.state, 't', null, 6000);
     expect(back.ok && back.state.staff[0]?.assignedChain).toBeNull();
   });
 
   it('changes nothing when the assignment is the same', () => {
     const state = hired();
-    const r = assignStaff(data, state, 't', null);
+    const r = assignStaff(data, state, 't', null, 5000);
     expect(r.ok && r.state).toBe(state);
   });
 
   it('throws for someone not hired, a baker, or a chain with no generator', () => {
-    expect(() => assignStaff(data, ready(), 't', null)).toThrow();
-    expect(() => assignStaff(data, hired(), 'b', 'flour-mill')).toThrow();
-    expect(() => assignStaff(data, hired(), 't', 'flour')).toThrow();
+    expect(() => assignStaff(data, ready(), 't', null, 0)).toThrow();
+    expect(() => assignStaff(data, hired(), 'b', 'flour-mill', 0)).toThrow();
+    expect(() => assignStaff(data, hired(), 't', 'flour', 0)).toThrow();
+  });
+});
+
+describe('tickStaff', () => {
+  const hireAndAssign = (
+    cells: Record<number, string>,
+    over: Partial<GameState> = {},
+  ) => {
+    let state = stateWith(cells, {
+      chapterId: 'chapter2',
+      coins: 500,
+      reputation: 20,
+      ...over,
+    });
+    const h = hireStaff(data, state, 't', 0);
+    if (!h.ok) throw new Error('setup');
+    const a = assignStaff(data, h.state, 't', 'flour-mill', 0);
+    if (!a.ok) throw new Error('setup');
+    state = a.state;
+    return state;
+  };
+  const rng = () => createRng(2);
+  const items = (s: GameState) =>
+    s.board.cells.filter((c) => c.kind === 'item').length;
+
+  it('does nothing before an interval has passed, or without an assignment', () => {
+    const state = hireAndAssign({ 0: 'flour-mill-1' });
+    const early = tickStaff(data, state, rng(), 299_999);
+    expect(early.ok && early.state).toBe(state);
+    const hired = hireStaff(
+      data,
+      stateWith(
+        { 0: 'flour-mill-1' },
+        { chapterId: 'chapter2', coins: 500, reputation: 20 },
+      ),
+      't',
+      0,
+    );
+    if (!hired.ok) throw new Error('setup');
+    const idle = tickStaff(data, hired.state, rng(), 9_999_999);
+    expect(idle.ok && idle.state).toBe(hired.state);
+  });
+
+  it('taps once per interval without spending energy, and keeps the beat', () => {
+    const state = hireAndAssign({ 0: 'flour-mill-1' });
+    const r = tickStaff(data, state, rng(), 300_000 + 5);
+    if (!r.ok) throw new Error('expected ok');
+    expect(items(r.state)).toBe(2);
+    expect(r.state.energy).toEqual(state.energy);
+    expect(r.state.staff[0]?.lastActedAt).toBe(300_000);
+    expect(r.events.some((e) => e.type === 'staffActed')).toBe(true);
+  });
+
+  it('catches up after an absence, up to maxCatchUp, then starts fresh', () => {
+    const state = hireAndAssign({ 0: 'flour-mill-1' });
+    const r = tickStaff(data, state, rng(), 300_000 * 100);
+    if (!r.ok) throw new Error('expected ok');
+    expect(items(r.state)).toBe(1 + 12);
+    expect(r.state.staff[0]?.lastActedAt).toBe(300_000 * 100);
+  });
+
+  it('works only its own chain, and loses a tap when no generator is ready', () => {
+    const wrong = hireAndAssign({ 0: 'dairy-fridge-1' });
+    const r = tickStaff(data, wrong, rng(), 300_000);
+    if (!r.ok) throw new Error('expected ok');
+    expect(items(r.state)).toBe(1);
+    // The missed tap is spent, not banked.
+    expect(r.state.staff[0]?.lastActedAt).toBe(300_000);
+  });
+});
+
+describe('staffBakeMultiplier', () => {
+  it('multiplies hired bakers in, and shortens a bake by it', () => {
+    const none = stateWith({});
+    expect(staffBakeMultiplier(data, none)).toBe(1);
+    const withBaker = {
+      ...none,
+      staff: [{ staffId: 'b', assignedChain: null, lastActedAt: 0 }],
+    };
+    expect(staffBakeMultiplier(data, withBaker)).toBe(0.8);
+    const plain = bakeDurationMs(data, 'bake-cookie', 'toaster-oven');
+    expect(bakeDurationMs(data, 'bake-cookie', 'toaster-oven', withBaker)).toBe(
+      Math.round(plain * 0.8),
+    );
   });
 });

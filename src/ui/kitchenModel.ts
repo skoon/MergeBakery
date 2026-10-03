@@ -195,7 +195,9 @@ export function kitchenModel(
         };
       }),
       cells,
-      bakeTime: formatDuration(bakeDurationMs(data, recipe.id, timingOven)),
+      bakeTime: formatDuration(
+        bakeDurationMs(data, recipe.id, timingOven, state),
+      ),
     };
   });
 

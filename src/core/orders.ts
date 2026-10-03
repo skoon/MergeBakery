@@ -331,10 +331,75 @@ export function generateCateringOrder(
   };
 }
 
-/** Removes catering orders whose time is up. A refill follows; there is no penalty. */
+/**
+ * A wholesale order, or null when none is due: wholesale is on, the player has
+ * reached its chapter, none is open, and the roll succeeds. A batch of 5–10 of
+ * one item for the grocery chain; it pays coins and company reputation. Items
+ * are discovered baked goods, or ingredients the player can make right now.
+ */
+export function generateWholesaleOrder(
+  data: GameData,
+  state: GameState,
+  rng: Rng,
+  now: Timestamp,
+): Order | null {
+  const rules = data.economy.orders.wholesale;
+  if (!rules) return null;
+  const chapterIds = [...data.chapters.keys()];
+  if (
+    chapterIds.indexOf(state.chapterId) < chapterIds.indexOf(rules.minChapter)
+  ) {
+    return null;
+  }
+  if (state.orders.some((o) => o.wholesale !== undefined)) return null;
+  if (rng.next() * 100 >= rules.chancePercent) return null;
+
+  const discovered = new Set(state.discovered);
+  const candidates = [...data.items.values()].filter((i) => {
+    if (
+      !discovered.has(i.id) ||
+      i.tier < rules.minTier ||
+      i.tier > rules.maxTier
+    ) {
+      return false;
+    }
+    const kind = data.chains.get(i.chainId)?.kind;
+    return (
+      kind === 'baked' ||
+      (kind === 'ingredient' && isProducible(data, state, i.id))
+    );
+  });
+  if (candidates.length === 0) return null;
+  const item = pickUniform(candidates, rng);
+  const count =
+    rules.minItems +
+    Math.floor(rng.next() * (rules.maxItems - rules.minItems + 1));
+
+  const customers = [...data.customers.values()].filter(
+    (c) => c.kind === 'walkIn' || state.unlockedCustomers.includes(c.id),
+  );
+  const customer = pickUniform(eligibleCustomers(customers, state), rng);
+
+  return {
+    id: state.nextOrderId,
+    customerId: customer.id,
+    wants: Array.from({ length: count }, () => item.id),
+    reward: {
+      coins: Math.round(item.sellValue * count * rules.coinMultiplier),
+      stars: 0,
+      xp: item.tier * count * rules.xpPerTier,
+      reputation: rules.reputationPerItem * count,
+    },
+    wholesale: { expiresAt: now + rules.windowSec * 1000 },
+  };
+}
+
+/** Removes catering and wholesale orders whose time is up. A refill follows; there is no penalty. */
 function expireCatering(state: GameState, now: Timestamp): ActionResult {
   const expired = state.orders.filter(
-    (o) => o.catering !== undefined && now >= o.catering.expiresAt,
+    (o) =>
+      (o.catering !== undefined && now >= o.catering.expiresAt) ||
+      (o.wholesale !== undefined && now >= o.wholesale.expiresAt),
   );
   if (expired.length === 0) return { ok: true, state, events: [] };
   return {
@@ -345,7 +410,10 @@ function expireCatering(state: GameState, now: Timestamp): ActionResult {
       nextOrderAt: state.nextOrderAt ?? now,
     },
     events: expired.map((o) => ({
-      type: 'cateringExpired' as const,
+      type:
+        o.wholesale !== undefined
+          ? ('wholesaleExpired' as const)
+          : ('cateringExpired' as const),
       orderId: o.id,
     })),
   };
@@ -375,6 +443,7 @@ export function refillOrders(
   while (regularOpen(currentState) < data.economy.orders.maxOpen) {
     const order =
       generateCateringOrder(data, currentState, rng, now) ??
+      generateWholesaleOrder(data, currentState, rng, now) ??
       generateOrder(data, currentState, rng);
     currentState = {
       ...currentState,

@@ -9,7 +9,7 @@ import { dismissDiscovery } from './discovery';
 import { applyDrop } from './drop';
 import { collectBonus, rushCooldown, tapGenerator } from './generators';
 import { claimMilestone, dismissEventResult, tickEvents } from './events';
-import { assignStaff, hireStaff } from './staff';
+import { assignStaff, hireStaff, tickStaff } from './staff';
 import { loadRecipe } from './kitchen';
 import { refillOrders } from './orders';
 import { mergeOvens } from './ovens';
@@ -167,7 +167,7 @@ export const dispatch: Dispatch = createDispatch({
   hireStaff: (data, state, action) =>
     hireStaff(data, state, action.staffId, action.now),
   assignStaff: (data, state, action) =>
-    assignStaff(data, state, action.staffId, action.chainId),
+    assignStaff(data, state, action.staffId, action.chainId, action.now),
   dismissDiscovery: (data, state, action) =>
     dismissDiscovery(data, state, action.itemId),
   setTutorialStep: (data, state, action) =>
@@ -177,6 +177,11 @@ export const dispatch: Dispatch = createDispatch({
     if (!orders.ok) return orders;
     const events = tickEvents(data, orders.state, rng, action.now);
     if (!events.ok) return events;
-    return { ...events, events: [...orders.events, ...events.events] };
+    const staff = tickStaff(data, events.state, rng, action.now);
+    if (!staff.ok) return staff;
+    return {
+      ...staff,
+      events: [...orders.events, ...events.events, ...staff.events],
+    };
   },
 });
