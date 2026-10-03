@@ -17,10 +17,21 @@ export type SaveObject = Record<string, unknown>;
 export type Migration = (save: SaveObject) => SaveObject;
 
 /**
- * The game's migrations. Empty while SAVE_VERSION is 1: there is no older
- * format to come from yet. The v1 → v2 example lives in migrate.test.ts.
+ * The game's migrations. v1 → v2 adds the MegaBun event fields (T8.1): no
+ * event running, none scheduled yet, no result to show, no trophies.
  */
-export const MIGRATIONS: Readonly<Record<number, Migration>> = {};
+export const MIGRATIONS: Readonly<Record<number, Migration>> = {
+  1: (save) => ({
+    ...save,
+    state: {
+      ...(save['state'] as Record<string, unknown>),
+      event: null,
+      nextEventAt: null,
+      eventResult: null,
+      trophies: [],
+    },
+  }),
+};
 
 /**
  * Applies `migrations[v]` for each v from `save.version` up to

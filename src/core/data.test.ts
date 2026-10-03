@@ -215,6 +215,7 @@ function makeFixture(): RawGameData {
       unlockedCustomers: ['grandma'],
     },
     shop: { items: [] },
+    events: { events: [] },
   };
 }
 
@@ -709,6 +710,34 @@ describe('parseGameData: chapters and the Shop (T7.1)', () => {
     );
     expect(message).toMatch(/"free": price 0 is not positive/);
     expect(message).toMatch(/"later": fromChapter "chapter9"/);
+  });
+
+  it('rejects an event with an unknown generator and a bad curve', () => {
+    const raw = makeFixture();
+    obj(raw).events = {
+      events: [
+        {
+          id: 'bakeOff',
+          name: 'Bake-Off',
+          minChapter: 'chapter1',
+          durationSec: 100,
+          generatorItemId: 'nope',
+          pointsPerOrder: 5,
+          milestones: [
+            { points: 20, reward: { coins: 1, gems: 0 } },
+            { points: 10, reward: { coins: 1, gems: 0 } },
+          ],
+          megabunCurve: [
+            { atSec: 0, score: 0 },
+            { atSec: 200, score: 50 },
+          ],
+          trophyGems: 1,
+        },
+      ],
+    };
+    expect(() => parseGameData(raw)).toThrow(
+      /generatorItemId[\s\S]*milestone points[\s\S]*runs past durationSec/,
+    );
   });
 
   it('loads the real shop.json', () => {

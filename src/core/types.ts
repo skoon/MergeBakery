@@ -7,7 +7,11 @@
  * Approved changes (T-O1): `rushCooldown` and `cooldownRushed`, for rushing a
  * generator's cooldown with gems (T6.5, Scott, Sep 30). The Shop and chapter
  * progression: `ShopItem`, `ShopFile`, `GameData.shop`, `buyShopItem`,
- * `purchased` and `chapterStarted` (T7.1, Scott, Oct 1).
+ * `purchased` and `chapterStarted` (T7.1, Scott, Oct 1). The MegaBun events:
+ * `EventDef`, `EventsFile`, `ActiveEvent`, `EventResult`, `GameData.events`,
+ * four `GameState` fields (`event`, `nextEventAt`, `eventResult`, `trophies`),
+ * `Order.eventPoints`, `claimMilestone`, `dismissEventResult`, three events and
+ * two reject reasons (T8.1, Scott, Oct 3). Save version 2.
  *
  * Conventions every core function follows:
  * - Core functions are pure: they never mutate their inputs and return new
@@ -32,6 +36,7 @@ export type TaskId = string;
 export type SceneId = string;
 export type OrderId = number;
 export type ShopItemId = string;
+export type EventId = string;
 
 /** Milliseconds since the Unix epoch, as from Date.now(). */
 export type Timestamp = number;
@@ -175,6 +180,50 @@ export interface ShopItem {
 
 export interface ShopFile {
   readonly items: readonly ShopItem[];
+}
+
+// ─── Static data: MegaBun events (events.json) ──────────────────────────────
+
+/** What a milestone pays. Trophies and decor come from winning, not from milestones. */
+export interface EventReward {
+  readonly coins: number;
+  readonly gems: number;
+}
+
+export interface EventMilestone {
+  /** Hometown Pride points needed. */
+  readonly points: number;
+  readonly reward: EventReward;
+}
+
+/** One point on MegaBun's scripted score curve; the score is interpolated between points. */
+export interface MegabunCurvePoint {
+  /** Seconds since the event started. */
+  readonly atSec: number;
+  readonly score: number;
+}
+
+/** A kind of event (Bake-Off Showdown, Street Fair Standoff, ...). */
+export interface EventDef {
+  readonly id: EventId;
+  readonly name: string;
+  /** Not offered before the player reaches this chapter. */
+  readonly minChapter: ChapterId;
+  readonly durationSec: number;
+  /** The event generator placed on the board when the event starts. */
+  readonly generatorItemId: ItemId;
+  /** Hometown Pride per event order delivered. */
+  readonly pointsPerOrder: number;
+  /** In ascending order of points. */
+  readonly milestones: readonly EventMilestone[];
+  /** In ascending order of atSec; the player wins by reaching the last score first. */
+  readonly megabunCurve: readonly MegabunCurvePoint[];
+  /** Gems paid for winning; the win is also recorded in GameState.trophies. */
+  readonly trophyGems: number;
+}
+
+export interface EventsFile {
+  readonly events: readonly EventDef[];
 }
 
 // ─── Static data: customers (customers.json) ────────────────────────────────
@@ -333,6 +382,8 @@ export interface GameData {
   readonly newGame: NewGameConfig;
   /** In data order. */
   readonly shop: ReadonlyMap<ShopItemId, ShopItem>;
+  /** In data order. */
+  readonly events: ReadonlyMap<EventId, EventDef>;
 }
 
 // ─── Game state ─────────────────────────────────────────────────────────────
@@ -386,6 +437,8 @@ export interface Order {
   /** Repeats mean more than one of that item. */
   readonly wants: readonly ItemId[];
   readonly reward: OrderReward;
+  /** Hometown Pride this order earns; present only on event orders. */
+  readonly eventPoints?: number;
 }
 
 export interface OrderReward {
@@ -418,6 +471,24 @@ export interface LastSale {
   readonly cell: CellIndex;
   readonly coins: number;
   readonly soldAt: Timestamp;
+}
+
+/** The running event. MegaBun's score isn't stored: it follows from `startedAt` and the curve. */
+export interface ActiveEvent {
+  readonly eventId: EventId;
+  readonly startedAt: Timestamp;
+  readonly endsAt: Timestamp;
+  /** Hometown Pride earned. */
+  readonly points: number;
+  /** Indices into the event's milestones. */
+  readonly claimedMilestones: readonly number[];
+}
+
+/** How an event ended, held until the result card is dismissed. */
+export interface EventResult {
+  readonly eventId: EventId;
+  readonly won: boolean;
+  readonly points: number;
 }
 
 export type TutorialStep =
@@ -456,6 +527,14 @@ export interface GameState {
   readonly rngState: number;
   /** Next OrderId to hand out. */
   readonly nextOrderId: OrderId;
+  /** The running event, or null. At most one at a time. */
+  readonly event: ActiveEvent | null;
+  /** When the next event starts; null until the first is scheduled. */
+  readonly nextEventAt: Timestamp | null;
+  /** The last event's result, until the player dismisses it. */
+  readonly eventResult: EventResult | null;
+  /** Events won, one entry each time, for trophy decor. */
+  readonly trophies: readonly EventId[];
 }
 
 // ─── Actions, results, and events ───────────────────────────────────────────
@@ -491,6 +570,9 @@ type ActionBody =
   | { readonly type: 'completeTask'; readonly taskId: TaskId }
   /** Buy something from the Shop (T7.8). */
   | { readonly type: 'buyShopItem'; readonly shopItemId: ShopItemId }
+  /** Claim a reached milestone of the running event (T8.1). */
+  | { readonly type: 'claimMilestone'; readonly index: number }
+  | { readonly type: 'dismissEventResult' }
   | { readonly type: 'dismissDiscovery'; readonly itemId: ItemId }
   | { readonly type: 'setTutorialStep'; readonly step: TutorialStep }
   /** Time passing: order refills and cooldowns. Sent on an interval and on load. */
@@ -527,7 +609,9 @@ export type RejectReason =
   | 'ovensDontMatch'
   | 'ovenMaxTier'
   | 'prerequisitesMissing'
-  | 'alreadyCompleted';
+  | 'alreadyCompleted'
+  | 'noActiveEvent'
+  | 'milestoneNotReached';
 
 /** What happened, for animation, audio, and UI cards. The state is the source of truth. */
 export type GameEvent =
@@ -594,6 +678,18 @@ export type GameEvent =
       readonly type: 'purchased';
       readonly shopItemId: ShopItemId;
       readonly coins: number;
+    }
+  | { readonly type: 'eventStarted'; readonly eventId: EventId }
+  | {
+      readonly type: 'eventEnded';
+      readonly eventId: EventId;
+      readonly won: boolean;
+    }
+  | {
+      readonly type: 'milestoneClaimed';
+      readonly eventId: EventId;
+      readonly index: number;
+      readonly reward: EventReward;
     }
   /** The player moved on to this chapter (T7.2). */
   | { readonly type: 'chapterStarted'; readonly chapterId: ChapterId };

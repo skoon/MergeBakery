@@ -81,5 +81,9 @@ export function createNewGame(
     tutorialStep: 'firstTap',
     rngState: seed >>> 0,
     nextOrderId: 1,
+    event: null,
+    nextEventAt: null,
+    eventResult: null,
+    trophies: [],
   };
 }

@@ -12,8 +12,7 @@ import {
 
 /**
  * The example v1 → v2 migration: `state.coins` becomes `state.coinCount`.
- * It lives here rather than in MIGRATIONS, which stays empty while
- * SAVE_VERSION is 1.
+ * Test-only; the real v1 → v2 migration is in MIGRATIONS.
  */
 const renameCoins: Migration = (save) => {
   const state = save['state'] as Record<string, unknown>;
@@ -32,8 +31,21 @@ function v1Save(): SaveObject {
 }
 
 describe('MIGRATIONS', () => {
-  it('is empty while SAVE_VERSION is 1', () => {
-    expect(Object.keys(MIGRATIONS)).toEqual([]);
+  it('has one step per version up to SAVE_VERSION', () => {
+    expect(Object.keys(MIGRATIONS)).toEqual(['1']);
+  });
+
+  it('v1 → v2 adds the event fields and keeps the rest', () => {
+    const out = migrate(v1Save(), 2);
+    expect(out['version']).toBe(2);
+    expect(out['state']).toEqual({
+      coins: 50,
+      gems: 10,
+      event: null,
+      nextEventAt: null,
+      eventResult: null,
+      trophies: [],
+    });
   });
 });
 

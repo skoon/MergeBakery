@@ -143,6 +143,7 @@ function makeGameData(overrides: Partial<GameData> = {}): GameData {
     economy: ECONOMY,
     newGame: NEW_GAME_CONFIG,
     shop: new Map(),
+    events: new Map(),
     ...overrides,
   };
 }

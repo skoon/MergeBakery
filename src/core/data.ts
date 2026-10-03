@@ -18,6 +18,9 @@ import type {
   Customer,
   CustomerKind,
   CustomersFile,
+  EventDef,
+  EventReward,
+  EventsFile,
   Economy,
   GameData,
   GeneratorDef,
@@ -53,6 +56,7 @@ export interface RawGameData {
   chapters: readonly unknown[]; // chapter1.json, later chapters appended
   newGame: unknown; // newGame.json
   shop: unknown; // shop.json
+  events: unknown; // events.json
 }
 
 // ─── Zod schemas: items and chains (items.json) ─────────────────────────────
@@ -159,6 +163,33 @@ const shopItemSchema: z.ZodType<ShopItem> = z.strictObject({
 
 const shopFileSchema: z.ZodType<ShopFile> = z.strictObject({
   items: z.array(shopItemSchema),
+});
+
+// ─── Zod schemas: MegaBun events (events.json) ──────────────────────────────
+
+const eventRewardSchema: z.ZodType<EventReward> = z.strictObject({
+  coins: z.number(),
+  gems: z.number(),
+});
+
+const eventDefSchema: z.ZodType<EventDef> = z.strictObject({
+  id: z.string(),
+  name: z.string(),
+  minChapter: z.string(),
+  durationSec: z.number(),
+  generatorItemId: z.string(),
+  pointsPerOrder: z.number(),
+  milestones: z.array(
+    z.strictObject({ points: z.number(), reward: eventRewardSchema }),
+  ),
+  megabunCurve: z.array(
+    z.strictObject({ atSec: z.number(), score: z.number() }),
+  ),
+  trophyGems: z.number(),
+});
+
+const eventsFileSchema: z.ZodType<EventsFile> = z.strictObject({
+  events: z.array(eventDefSchema),
 });
 
 // ─── Zod schemas: customers (customers.json) ────────────────────────────────
@@ -311,6 +342,7 @@ interface ParsedSections {
   readonly economy: Economy;
   readonly newGame: NewGameConfig;
   readonly shop: ShopFile;
+  readonly events: EventsFile;
 }
 
 /** Every id in `ids` must be distinct; reports each duplicate once. */
@@ -381,6 +413,7 @@ function validateCrossReferences(parsed: ParsedSections): string[] {
     economy,
     newGame,
     shop,
+    events,
   } = parsed;
 
   const chainById = new Map<ChainId, Chain>(items.chains.map((c) => [c.id, c]));
@@ -462,6 +495,47 @@ function validateCrossReferences(parsed: ParsedSections): string[] {
       problems.push(
         `${where}: fromChapter "${row.fromChapter}" names an unknown chapter`,
       );
+    }
+  }
+
+  // Events: ids unique; the generator is a known item; a real duration;
+  // milestones and the curve ascend; the curve starts at 0 and ends inside
+  // the event's duration, so MegaBun's final score is reached before the timer.
+  checkUnique(
+    events.events.map((e) => e.id),
+    'events',
+    problems,
+  );
+  for (const event of events.events) {
+    const where = `event "${event.id}"`;
+    requireItem(event.generatorItemId, `${where} generatorItemId`);
+    if (!chapters.some((c) => c.id === event.minChapter)) {
+      problems.push(
+        `${where}: minChapter "${event.minChapter}" names an unknown chapter`,
+      );
+    }
+    if (event.durationSec <= 0 || event.pointsPerOrder <= 0) {
+      problems.push(
+        `${where}: durationSec and pointsPerOrder must be positive`,
+      );
+    }
+    const ascending = (xs: readonly number[]): boolean =>
+      xs.every((x, i) => i === 0 || x > (xs[i - 1] ?? 0));
+    if (!ascending(event.milestones.map((m) => m.points))) {
+      problems.push(`${where}: milestone points must be ascending`);
+    }
+    const curve = event.megabunCurve;
+    if (curve.length < 2 || curve[0]?.atSec !== 0 || curve[0].score !== 0) {
+      problems.push(`${where}: megabunCurve must start at atSec 0, score 0`);
+    }
+    if (!ascending(curve.map((p) => p.atSec).slice(1))) {
+      problems.push(`${where}: megabunCurve atSec must be ascending`);
+    }
+    if (curve.some((p, i) => i > 0 && p.score < (curve[i - 1]?.score ?? 0))) {
+      problems.push(`${where}: megabunCurve score must never fall`);
+    }
+    if ((curve[curve.length - 1]?.atSec ?? 0) > event.durationSec) {
+      problems.push(`${where}: megabunCurve runs past durationSec`);
     }
   }
 
@@ -746,6 +820,7 @@ function buildGameData(parsed: ParsedSections): GameData {
     economy: parsed.economy,
     newGame: parsed.newGame,
     shop: new Map(parsed.shop.items.map((i) => [i.id, i])),
+    events: new Map(parsed.events.events.map((e) => [e.id, e])),
   };
 }
 
@@ -810,6 +885,13 @@ export function parseGameData(raw: RawGameData): GameData {
     shapeProblems,
   );
 
+  const events = parseSection(
+    eventsFileSchema,
+    raw.events,
+    'events.json',
+    shapeProblems,
+  );
+
   if (
     items === undefined ||
     generators === undefined ||
@@ -819,7 +901,8 @@ export function parseGameData(raw: RawGameData): GameData {
     customers === undefined ||
     chapters === undefined ||
     newGame === undefined ||
-    shop === undefined
+    shop === undefined ||
+    events === undefined
   ) {
     throw new Error(shapeProblems.join('\n'));
   }
@@ -834,6 +917,7 @@ export function parseGameData(raw: RawGameData): GameData {
     economy,
     newGame,
     shop,
+    events,
   };
 
   const crossRefProblems = validateCrossReferences(parsed);
@@ -881,5 +965,6 @@ export function loadGameData(): GameData {
     chapters: readChapterFiles(),
     newGame: readDataFile('newGame.json'),
     shop: readDataFile('shop.json'),
+    events: readDataFile('events.json'),
   });
 }

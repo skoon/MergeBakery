@@ -67,6 +67,7 @@ function makeGameData(): GameData {
       unlockedCustomers: [],
     },
     shop: new Map(),
+    events: new Map(),
   };
 }
 
@@ -93,6 +94,10 @@ function makeState(overrides: Partial<GameState> = {}): GameState {
     tutorialStep: 'firstTap',
     rngState: 0,
     nextOrderId: 1,
+    event: null,
+    nextEventAt: null,
+    eventResult: null,
+    trophies: [],
     ...overrides,
   };
 }

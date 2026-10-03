@@ -8,6 +8,8 @@
 import { z } from 'zod';
 import { migrate } from './migrate';
 import type {
+  ActiveEvent,
+  EventResult,
   Bake,
   Board,
   BoardItem,
@@ -26,7 +28,7 @@ import type {
   TutorialStep,
 } from './types';
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 export interface SaveFile {
   version: number;
@@ -85,6 +87,7 @@ const orderSchema: z.ZodType<Order> = z.strictObject({
   customerId: z.string(),
   wants: z.array(z.string()),
   reward: orderRewardSchema,
+  eventPoints: z.number().optional(),
 });
 
 const bakeSchema: z.ZodType<Bake> = z.strictObject({
@@ -103,6 +106,20 @@ const lastSaleSchema: z.ZodType<LastSale> = z.strictObject({
   cell: z.number(),
   coins: z.number(),
   soldAt: z.number(),
+});
+
+const activeEventSchema: z.ZodType<ActiveEvent> = z.strictObject({
+  eventId: z.string(),
+  startedAt: z.number(),
+  endsAt: z.number(),
+  points: z.number(),
+  claimedMilestones: z.array(z.number()),
+});
+
+const eventResultSchema: z.ZodType<EventResult> = z.strictObject({
+  eventId: z.string(),
+  won: z.boolean(),
+  points: z.number(),
 });
 
 const tutorialStepSchema: z.ZodType<TutorialStep> = z.enum([
@@ -135,6 +152,10 @@ const gameStateSchema: z.ZodType<GameState> = z.strictObject({
   tutorialStep: tutorialStepSchema,
   rngState: z.number(),
   nextOrderId: z.number(),
+  event: activeEventSchema.nullable(),
+  nextEventAt: z.number().nullable(),
+  eventResult: eventResultSchema.nullable(),
+  trophies: z.array(z.string()),
 });
 
 const saveFileSchema: z.ZodType<SaveFile> = z.strictObject({

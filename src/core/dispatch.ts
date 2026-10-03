@@ -8,6 +8,7 @@ import { deliverOrder } from './deliver';
 import { dismissDiscovery } from './discovery';
 import { applyDrop } from './drop';
 import { collectBonus, rushCooldown, tapGenerator } from './generators';
+import { claimMilestone, dismissEventResult } from './events';
 import { loadRecipe } from './kitchen';
 import { refillOrders } from './orders';
 import { mergeOvens } from './ovens';
@@ -99,6 +100,10 @@ function routeAction(
       return handlers.completeTask(data, state, action, rng);
     case 'buyShopItem':
       return handlers.buyShopItem(data, state, action, rng);
+    case 'claimMilestone':
+      return handlers.claimMilestone(data, state, action, rng);
+    case 'dismissEventResult':
+      return handlers.dismissEventResult(data, state, action, rng);
     case 'dismissDiscovery':
       return handlers.dismissDiscovery(data, state, action, rng);
     case 'setTutorialStep':
@@ -151,6 +156,9 @@ export const dispatch: Dispatch = createDispatch({
     completeTask(data, state, action.taskId),
   buyShopItem: (data, state, action) =>
     buyShopItem(data, state, action.shopItemId, action.now),
+  claimMilestone: (data, state, action) =>
+    claimMilestone(data, state, action.index),
+  dismissEventResult: (_data, state) => dismissEventResult(state),
   dismissDiscovery: (data, state, action) =>
     dismissDiscovery(data, state, action.itemId),
   setTutorialStep: (data, state, action) =>
