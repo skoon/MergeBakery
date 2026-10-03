@@ -301,3 +301,23 @@ describe('deserializeSave error cases', () => {
     expect(result.error).toMatch(/board/);
   });
 });
+
+describe('loading a version 1 save (T8.1)', () => {
+  it('migrates it to the current version with no event running', () => {
+    const state = createNewGame(testData, 1, 0);
+    const file = JSON.parse(serializeSave(state, 5000)) as {
+      version: number;
+      state: Record<string, unknown>;
+    };
+    // What a v1 file looked like: no event fields at all.
+    for (const key of ['event', 'nextEventAt', 'eventResult', 'trophies']) {
+      delete file.state[key];
+    }
+    file.version = 1;
+
+    const loaded = deserializeSave(testData, JSON.stringify(file));
+    if (!loaded.ok) throw new Error(loaded.error);
+    expect(loaded.save.version).toBe(SAVE_VERSION);
+    expect(loaded.save.state).toEqual(state);
+  });
+});

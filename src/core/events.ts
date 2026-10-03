@@ -144,7 +144,15 @@ export function tickEvents(
   let next = state;
   const active = next.event;
 
-  if (active && now >= active.endsAt) {
+  // A save can name an event the data no longer has (renamed or removed). Drop
+  // it quietly rather than fail on every tick.
+  if (active && !data.events.has(active.eventId)) {
+    next = {
+      ...next,
+      event: null,
+      orders: next.orders.filter((o) => o.eventPoints === undefined),
+    };
+  } else if (active && now >= active.endsAt) {
     const def = data.events.get(active.eventId);
     if (!def) throw new Error(`tickEvents: unknown event "${active.eventId}"`);
     const won = active.points >= megabunScore(def, def.durationSec);

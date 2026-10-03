@@ -58,7 +58,7 @@ export function eventModel(
   const active = state.event;
   if (!active) return null;
   const def = data.events.get(active.eventId);
-  if (!def) throw new Error(`eventModel: unknown event "${active.eventId}"`);
+  if (!def) return null;
 
   const elapsedSec = Math.max(0, (now - active.startedAt) / 1000);
   const megabun = Math.floor(megabunScore(def, elapsedSec));

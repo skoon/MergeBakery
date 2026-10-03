@@ -333,6 +333,27 @@ describe('event items', () => {
   });
 });
 
+describe('an event the data no longer has', () => {
+  it('is dropped, with its orders, instead of throwing', () => {
+    const state = {
+      ...running(10),
+      orders: [
+        {
+          id: 1,
+          customerId: 'walkin-hiker',
+          wants: ['flour-1'],
+          reward: { coins: 1, stars: 0, xp: 0 },
+          eventPoints: 10,
+        },
+      ],
+    };
+    const r = tickEvents(testData, state, rng(), 1000);
+    if (!r.ok) throw new Error('expected ok');
+    expect(r.state.event).toBeNull();
+    expect(r.state.orders).toEqual([]);
+  });
+});
+
 describe('event orders', () => {
   const orderData: GameData = {
     ...data,

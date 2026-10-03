@@ -11,7 +11,7 @@ Source: Implementation Plan, Phase 8. Branches t8.1 … t8.9, each stacked on th
 - [ ] T8.7 Event dialogue: `src/data/dialogue/events.json`, 3 scenes per event, played by naming convention. Awaiting Scott's approval of the script
 - [x] T8.8 Street Fair Standoff, Blind Taste Test, Flour Shortage (slows the Flour Mill's cooldowns), Charity Bake Sale. Added `EventDef.slow`, `orders.minTier`. Not done: the permanent rewards (Flour Mill upgrade, decor sets) — wins are recorded in `trophies` only
 - [x] T8.9 Balance pass: `npm run balance` now also prints each event played alone (one event at a time, 2 seeds, 10 days). MegaBun's final scores and milestones rescaled (Bake-Off 1500, Street Fair 1500, Flour Shortage 1400, Charity 1800, Taste Test 150) so the bot, a faster player than most, reaches the target after 3–10 sessions of 12–21. Left open: the first event arrives a full gap (14 days) after reaching Chapter 2 — probably too late; decide with Scott
-- [ ] T8.10 Phase-end review and Scott's events playtest
+- [ ] T8.10 Phase-end review done Oct 3 (seams read: tick composition, save v1 → v2 load, unknown event ids in old saves now dropped instead of throwing). Remaining: Scott's events playtest, including the browser check of the T8.5 UI
 
 # Phase 7 — Chapter 2, The Café Terrace, and the Shop
 

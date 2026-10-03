@@ -1,12 +1,29 @@
-# Handoff — Oct 2, 2026
+# Handoff — Oct 3, 2026
 
-Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md` (top section is Phase 7) and `docs/briefs/working-rules.md` first.
+Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md` (top section is Phase 8) and `docs/briefs/working-rules.md` first.
 
 ## State
 
-- **Branch** `t1.1-types`. Last commit `0a7693b` (T6.4 and T6.5). **Uncommitted:** the first-session tuning (T-O3 "smooth the first session") and all of Phase 7. Scott commits — don't commit unless asked.
-- **Gate** on Oct 2: typecheck clean, eslint and prettier clean, 55 test files / 699 tests pass, `npm run build` exits 0 (about 2.5 min).
-- **Phases 1–6 done.** Phase 7 (Chapter 2, The Café Terrace, and the Shop) is built and gated. **Scott's Chapter 2 playtest (T-O5) is under way and going well.** MegaBun events are Phase 8, after Chapter 2.
+- **Branches** are stacked, one per task: `t8.1-events-contract` → `t8.2-event-schedule` → … → `t8.10-review`. Phase 7 is committed on `t1.1-types`. Nothing is merged to `main` and there is no remote yet (T0.4).
+- **Phase 8 (MegaBun events) is built**: five event types on one framework, all in `src/core/events.ts`, run from the `tick` handler in `dispatch.ts`. 742 tests pass; typecheck and ESLint are clean.
+- **Not checked in a browser:** the event pill, sheet and result card (T8.5). The Playwright tool had no Chrome. Start one with `bakery.event()` in the console (dev only), then `bakery.away(4400)` to expire it.
+- **Waiting on Scott:** the event dialogue script (`src/data/dialogue/events.json`, T8.7) and the events playtest (T8.10).
+
+## Phase 8 as built
+
+- Contract changes: Scott approved the T8.1 proposal on Oct 3. Added after that, and listed in the header of `types.ts`: `EventDef.gapAfterSec`, `EventDef.orders`, `EventDef.slow`, `EventOrderRules.minTier`, chain kind `event`, `EventResult.coins`. Save version is 2 (migration in `migrate.ts`).
+- Events: `bake-off`, `street-fair`, `taste-test`, `flour-shortage`, `charity-sale` in `src/data/events.json`, each with its own generator and product chain in `items.json` and `generators.json` (placeholder SVGs only).
+- Rules: one event at a time; the next starts `gapAfterSec` (14 days) after the last ends; the first starts one gap after the player reaches `minChapter`. Event orders are extra, outside the 4 regular slots. At the end, event items are sold, the generator removed, reached milestones paid, and a win pays `trophyGems` and is recorded in `trophies`.
+- Dialogue: scenes `event-<id>-start`, `-win`, `-lose`, played from `main.ts` by naming convention. Win and lose play after the result card is dismissed.
+- Balance: `npm run balance` prints each event played alone. The bot reaches MegaBun's final score after 3–10 sessions.
+
+## Open for Phase 8
+
+1. **First event delay.** It arrives a full 14 days after Chapter 2 starts. Probably too late; a shorter first gap needs a data field.
+2. **Permanent rewards** (Flour Mill upgrade, decor sets) are not built; wins are only recorded in `trophies`.
+3. **Spy regular and portraits** for the hint letters are not built; the letters are narrator lines.
+4. **Event art** is placeholder SVG; the event items and generators need pixel art in the T5.14 style.
+5. A Golden Whisk can copy an event item (harmless: it is sold at the end).
 
 ## Phase 7 progress
 

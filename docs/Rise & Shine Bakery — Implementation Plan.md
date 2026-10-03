@@ -230,6 +230,8 @@ Each chapter keeps the GDD's target of 15–25 renovation tasks (Chapters 1 and 
 
 ## Phase 8: MegaBun competitive events
 
+**Status (Oct 3):** T8.1–T8.9 built; T8.7's script awaits Scott's approval and T8.10's playtest is his. Differences from the plan: the contract also gained `EventDef.gapAfterSec`, `orders`, `slow`, chain kind `event` and `EventResult.coins`; event art is placeholder SVG; the permanent rewards and the spy regular are not built. See `docs/HANDOFF.md`.
+
 Available once Chapter 2 is reached. Five event types, built one at a time on a shared event framework. The Bake-Off Showdown ships first and proves the framework; the others reuse it. Events are limited to 3–5 days, about one every two weeks, and never overlap.
 
 **Contract change (T-O1), to approve before T8.1.** In `types.ts`: an `EventState` in `GameState` (active event id, start and end timestamps, points, claimed milestones, MegaBun's score) and the actions `startEvent`, `deliverEventOrder`, `claimMilestone`. This is a `GameState` change, so it needs a save migration (v1 to v2, using the T4.6 scaffold).
