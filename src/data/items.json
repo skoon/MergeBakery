@@ -104,6 +104,20 @@
       "kind": "wildcard",
       "color": "#ffd700",
       "completionGems": 0
+    },
+    {
+      "id": "bakeoff-mixer",
+      "name": "Contest Mixer",
+      "kind": "generator",
+      "color": "#e0457b",
+      "completionGems": 0
+    },
+    {
+      "id": "showpiece",
+      "name": "Showpiece Cake",
+      "kind": "event",
+      "color": "#e0457b",
+      "completionGems": 0
     }
   ],
   "items": [
@@ -710,6 +724,66 @@
       "tier": 1,
       "spriteKey": "golden-whisk",
       "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "contest-mixer-1",
+      "name": "Contest Mixer",
+      "chainId": "bakeoff-mixer",
+      "tier": 1,
+      "spriteKey": "contest-mixer-1",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "sprinkles",
+      "name": "Sprinkles",
+      "chainId": "showpiece",
+      "tier": 1,
+      "spriteKey": "sprinkles",
+      "sellValue": 2,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "frosting-swirl",
+      "name": "Frosting swirl",
+      "chainId": "showpiece",
+      "tier": 2,
+      "spriteKey": "frosting-swirl",
+      "sellValue": 4,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "sponge-layer",
+      "name": "Sponge layer",
+      "chainId": "showpiece",
+      "tier": 3,
+      "spriteKey": "sponge-layer",
+      "sellValue": 8,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "tiered-cake",
+      "name": "Tiered cake",
+      "chainId": "showpiece",
+      "tier": 4,
+      "spriteKey": "tiered-cake",
+      "sellValue": 16,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "showstopper-cake",
+      "name": "Showstopper cake",
+      "chainId": "showpiece",
+      "tier": 5,
+      "spriteKey": "showstopper-cake",
+      "sellValue": 32,
       "note": null,
       "collectReward": null
     }

@@ -1,1 +1,75 @@
-{ "events": [] }
+{
+  "events": [
+    {
+      "id": "bake-off",
+      "name": "Bake-Off Showdown",
+      "minChapter": "chapter2",
+      "durationSec": 259200,
+      "gapAfterSec": 1209600,
+      "generatorItemId": "contest-mixer-1",
+      "pointsPerOrder": 10,
+      "orders": {
+        "maxOpen": 2,
+        "minItems": 1,
+        "maxItems": 2,
+        "maxTier": 3
+      },
+      "milestones": [
+        {
+          "points": 40,
+          "reward": {
+            "coins": 100,
+            "gems": 0
+          }
+        },
+        {
+          "points": 100,
+          "reward": {
+            "coins": 0,
+            "gems": 2
+          }
+        },
+        {
+          "points": 180,
+          "reward": {
+            "coins": 300,
+            "gems": 0
+          }
+        },
+        {
+          "points": 280,
+          "reward": {
+            "coins": 0,
+            "gems": 5
+          }
+        },
+        {
+          "points": 400,
+          "reward": {
+            "coins": 0,
+            "gems": 10
+          }
+        }
+      ],
+      "megabunCurve": [
+        {
+          "atSec": 0,
+          "score": 0
+        },
+        {
+          "atSec": 86400,
+          "score": 80
+        },
+        {
+          "atSec": 172800,
+          "score": 220
+        },
+        {
+          "atSec": 259200,
+          "score": 400
+        }
+      ],
+      "trophyGems": 15
+    }
+  ]
+}

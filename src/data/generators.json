@@ -119,6 +119,15 @@
       ],
       "charges": 60,
       "cooldownSec": 180
+    },
+    {
+      "itemId": "contest-mixer-1",
+      "spawnTable": [
+        { "itemId": "sprinkles", "weight": 70 },
+        { "itemId": "frosting-swirl", "weight": 30 }
+      ],
+      "charges": 30,
+      "cooldownSec": 180
     }
   ],
   "rareDrops": {

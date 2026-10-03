@@ -381,3 +381,29 @@ describe('event orders', () => {
     expect(ended.state.orders.filter((o) => o.eventPoints)).toEqual([]);
   });
 });
+
+describe('the real Bake-Off Showdown', () => {
+  it('starts in Chapter 2 with its mixer and two orders for its own items', () => {
+    const state = stateWith({}, { chapterId: 'chapter2', nextEventAt: 0 });
+    const r = tickEvents(testData, state, rng(), 0);
+    if (!r.ok) throw new Error('expected ok');
+    expect(r.state.event?.eventId).toBe('bake-off');
+    const itemIds = r.state.board.cells.flatMap((c) =>
+      c.kind === 'item' ? [c.item.itemId] : [],
+    );
+    expect(itemIds).toContain('contest-mixer-1');
+    const eventOrders = r.state.orders.filter((o) => o.eventPoints);
+    expect(eventOrders).toHaveLength(2);
+    for (const o of eventOrders) {
+      for (const id of o.wants) {
+        expect(testData.items.get(id)?.chainId).toBe('showpiece');
+      }
+    }
+  });
+
+  it('is not offered in Chapter 1', () => {
+    const state = stateWith({}, { chapterId: 'chapter1' });
+    const r = tickEvents(testData, state, rng(), 0);
+    expect(r.ok && r.state.nextEventAt).toBeNull();
+  });
+});
