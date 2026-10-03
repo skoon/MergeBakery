@@ -15,6 +15,8 @@ export interface OrderCard {
   stars: number;
   /** Hometown Pride this order earns; present only on event orders. */
   eventPoints?: number;
+  /** When a catering order expires; present only on catering orders (T9.3). */
+  cateringExpiresAt?: number;
   fillable: boolean;
 }
 
@@ -60,6 +62,7 @@ export function counterCards(data: GameData, state: GameState): OrderCard[] {
       ...(order.eventPoints !== undefined && {
         eventPoints: order.eventPoints,
       }),
+      ...(order.catering && { cateringExpiresAt: order.catering.expiresAt }),
       fillable: wants.every((w) => w.ready),
     };
   });

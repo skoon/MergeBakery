@@ -8,6 +8,26 @@ import { stateWith, testData } from '../core/testing';
 import { counterCards } from './counterModel';
 
 describe('counterCards', () => {
+  it('carries when a catering order expires, and only on catering orders', () => {
+    const regular: Order = {
+      id: 1,
+      customerId: 'gus',
+      wants: ['apple'],
+      reward: { coins: 10, stars: 1, xp: 2 },
+    };
+    const catering: Order = {
+      ...regular,
+      id: 2,
+      catering: { expiresAt: 9000, upgradeChancePercent: 25 },
+    };
+    const cards = counterCards(
+      testData,
+      stateWith({}, { orders: [regular, catering] }),
+    );
+    expect(cards[0]).not.toHaveProperty('cateringExpiresAt');
+    expect(cards[1]?.cateringExpiresAt).toBe(9000);
+  });
+
   it('carries the points of an event order, and leaves them off a regular one', () => {
     const regular: Order = {
       id: 1,

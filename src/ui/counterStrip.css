@@ -139,3 +139,14 @@
   background: var(--color-cream);
   border: 2px solid var(--color-strawberry);
 }
+
+.counter-card--catering {
+  background: var(--color-butter);
+  border: 2px solid var(--color-crust);
+  box-shadow: 0 0 0 2px var(--color-butter);
+}
+
+.counter-card-timer {
+  font-weight: 700;
+  color: var(--color-crust);
+}
