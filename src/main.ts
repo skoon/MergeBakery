@@ -34,6 +34,7 @@ import { mountDialoguePlayer } from './ui/dialoguePlayer';
 import { mountChapterTransition } from './ui/chapterTransition';
 import chapter1Scenes from './data/dialogue/chapter1.json';
 import chapter2Scenes from './data/dialogue/chapter2.json';
+import chapter3Scenes from './data/dialogue/chapter3.json';
 import eventScenes from './data/dialogue/events.json';
 import { startBakeNotifier } from './ui/bakeNotifier';
 import { createSettingsStore } from './ui/settings';
@@ -123,6 +124,7 @@ const dialogue = mountDialoguePlayer(
     scenes: [
       ...chapter1Scenes.scenes,
       ...chapter2Scenes.scenes,
+      ...chapter3Scenes.scenes,
       ...eventScenes.scenes,
     ],
   }),

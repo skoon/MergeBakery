@@ -1,0 +1,197 @@
+{
+  "scenes": [
+    {
+      "id": "ch3-intro",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Past the ferry steps and a very suspicious seagull, a market stall leans on the quay. It hasn't sold a thing since a storm in 1998."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Ah, the harbor stall. I sold my first cherry tarts here, standing on an upturned crate because I was too short for the counter."
+        },
+        {
+          "speaker": "grandma",
+          "text": "The Harbor Festival is coming. The whole town turns up, hungry and loud. Whoever feeds them is remembered for a year."
+        },
+        {
+          "speaker": "grandma",
+          "text": "You'll want fruit, dear. Plenty of it. And a stall that doesn't try to eat your thumbs."
+        },
+        {
+          "speaker": "narrator",
+          "text": "A crate of berries has already been left on the counter. A note, unsigned: 'For the festival. P.S. The seagull is called Gerald.'"
+        }
+      ]
+    },
+    {
+      "id": "ch3-marisol",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "A woman in a captain's cap strides down the gangway like she owns the sea. The ferry behind her seems to agree."
+        },
+        {
+          "speaker": "marisol",
+          "text": "Captain Marisol. I run the ferry, and I've been stuck eating gas-station sandwiches for six years. This stall used to fix that."
+        },
+        {
+          "speaker": "marisol",
+          "expression": "happy",
+          "text": "Your gran's fruit tarts were the reason I took this route in the first place. Tell me you've kept the recipe."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "It's on the third page, Captain. We're nearly there."
+        },
+        {
+          "speaker": "marisol",
+          "text": "Good. A captain on a full stomach is a patient captain. A captain on a gas-station sandwich is a threat to navigation."
+        }
+      ]
+    },
+    {
+      "id": "ch3-pell",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "A big man with a bigger beard wrestles a tray of mackerel across the quay and parks it by the stall. Several gulls take an interest."
+        },
+        {
+          "speaker": "pell",
+          "text": "Pell. Fishmonger. Don't mind the smell. It's mostly honest."
+        },
+        {
+          "speaker": "pell",
+          "expression": "happy",
+          "text": "I'd like a scone. Plain. Warm. With jam you can pronounce. Not the stuff the other lot sells, in the tub that says 'spread-style'."
+        },
+        {
+          "speaker": "grandma",
+          "text": "He's right about the jam. Put your best berries in it, dear. It's the only real way to argue with a corporation."
+        },
+        {
+          "speaker": "pell",
+          "text": "And if you're hiring: I'm very good at shouting 'fresh!' across a harbor. It's my one skill. Other than fish."
+        }
+      ]
+    },
+    {
+      "id": "ch3-juno",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "A woman with a clipboard, a headband and an expression of controlled panic walks straight into the stall. She apologizes to the stall."
+        },
+        {
+          "speaker": "juno",
+          "text": "Juno! I run the Harbor Festival. Three hundred people, one stage, a brass band that only knows one song, and no catering."
+        },
+        {
+          "speaker": "juno",
+          "expression": "happy",
+          "text": "That's where you come in. Tarts, scones, a showpiece cake for the mayor's photo. I'll pay, I promise. In money, not exposure."
+        },
+        {
+          "speaker": "grandma",
+          "text": "Say yes, dear. A festival is only a very large party, and we know how to throw those."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Juno ticks something off her clipboard so hard the pen goes through the paper."
+        }
+      ]
+    },
+    {
+      "id": "ch3-neighbors",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The market bell rings for the first time in years. The sound rolls across the water, and doors start opening all along the quay."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The fruit seller drags out her barrow. The net-mender stops mending. The seagull, Gerald, retires to a bin to supervise."
+        },
+        {
+          "speaker": "juno",
+          "text": "That's the sound! That's the festival sound! Somebody write that down. No, don't. I'll remember it. I will not remember it. Write it down."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Nothing wakes up a harbor like a bell and the smell of fresh scones, dear. We've only just begun."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Somewhere out beyond the breakwater, a very large orange tent is being unpacked. Nobody has told Juno yet."
+        }
+      ]
+    },
+    {
+      "id": "ch3-recipe-page",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Tucked behind the loose brick under the till, wrapped in waxed paper, a third page of Grandma's recipe book. The ink has barely faded."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Fruit tarts, as I made them for my first Harbor Festival. Crisp pastry, good custard, and the fruit tipped on while it's still warm."
+        },
+        {
+          "speaker": "grandma",
+          "text": "There's a note at the bottom. 'If it sags, nobody has to know. Put more fruit on it.' That is the best baking advice I ever gave."
+        },
+        {
+          "speaker": "marisol",
+          "text": "The captain approves of this page. The captain has been waiting six years."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The page smells faintly of cinnamon and salt. The recipe book feels, for the first time, nearly whole."
+        }
+      ]
+    },
+    {
+      "id": "ch3-festival",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Lanterns on every mast. Bunting on every rope. The brass band plays its one song with enormous confidence."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Three hundred people queue at your stall. Some of them have brought their own plates, which Grandma would have approved of."
+        },
+        {
+          "speaker": "juno",
+          "expression": "happy",
+          "text": "It's working! It's actually working! Someone take my clipboard before I frame it!"
+        },
+        {
+          "speaker": "pell",
+          "expression": "happy",
+          "text": "FRESH! FRESH SCONES! Also fish! But mostly scones!"
+        },
+        {
+          "speaker": "marisol",
+          "text": "The ferry will wait. Let it wait. The captain would like a second tart."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Look at them all, dear. Every plate is a little 'thank you'. Hold on to this feeling. Bake from it."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Out past the breakwater, the orange tent's banner has begun, very quietly, to flap in the wrong direction."
+        }
+      ]
+    }
+  ]
+}

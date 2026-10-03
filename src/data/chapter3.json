@@ -1,0 +1,353 @@
+{
+  "id": "chapter3",
+  "name": "Harbor Market Stall",
+  "sceneKey": "harbor-market",
+  "introSceneId": "ch3-intro",
+  "tasks": [
+    {
+      "id": "harbor-clear-quay",
+      "name": "Clear the quay",
+      "starCost": 10,
+      "spot": {
+        "x": 0.17,
+        "y": 0.2
+      },
+      "prerequisites": [],
+      "unlocks": [],
+      "featuredItems": ["berry", "berry-bunch"],
+      "beforeSpriteKey": "harbor-market-clear-quay-before",
+      "afterSpriteKey": "harbor-market-clear-quay-after",
+      "sceneId": null
+    },
+    {
+      "id": "harbor-mend-boards",
+      "name": "Mend the boards",
+      "starCost": 10,
+      "spot": {
+        "x": 0.35,
+        "y": 0.16
+      },
+      "prerequisites": ["harbor-clear-quay"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "fruit-crate-1"
+        }
+      ],
+      "featuredItems": ["berry", "scone"],
+      "beforeSpriteKey": "harbor-market-mend-boards-before",
+      "afterSpriteKey": "harbor-market-mend-boards-after",
+      "sceneId": null
+    },
+    {
+      "id": "harbor-scrub-stall",
+      "name": "Scrub the stall",
+      "starCost": 12,
+      "spot": {
+        "x": 0.64,
+        "y": 0.19
+      },
+      "prerequisites": ["harbor-clear-quay"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "marisol"
+        }
+      ],
+      "featuredItems": ["berry-bunch", "fruit-tart"],
+      "beforeSpriteKey": "harbor-market-scrub-stall-before",
+      "afterSpriteKey": "harbor-market-scrub-stall-after",
+      "sceneId": "ch3-marisol"
+    },
+    {
+      "id": "harbor-paint-stall",
+      "name": "Paint the stall",
+      "starCost": 12,
+      "spot": {
+        "x": 0.87,
+        "y": 0.17
+      },
+      "prerequisites": ["harbor-mend-boards"],
+      "unlocks": [],
+      "featuredItems": ["apple", "scone"],
+      "beforeSpriteKey": "harbor-market-paint-stall-before",
+      "afterSpriteKey": "harbor-market-paint-stall-after",
+      "sceneId": null
+    },
+    {
+      "id": "harbor-new-awning",
+      "name": "Raise a new awning",
+      "starCost": 12,
+      "spot": {
+        "x": 0.15,
+        "y": 0.34
+      },
+      "prerequisites": ["harbor-scrub-stall"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "fruit-crate-1"
+        }
+      ],
+      "featuredItems": ["apple", "fruit-tart"],
+      "beforeSpriteKey": "harbor-market-new-awning-before",
+      "afterSpriteKey": "harbor-market-new-awning-after",
+      "sceneId": null
+    },
+    {
+      "id": "harbor-hang-lanterns",
+      "name": "Hang the lanterns",
+      "starCost": 14,
+      "spot": {
+        "x": 0.38,
+        "y": 0.33
+      },
+      "prerequisites": ["harbor-paint-stall"],
+      "unlocks": [],
+      "featuredItems": ["apple", "scone-basket"],
+      "beforeSpriteKey": "harbor-market-hang-lanterns-before",
+      "afterSpriteKey": "harbor-market-hang-lanterns-after",
+      "sceneId": null
+    },
+    {
+      "id": "harbor-price-boards",
+      "name": "Chalk the price boards",
+      "starCost": 14,
+      "spot": {
+        "x": 0.62,
+        "y": 0.34
+      },
+      "prerequisites": ["harbor-new-awning"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "pell"
+        }
+      ],
+      "featuredItems": ["apple-basket", "scone"],
+      "beforeSpriteKey": "harbor-market-price-boards-before",
+      "afterSpriteKey": "harbor-market-price-boards-after",
+      "sceneId": "ch3-pell"
+    },
+    {
+      "id": "harbor-brass-scales",
+      "name": "Polish the brass scales",
+      "starCost": 14,
+      "spot": {
+        "x": 0.87,
+        "y": 0.36
+      },
+      "prerequisites": ["harbor-hang-lanterns"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "sugar-tin-1"
+        }
+      ],
+      "featuredItems": ["scone-basket", "tart-tray"],
+      "beforeSpriteKey": "harbor-market-brass-scales-before",
+      "afterSpriteKey": "harbor-market-brass-scales-after",
+      "sceneId": null
+    },
+    {
+      "id": "harbor-stack-crates",
+      "name": "Stack the crates",
+      "starCost": 16,
+      "spot": {
+        "x": 0.17,
+        "y": 0.5
+      },
+      "prerequisites": ["harbor-price-boards"],
+      "unlocks": [],
+      "featuredItems": ["apple-basket", "fruit-tart"],
+      "beforeSpriteKey": "harbor-market-stack-crates-before",
+      "afterSpriteKey": "harbor-market-stack-crates-after",
+      "sceneId": null
+    },
+    {
+      "id": "harbor-net-display",
+      "name": "Hang a net display",
+      "starCost": 16,
+      "spot": {
+        "x": 0.38,
+        "y": 0.49
+      },
+      "prerequisites": ["harbor-brass-scales", "harbor-stack-crates"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "juno"
+        }
+      ],
+      "featuredItems": ["jam-jar", "cream-tea"],
+      "beforeSpriteKey": "harbor-market-net-display-before",
+      "afterSpriteKey": "harbor-market-net-display-after",
+      "sceneId": "ch3-juno"
+    },
+    {
+      "id": "harbor-flower-boxes",
+      "name": "Fill the flower boxes",
+      "starCost": 16,
+      "spot": {
+        "x": 0.59,
+        "y": 0.48
+      },
+      "prerequisites": ["harbor-net-display"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "dairy-fridge-1"
+        }
+      ],
+      "featuredItems": ["jam-jar", "tart-tray"],
+      "beforeSpriteKey": "harbor-market-flower-boxes-before",
+      "afterSpriteKey": "harbor-market-flower-boxes-after",
+      "sceneId": null
+    },
+    {
+      "id": "harbor-harbor-cat",
+      "name": "Adopt the harbor cat",
+      "starCost": 16,
+      "spot": {
+        "x": 0.86,
+        "y": 0.49
+      },
+      "prerequisites": ["harbor-flower-boxes"],
+      "unlocks": [],
+      "featuredItems": ["cream-tea", "scone-basket"],
+      "beforeSpriteKey": "harbor-market-harbor-cat-before",
+      "afterSpriteKey": "harbor-market-harbor-cat-after",
+      "sceneId": null
+    },
+    {
+      "id": "harbor-festival-banner",
+      "name": "Raise the festival banner",
+      "starCost": 18,
+      "spot": {
+        "x": 0.13,
+        "y": 0.68
+      },
+      "prerequisites": ["harbor-harbor-cat"],
+      "unlocks": [],
+      "featuredItems": ["fruit-gateau", "jam-jar"],
+      "beforeSpriteKey": "harbor-market-festival-banner-before",
+      "afterSpriteKey": "harbor-market-festival-banner-after",
+      "sceneId": null
+    },
+    {
+      "id": "harbor-chalk-menu",
+      "name": "Write the festival menu",
+      "starCost": 18,
+      "spot": {
+        "x": 0.38,
+        "y": 0.66
+      },
+      "prerequisites": ["harbor-harbor-cat"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "hen-coop-1"
+        }
+      ],
+      "featuredItems": ["fruit-gateau", "cream-tea"],
+      "beforeSpriteKey": "harbor-market-chalk-menu-before",
+      "afterSpriteKey": "harbor-market-chalk-menu-after",
+      "sceneId": null
+    },
+    {
+      "id": "harbor-market-bell",
+      "name": "Ring the market bell",
+      "starCost": 18,
+      "spot": {
+        "x": 0.6,
+        "y": 0.64
+      },
+      "prerequisites": ["harbor-festival-banner", "harbor-chalk-menu"],
+      "unlocks": [],
+      "featuredItems": ["fruit-tart-filling", "tart-tray"],
+      "beforeSpriteKey": "harbor-market-market-bell-before",
+      "afterSpriteKey": "harbor-market-market-bell-after",
+      "sceneId": "ch3-neighbors"
+    },
+    {
+      "id": "harbor-paper-boats",
+      "name": "Float the paper boats",
+      "starCost": 20,
+      "spot": {
+        "x": 0.85,
+        "y": 0.65
+      },
+      "prerequisites": ["harbor-market-bell"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "flour-mill-1"
+        }
+      ],
+      "featuredItems": ["fruit-gateau", "harvest-showcase"],
+      "beforeSpriteKey": "harbor-market-paper-boats-before",
+      "afterSpriteKey": "harbor-market-paper-boats-after",
+      "sceneId": null
+    },
+    {
+      "id": "harbor-tasting-table",
+      "name": "Set the tasting table",
+      "starCost": 20,
+      "spot": {
+        "x": 0.14,
+        "y": 0.84
+      },
+      "prerequisites": ["harbor-market-bell"],
+      "unlocks": [],
+      "featuredItems": ["harvest-showcase", "cream-tea"],
+      "beforeSpriteKey": "harbor-market-tasting-table-before",
+      "afterSpriteKey": "harbor-market-tasting-table-after",
+      "sceneId": null
+    },
+    {
+      "id": "harbor-festival-stage",
+      "name": "Build the festival stage",
+      "starCost": 22,
+      "spot": {
+        "x": 0.39,
+        "y": 0.81
+      },
+      "prerequisites": ["harbor-paper-boats", "harbor-tasting-table"],
+      "unlocks": [],
+      "featuredItems": ["harvest-showcase", "fruit-gateau"],
+      "beforeSpriteKey": "harbor-market-festival-stage-before",
+      "afterSpriteKey": "harbor-market-festival-stage-after",
+      "sceneId": null
+    },
+    {
+      "id": "harbor-third-recipe-page",
+      "name": "Find the third recipe page",
+      "starCost": 22,
+      "spot": {
+        "x": 0.64,
+        "y": 0.83
+      },
+      "prerequisites": ["harbor-festival-stage"],
+      "unlocks": [],
+      "featuredItems": ["harvest-showcase", "cream-tea"],
+      "beforeSpriteKey": "harbor-market-third-recipe-page-before",
+      "afterSpriteKey": "harbor-market-third-recipe-page-after",
+      "sceneId": "ch3-recipe-page"
+    },
+    {
+      "id": "harbor-festival-night",
+      "name": "Open the Harbor Festival",
+      "starCost": 24,
+      "spot": {
+        "x": 0.87,
+        "y": 0.84
+      },
+      "prerequisites": ["harbor-third-recipe-page"],
+      "unlocks": [],
+      "featuredItems": ["harvest-showcase", "fruit-gateau"],
+      "beforeSpriteKey": "harbor-market-festival-night-before",
+      "afterSpriteKey": "harbor-market-festival-night-after",
+      "sceneId": "ch3-festival"
+    }
+  ]
+}

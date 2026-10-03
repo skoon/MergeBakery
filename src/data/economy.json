@@ -64,6 +64,17 @@
       "starsByItemCount": [2, 2, 3],
       "coinMultiplier": 3,
       "xpPerTier": 2
+    },
+    "catering": {
+      "minChapter": "chapter3",
+      "chancePercent": 15,
+      "minTier": 3,
+      "maxTier": 4,
+      "windowSec": 86400,
+      "coinMultiplier": 6,
+      "stars": 5,
+      "xp": 20,
+      "upgradeChancePercent": 25
     }
   }
 }

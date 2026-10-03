@@ -47,6 +47,14 @@
       "energy": 100,
       "price": 1000,
       "fromChapter": "chapter1"
+    },
+    {
+      "id": "shop-fruit-crate",
+      "name": "Fruit Crate",
+      "kind": "generator",
+      "itemId": "fruit-crate-1",
+      "price": 800,
+      "fromChapter": "chapter3"
     }
   ]
 }
