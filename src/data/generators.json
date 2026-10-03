@@ -164,6 +164,36 @@
       ],
       "charges": 30,
       "cooldownSec": 180
+    },
+    {
+      "itemId": "fruit-crate-1",
+      "spawnTable": [
+        { "itemId": "berry", "weight": 85 },
+        { "itemId": "berry-bunch", "weight": 15 }
+      ],
+      "charges": 36,
+      "cooldownSec": 300
+    },
+    {
+      "itemId": "fruit-crate-2",
+      "spawnTable": [
+        { "itemId": "berry", "weight": 60 },
+        { "itemId": "berry-bunch", "weight": 30 },
+        { "itemId": "apple", "weight": 10 }
+      ],
+      "charges": 48,
+      "cooldownSec": 240
+    },
+    {
+      "itemId": "fruit-crate-3",
+      "spawnTable": [
+        { "itemId": "berry", "weight": 40 },
+        { "itemId": "berry-bunch", "weight": 35 },
+        { "itemId": "apple", "weight": 20 },
+        { "itemId": "apple-basket", "weight": 5 }
+      ],
+      "charges": 60,
+      "cooldownSec": 180
     }
   ],
   "rareDrops": {

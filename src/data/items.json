@@ -174,6 +174,27 @@
       "kind": "event",
       "color": "#3fae6a",
       "completionGems": 0
+    },
+    {
+      "id": "fruit-crate",
+      "name": "Fruit Crate",
+      "kind": "generator",
+      "color": "#d94b4b",
+      "completionGems": 0
+    },
+    {
+      "id": "tart",
+      "name": "Fruit Tarts",
+      "kind": "baked",
+      "color": "#c8553d",
+      "completionGems": 4
+    },
+    {
+      "id": "scone",
+      "name": "Scones",
+      "kind": "baked",
+      "color": "#c98a4b",
+      "completionGems": 4
     }
   ],
   "items": [
@@ -1040,6 +1061,106 @@
       "tier": 4,
       "spriteKey": "sale-raffle-cake",
       "sellValue": 16,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "fruit-crate-1",
+      "name": "Fruit Crate",
+      "chainId": "fruit-crate",
+      "tier": 1,
+      "spriteKey": "fruit-crate-1",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "fruit-crate-2",
+      "name": "Fruit Crate II",
+      "chainId": "fruit-crate",
+      "tier": 2,
+      "spriteKey": "fruit-crate-2",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "fruit-crate-3",
+      "name": "Fruit Crate III",
+      "chainId": "fruit-crate",
+      "tier": 3,
+      "spriteKey": "fruit-crate-3",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "fruit-tart",
+      "name": "Fruit tart",
+      "chainId": "tart",
+      "tier": 1,
+      "spriteKey": "fruit-tart",
+      "sellValue": 40,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "tart-tray",
+      "name": "Tart tray",
+      "chainId": "tart",
+      "tier": 2,
+      "spriteKey": "tart-tray",
+      "sellValue": 80,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "fruit-gateau",
+      "name": "Fruit gateau",
+      "chainId": "tart",
+      "tier": 3,
+      "spriteKey": "fruit-gateau",
+      "sellValue": 160,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "harvest-showcase",
+      "name": "Harvest showcase",
+      "chainId": "tart",
+      "tier": 4,
+      "spriteKey": "harvest-showcase",
+      "sellValue": 320,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "scone",
+      "name": "Scone",
+      "chainId": "scone",
+      "tier": 1,
+      "spriteKey": "scone",
+      "sellValue": 30,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "scone-basket",
+      "name": "Scone basket",
+      "chainId": "scone",
+      "tier": 2,
+      "spriteKey": "scone-basket",
+      "sellValue": 60,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "cream-tea",
+      "name": "Cream tea set",
+      "chainId": "scone",
+      "tier": 3,
+      "spriteKey": "cream-tea",
+      "sellValue": 120,
       "note": null,
       "collectReward": null
     }

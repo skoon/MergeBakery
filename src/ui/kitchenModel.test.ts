@@ -179,6 +179,20 @@ describe('recipeAvailable', () => {
       .map((r) => r.id);
   }
 
+  it('offers the scone with a Fruit Crate, and the tart once sugar is also near (T9.1)', () => {
+    const base = { 0: 'flour-mill-1', 1: 'dairy-fridge-1' } as const;
+    expect(availableIds(stateWith(base))).not.toContain('bake-scone');
+    const withCrate = stateWith({ ...base, 2: 'fruit-crate-1' });
+    expect(availableIds(withCrate)).toContain('bake-scone');
+    expect(availableIds(withCrate)).not.toContain('bake-fruit-tart');
+    const withSugar = stateWith({
+      ...base,
+      2: 'fruit-crate-1',
+      3: 'sugar-tin-1',
+    });
+    expect(availableIds(withSugar)).toContain('bake-fruit-tart');
+  });
+
   it('offers only the croissant with the Chapter 1 generators', () => {
     const state = stateWith({ 0: 'flour-mill-1', 1: 'dairy-fridge-1' });
 

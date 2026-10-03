@@ -20,6 +20,20 @@
       "inputs": ["flour-bag", "egg-pair", "cream-jug"],
       "output": "cupcake",
       "bakeSec": 900
+    },
+    {
+      "id": "bake-fruit-tart",
+      "name": "Fruit tart",
+      "inputs": ["flour-bag", "berry-bunch", "sugar-bowl"],
+      "output": "fruit-tart",
+      "bakeSec": 600
+    },
+    {
+      "id": "bake-scone",
+      "name": "Scone",
+      "inputs": ["flour-bag", "butter-block", "berry"],
+      "output": "scone",
+      "bakeSec": 180
     }
   ]
 }

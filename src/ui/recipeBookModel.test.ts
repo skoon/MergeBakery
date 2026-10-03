@@ -19,6 +19,8 @@ describe('recipeBookPages', () => {
       'cookie',
       'croissant',
       'cupcake',
+      'tart',
+      'scone',
     ]);
   });
 
