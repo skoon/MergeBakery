@@ -57,6 +57,27 @@
       "favoriteItems": ["croissant", "cookie-stack", "cupcake"]
     },
     {
+      "id": "marisol",
+      "name": "Captain Marisol",
+      "kind": "regular",
+      "portraitKey": "portrait-marisol",
+      "favoriteItems": ["fruit-tart", "tart-tray", "apple-basket"]
+    },
+    {
+      "id": "pell",
+      "name": "Mr. Pell",
+      "kind": "regular",
+      "portraitKey": "portrait-pell",
+      "favoriteItems": ["scone", "scone-basket", "berry-bunch"]
+    },
+    {
+      "id": "juno",
+      "name": "Juno",
+      "kind": "regular",
+      "portraitKey": "portrait-juno",
+      "favoriteItems": ["cream-tea", "harvest-showcase", "jam-jar"]
+    },
+    {
       "id": "walkin-hiker",
       "name": "Hiker",
       "kind": "walkIn",
