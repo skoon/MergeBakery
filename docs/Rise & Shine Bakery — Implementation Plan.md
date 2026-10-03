@@ -251,6 +251,8 @@ Available once Chapter 2 is reached. Five event types, built one at a time on a 
 
 ## Phase 9: Chapter 3, Harbor Market Stall
 
+**Status (Oct 3):** T9.1–T9.8 built; the Chapter 3 portraits, script and art await Scott's approval, and T9.9's playtest is his. Differences from the plan: catering's contract is `Order.catering` plus `OrderRules.catering` (no `kind` field) and two events; a new `OrderRules.lowTierBias` was needed to keep late orders affordable. See `docs/HANDOFF.md`.
+
 The Fruit Crate arrives (folds in T6.7), a recipe finally uses fruit, and catering orders begin. The story beat is catering the town festival.
 
 **Contract change (T-O1), if needed.** The GDD's catering order carries a 24-hour deadline, a large coin payout, 5 stars and a generator-upgrade chance. `Order` already allows `expiresAt`; check whether the type needs a `kind` field and a catering reward shape before T9.2.

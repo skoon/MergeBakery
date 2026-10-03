@@ -1,15 +1,29 @@
 # Handoff — Oct 3, 2026
 
-Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md` (top section is Phase 8) and `docs/briefs/working-rules.md` first.
+Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md` (top section is Phase 9) and `docs/briefs/working-rules.md` first.
 
 ## State
 
-- **Branches** are stacked, one per task: `t8.1-events-contract` → `t8.2-event-schedule` → … → `t8.10-review`. Phase 7 is committed on `t1.1-types`. Nothing is merged to `main` and there is no remote yet (T0.4).
-- **Phase 8 (MegaBun events) is built**: five event types on one framework, all in `src/core/events.ts`, run from the `tick` handler in `dispatch.ts`. 742 tests pass; typecheck and ESLint are clean.
-- **Not checked in a browser:** the event pill, sheet and result card (T8.5). The Playwright tool had no Chrome. Start one with `bakery.event()` in the console (dev only), then `bakery.away(4400)` to expire it.
-- **Waiting on Scott:** the event dialogue script (`src/data/dialogue/events.json`, T8.7) and the events playtest (T8.10).
+- **Branches** are stacked, one per task, from `t8.1-events-contract` through `t8.11-open-items` to `t9.1-fruit` … `t9.8-balance`. Phase 7 is on `t1.1-types`. Nothing is merged to `main`; there is no remote yet (T0.4).
+- **Phases 8 and 9 are built** (MegaBun events; Chapter 3, catering, Fruit Crate). 769 tests pass; typecheck and ESLint are clean; `npm run build` last passed after Phase 8.
+- **Not checked in a browser** (the Playwright tool has no Chrome here): the event pill, sheet and result card, the catering card, the Harbor Market scene. Dev helpers: `bakery.event()` starts an event, `bakery.away(4400)` expires it, `bakery.stars(300)` for tasks.
+- **Waiting on Scott:** Chapter 3's portraits, script and art (T9.4, T9.6, T9.7); the event art (`batch7_events.py`) and Wren's portraits; the Chapter 3 playtest.
 
-## Phase 8 as built
+## Phase 9 as built
+
+- **Contract changes**, all in the `types.ts` header: catering (`Order.catering`, `OrderRules.catering`, two events; approved Oct 3) and `OrderRules.lowTierBias` (approved Oct 3).
+- **Fruit Crate** (3 tiers) is in `items.json`, `generators.json` and the Shop (800 coins from Chapter 3). New baked chains `tart` (4 tiers) and `scone` (3), recipes `bake-fruit-tart`, `bake-scone`.
+- **Catering** (`generateCateringOrder`, `expireCatering` in `orders.ts`; the generator upgrade in `deliver.ts`). Rules are in `economy.json`.
+- **Chapter 3** data `chapter3.json` (ids `harbor-`, scene `harbor-market`), dialogue `dialogue/chapter3.json`, art `scripts/art/harbor.py`.
+- **Order bias.** `lowTierBias: 2` divides an item's weight by tier². It was needed because order cost grew with every discovered chain while stars stayed flat.
+
+## Open
+
+1. Chapter 4 (Phase 10): wholesale orders, reputation, staff, Deck Oven in the Shop. Needs a contract change and a save migration (v3).
+2. A sim seed still stalls near the end of Chapter 3 or in Chapter 2 now and then. It looks like a bot limit (four open orders the bot never fills, nothing refreshes them), but a player could meet the same thing: orders can't be skipped. Worth a look.
+3. Event art and Chapter 3 art are scripted pixel art, not hand-polished.
+
+## Phase 8 as built (earlier)
 
 - Contract changes: Scott approved the T8.1 proposal on Oct 3. Added after that, and listed in the header of `types.ts`: `EventDef.gapAfterSec`, `EventDef.orders`, `EventDef.slow`, `EventOrderRules.minTier`, chain kind `event`, `EventResult.coins`. Save version is 2 (migration in `migrate.ts`).
 - Events: `bake-off`, `street-fair`, `taste-test`, `flour-shortage`, `charity-sale` in `src/data/events.json`, each with its own generator and product chain in `items.json` and `generators.json` (placeholder SVGs only).
@@ -17,7 +31,7 @@ Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md
 - Dialogue: scenes `event-<id>-start`, `-win`, `-lose`, played from `main.ts` by naming convention. Win and lose play after the result card is dismissed.
 - Balance: `npm run balance` prints each event played alone. The bot reaches MegaBun's final score after 3–10 sessions.
 
-## Open for Phase 8
+## Open for Phase 8 (earlier)
 
 1. **First event delay.** It arrives a full 14 days after Chapter 2 starts. Probably too late; a shorter first gap needs a data field.
 2. **Permanent rewards** (Flour Mill upgrade, decor sets) are not built; wins are only recorded in `trophies`.

@@ -1,3 +1,18 @@
+# Phase 9 — Chapter 3, Harbor Market Stall
+
+Source: Implementation Plan, Phase 9. Branches t9.1 … t9.9, stacked on the Phase 8 ones.
+
+- [x] Phase 8 open items (Oct 3): first event now 4 days into Chapter 2 (`firstAfterSec`); Flour Shortage's permanent Flour Mill perk (cooldowns ×0.8, `EventDef.perk`) and a trophy shelf in the Bakery view; Wren the MegaBun spy (regular, 3 portraits, intro scene `ch2-wren` on `cafe-chalk-sign`, hint lines in the event scenes); pixel art for the 5 event generators and 21 products (`scripts/art/batch7_events.py`). Fixed: the counter strip cut orders to the first four, hiding event and catering cards
+- [x] T9.1 Fruit Crate (3 tiers, in the Shop from Chapter 3), fruit tart and scone chains and recipes, 10 sprites (`batch8_fruit.py`)
+- [x] T9.2 Catering orders. Contract approved Oct 3: `Order.catering`, `OrderRules.catering`, `cateringExpired`, `generatorUpgraded`. 6% of new orders from Chapter 3, one at a time, one baked item tier 3–4 (discovered), 24 h, coins ×6 + 5 stars, 15% chance to upgrade a board generator
+- [x] T9.3 Catering card (butter background, countdown) in the counter strip; catering and event cards sort first
+- [x] T9.4 Captain Marisol, Mr. Pell, Juno: data and 9 portraits (`portraits5.py`). **Awaiting Scott's approval of the portraits**
+- [x] T9.5 `chapter3.json`: 20 `harbor-` tasks (324 stars), Fruit Crate unlocked by task 2, three regulars, Shop row, catering switched on
+- [x] T9.6 `src/data/dialogue/chapter3.json`, 7 scenes. **Awaiting Scott's approval of the script**
+- [x] T9.7 Harbor Market art: `harbor-market.png` and 40 before/after (`scripts/art/harbor.py`). **Awaiting Scott's approval**
+- [x] T9.8 Balance pass. Contract approved Oct 3: `OrderRules.lowTierBias` = 2 (item weight ÷ tier²). Without it order cost outran the flat star reward and stars per session fell from ~35 to ~8. With it: Chapter 1 d2, Chapter 2 d4–7, Chapter 3 2–5 days later on 4 of 5 seeds (one seed stalls with 1 task left). Events halve on 16-day runs; sim now also reports catering
+- [ ] T9.9 Phase-end review done Oct 3 (`catchUpChapter` walks a save finishing Chapter 2 on to Chapter 3; shop, events and catering gate on chapter order). Remaining: Scott's Chapter 3 playtest, including a browser check of the catering card and the Harbor Market scene
+
 # Phase 8 — MegaBun competitive events
 
 Source: Implementation Plan, Phase 8. Branches t8.1 … t8.9, each stacked on the one before.

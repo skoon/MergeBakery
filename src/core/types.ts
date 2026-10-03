@@ -15,7 +15,8 @@
  * after that (T8.2–T8.4, T8.11): `EventDef.gapAfterSec`, `firstAfterSec`, `orders`,
  * `slow`, `perk`, `ChainKind` 'event', `EventResult.coins`. Catering orders
  * (T9.2, Scott, Oct 3): `CateringRules`, `OrderRules.catering`, `Order.catering`,
- * `cateringExpired` and `generatorUpgraded`.
+ * `cateringExpired` and `generatorUpgraded`. `OrderRules.lowTierBias` (T9.8,
+ * Scott, Oct 3).
  *
  * Conventions every core function follows:
  * - Core functions are pure: they never mutate their inputs and return new
