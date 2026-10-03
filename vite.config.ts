@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  base: '/MergeBakery/',
   plugins: [
     // Installable app with offline play (T5.13). The service worker only runs in
     // builds, so `npm run dev` keeps hot reload and the dev console tools.
