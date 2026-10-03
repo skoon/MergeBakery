@@ -88,6 +88,9 @@ const orderSchema: z.ZodType<Order> = z.strictObject({
   wants: z.array(z.string()),
   reward: orderRewardSchema,
   eventPoints: z.number().optional(),
+  catering: z
+    .strictObject({ expiresAt: z.number(), upgradeChancePercent: z.number() })
+    .optional(),
 });
 
 const bakeSchema: z.ZodType<Bake> = z.strictObject({

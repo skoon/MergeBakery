@@ -10,10 +10,13 @@ import type {
   GameState,
   ItemId,
   OrderId,
+  Rng,
   Timestamp,
 } from './types';
 import { setCell } from './board';
 import { addXp } from './level';
+import { nextTier } from './merge';
+import { pickUniform } from './orders';
 
 /**
  * For each wanted item, in order, a distinct board cell holding that item that isn't
@@ -57,16 +60,55 @@ export function matchOrderItems(
 }
 
 /**
+ * Upgrades one generator on the board that has a next tier, picked at random,
+ * to that tier with full charges. Null when there is none.
+ */
+function upgradeGenerator(
+  data: GameData,
+  state: GameState,
+  rng: Rng,
+): { state: GameState; event: GameEvent } | null {
+  const upgradable: { cell: CellIndex; itemId: ItemId }[] = [];
+  state.board.cells.forEach((cell, i) => {
+    if (cell.kind !== 'item' || !cell.item.generator) return;
+    const next = nextTier(data, cell.item.itemId);
+    if (next && data.generators.has(next.id)) {
+      upgradable.push({ cell: i, itemId: next.id });
+    }
+  });
+  if (upgradable.length === 0) return null;
+  const pick = pickUniform(upgradable, rng);
+  const def = data.generators.get(pick.itemId);
+  if (!def) return null;
+  return {
+    state: {
+      ...state,
+      board: setCell(state.board, pick.cell, {
+        kind: 'item',
+        item: {
+          itemId: pick.itemId,
+          cobwebbed: false,
+          generator: { charges: def.charges, cooldownEndsAt: null },
+        },
+      }),
+    },
+    event: { type: 'generatorUpgraded', cell: pick.cell, itemId: pick.itemId },
+  };
+}
+
+/**
  * Throws for an unknown orderId. Rejects 'missingItems' if any match is null. Otherwise
  * empties the matched cells, adds the reward's coins and stars, removes the order, sets
  * nextOrderAt to its current value or, if null, now + refillDelaySec × 1000, and adds the
  * reward's XP with addXp. Events: orderDelivered { orderId, reward }, then any levelUp events.
+ * A catering order (T9.2) may also upgrade one board generator a tier, when `rng` is given.
  */
 export function deliverOrder(
   data: GameData,
   state: GameState,
   orderId: OrderId,
   now: Timestamp,
+  rng?: Rng,
 ): ActionResult {
   // Find the order
   const orderIndex = state.orders.findIndex((o) => o.id === orderId);
@@ -134,6 +176,18 @@ export function deliverOrder(
     },
     ...xpEvents,
   ];
+
+  if (
+    order.catering &&
+    rng &&
+    rng.next() * 100 < order.catering.upgradeChancePercent
+  ) {
+    const upgraded = upgradeGenerator(data, newState, rng);
+    if (upgraded) {
+      newState = upgraded.state;
+      events.push(upgraded.event);
+    }
+  }
 
   return {
     ok: true,

@@ -133,8 +133,8 @@ export const dispatch: Dispatch = createDispatch({
   takeFromPantry: (data, state, action) =>
     takeFromPantry(data, state, action.pantryIndex, action.to),
   buyPantrySlot: (data, state) => buyPantrySlot(data, state),
-  deliverOrder: (data, state, action) =>
-    deliverOrder(data, state, action.orderId, action.now),
+  deliverOrder: (data, state, action, rng) =>
+    deliverOrder(data, state, action.orderId, action.now, rng),
   loadRecipe: (data, state, action) =>
     loadRecipe(
       data,

@@ -280,6 +280,19 @@ const orderRulesSchema: z.ZodType<OrderRules> = z.strictObject({
   featuredWeight: z.number(),
   walkIn: orderKindRulesSchema,
   regular: orderKindRulesSchema,
+  catering: z
+    .strictObject({
+      minChapter: z.string(),
+      chancePercent: z.number(),
+      minTier: z.number(),
+      maxTier: z.number(),
+      windowSec: z.number(),
+      coinMultiplier: z.number(),
+      stars: z.number(),
+      xp: z.number(),
+      upgradeChancePercent: z.number(),
+    })
+    .optional(),
 });
 
 const economySchema: z.ZodType<Economy> = z.strictObject({
@@ -793,6 +806,28 @@ function validateCrossReferences(parsed: ParsedSections): string[] {
       problems.push(
         `economy.orders.${kind}: minItems ${rules.minItems} is greater than maxItems ${rules.maxItems}`,
       );
+    }
+  }
+
+  // Catering: a known chapter, a sane tier range, positive window and multiplier.
+  const catering = economy.orders.catering;
+  if (catering !== undefined) {
+    if (!chapters.some((c) => c.id === catering.minChapter)) {
+      problems.push(
+        `economy.orders.catering: minChapter "${catering.minChapter}" names an unknown chapter`,
+      );
+    }
+    if (
+      catering.minTier < 1 ||
+      catering.minTier > catering.maxTier ||
+      catering.windowSec <= 0 ||
+      catering.coinMultiplier <= 0 ||
+      catering.chancePercent < 0 ||
+      catering.chancePercent > 100 ||
+      catering.upgradeChancePercent < 0 ||
+      catering.upgradeChancePercent > 100
+    ) {
+      problems.push('economy.orders.catering: a value is out of range');
     }
   }
 

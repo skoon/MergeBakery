@@ -11,9 +11,11 @@
  * `EventDef`, `EventsFile`, `ActiveEvent`, `EventResult`, `GameData.events`,
  * four `GameState` fields (`event`, `nextEventAt`, `eventResult`, `trophies`),
  * `Order.eventPoints`, `claimMilestone`, `dismissEventResult`, three events and
- * two reject reasons (T8.1, Scott, Oct 3). Save version 2. Later additions
- * (T8.2–T8.4): `EventDef.gapAfterSec`, `EventDef.orders`, `EventDef.slow`, `ChainKind` 'event',
- * `EventResult.coins`.
+ * two reject reasons (T8.1, Scott, Oct 3). Save version 2. Added to the events
+ * after that (T8.2–T8.4, T8.11): `EventDef.gapAfterSec`, `firstAfterSec`, `orders`,
+ * `slow`, `perk`, `ChainKind` 'event', `EventResult.coins`. Catering orders
+ * (T9.2, Scott, Oct 3): `CateringRules`, `OrderRules.catering`, `Order.catering`,
+ * `cateringExpired` and `generatorUpgraded`.
  *
  * Conventions every core function follows:
  * - Core functions are pure: they never mutate their inputs and return new
@@ -335,6 +337,25 @@ export interface OrderKindRules {
   readonly xpPerTier: number;
 }
 
+/** Catering orders (T9.2): one high-tier baked item within a day, paying well. */
+export interface CateringRules {
+  /** Not offered before the player reaches this chapter. */
+  readonly minChapter: ChapterId;
+  /** Chance that a new order is a catering order, when none is open. */
+  readonly chancePercent: number;
+  /** Tier range of the baked item asked for (discovered items only). */
+  readonly minTier: number;
+  readonly maxTier: number;
+  /** Seconds the player has to fill it. */
+  readonly windowSec: number;
+  /** Coins paid = the item's sellValue × this. */
+  readonly coinMultiplier: number;
+  readonly stars: number;
+  readonly xp: number;
+  /** Chance that delivery upgrades one generator on the board by a tier. */
+  readonly upgradeChancePercent: number;
+}
+
 export interface OrderRules {
   /** Open orders shown at once. */
   readonly maxOpen: number;
@@ -346,6 +367,7 @@ export interface OrderRules {
   readonly featuredWeight: number;
   readonly walkIn: OrderKindRules;
   readonly regular: OrderKindRules;
+  readonly catering?: CateringRules;
 }
 
 export interface Economy {
@@ -469,6 +491,11 @@ export interface Order {
   readonly reward: OrderReward;
   /** Hometown Pride this order earns; present only on event orders. */
   readonly eventPoints?: number;
+  /** Present only on catering orders (T9.2). */
+  readonly catering?: {
+    readonly expiresAt: Timestamp;
+    readonly upgradeChancePercent: number;
+  };
 }
 
 export interface OrderReward {
@@ -710,6 +737,12 @@ export type GameEvent =
       readonly type: 'purchased';
       readonly shopItemId: ShopItemId;
       readonly coins: number;
+    }
+  | { readonly type: 'cateringExpired'; readonly orderId: OrderId }
+  | {
+      readonly type: 'generatorUpgraded';
+      readonly cell: CellIndex;
+      readonly itemId: ItemId;
     }
   | { readonly type: 'eventStarted'; readonly eventId: EventId }
   | {

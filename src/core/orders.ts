@@ -275,6 +275,82 @@ export function generateOrder(
   };
 }
 
+/**
+ * A catering order, or null when none is due: catering is on, the player has
+ * reached its chapter, none is open, the roll succeeds, and a baked item of the
+ * right tier has been discovered. One high-tier item, a day to fill it, a
+ * generous payout. The roll is the first rng call, so a regular order that
+ * follows is unaffected when catering is off.
+ */
+export function generateCateringOrder(
+  data: GameData,
+  state: GameState,
+  rng: Rng,
+  now: Timestamp,
+): Order | null {
+  const rules = data.economy.orders.catering;
+  if (!rules) return null;
+  const chapterIds = [...data.chapters.keys()];
+  if (
+    chapterIds.indexOf(state.chapterId) < chapterIds.indexOf(rules.minChapter)
+  ) {
+    return null;
+  }
+  if (state.orders.some((o) => o.catering !== undefined)) return null;
+  if (rng.next() * 100 >= rules.chancePercent) return null;
+
+  const discovered = new Set(state.discovered);
+  const candidates = [...data.items.values()].filter(
+    (i) =>
+      discovered.has(i.id) &&
+      data.chains.get(i.chainId)?.kind === 'baked' &&
+      i.tier >= rules.minTier &&
+      i.tier <= rules.maxTier,
+  );
+  if (candidates.length === 0) return null;
+  const item = pickUniform(candidates, rng);
+
+  const customers = [...data.customers.values()].filter(
+    (c) => c.kind === 'walkIn' || state.unlockedCustomers.includes(c.id),
+  );
+  const customer = pickUniform(eligibleCustomers(customers, state), rng);
+
+  return {
+    id: state.nextOrderId,
+    customerId: customer.id,
+    wants: [item.id],
+    reward: {
+      coins: Math.round(item.sellValue * rules.coinMultiplier),
+      stars: rules.stars,
+      xp: rules.xp,
+    },
+    catering: {
+      expiresAt: now + rules.windowSec * 1000,
+      upgradeChancePercent: rules.upgradeChancePercent,
+    },
+  };
+}
+
+/** Removes catering orders whose time is up. A refill follows; there is no penalty. */
+function expireCatering(state: GameState, now: Timestamp): ActionResult {
+  const expired = state.orders.filter(
+    (o) => o.catering !== undefined && now >= o.catering.expiresAt,
+  );
+  if (expired.length === 0) return { ok: true, state, events: [] };
+  return {
+    ok: true,
+    state: {
+      ...state,
+      orders: state.orders.filter((o) => !expired.includes(o)),
+      nextOrderAt: state.nextOrderAt ?? now,
+    },
+    events: expired.map((o) => ({
+      type: 'cateringExpired' as const,
+      orderId: o.id,
+    })),
+  };
+}
+
 /** The tick handler. See "Refilling" below. */
 export function refillOrders(
   data: GameData,
@@ -282,18 +358,24 @@ export function refillOrders(
   rng: Rng,
   now: Timestamp,
 ): ActionResult {
+  const expired = expireCatering(state, now);
+  if (!expired.ok) return expired;
+  state = expired.state;
+
   if (state.nextOrderAt === null || now < state.nextOrderAt) {
-    return { ok: true, state, events: [] };
+    return { ok: true, state, events: [...expired.events] };
   }
 
   let currentState = state;
-  const events: GameEvent[] = [];
+  const events: GameEvent[] = [...expired.events];
 
   // Event orders (T8.4) are extra: they don't take a regular order's slot.
   const regularOpen = (s: GameState): number =>
     s.orders.filter((o) => o.eventPoints === undefined).length;
   while (regularOpen(currentState) < data.economy.orders.maxOpen) {
-    const order = generateOrder(data, currentState, rng);
+    const order =
+      generateCateringOrder(data, currentState, rng, now) ??
+      generateOrder(data, currentState, rng);
     currentState = {
       ...currentState,
       orders: [...currentState.orders, order],
