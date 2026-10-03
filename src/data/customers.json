@@ -78,6 +78,27 @@
       "favoriteItems": ["cream-tea", "harvest-showcase", "jam-jar"]
     },
     {
+      "id": "harlow",
+      "name": "Ms. Harlow",
+      "kind": "regular",
+      "portraitKey": "portrait-harlow",
+      "favoriteItems": ["cookie-stack", "scone-basket", "tart-tray"]
+    },
+    {
+      "id": "lou",
+      "name": "Big Lou",
+      "kind": "regular",
+      "portraitKey": "portrait-lou",
+      "favoriteItems": ["pastry-platter", "cookie-tin", "harvest-showcase"]
+    },
+    {
+      "id": "okafor",
+      "name": "Dr. Okafor",
+      "kind": "regular",
+      "portraitKey": "portrait-okafor",
+      "favoriteItems": ["whisked-eggs", "custard-cup", "jam-jar"]
+    },
+    {
       "id": "walkin-hiker",
       "name": "Hiker",
       "kind": "walkIn",

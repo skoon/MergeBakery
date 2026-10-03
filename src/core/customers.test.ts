@@ -6,19 +6,19 @@ import { describe, it, expect } from 'vitest';
 import { loadGameData } from './data';
 
 describe('customers.json', () => {
-  it('loadGameData succeeds and there are 11 regulars and 6 walk-ins', () => {
+  it('loadGameData succeeds and there are 14 regulars and 6 walk-ins', () => {
     const data = loadGameData();
 
     const customers = Array.from(data.customers.values());
     const regulars = customers.filter((c) => c.kind === 'regular');
     const walkIns = customers.filter((c) => c.kind === 'walkIn');
 
-    expect(regulars).toHaveLength(11);
+    expect(regulars).toHaveLength(14);
     expect(walkIns).toHaveLength(6);
 
     // Check regulars have the expected ids
     const regularIds = new Set(regulars.map((c) => c.id));
-    // Chapter 1's four, Chapter 2's three (T7.3), Wren the MegaBun spy, and Chapter 3's three (T9.4).
+    // Chapter 1's four, Chapter 2's three (T7.3), Wren the MegaBun spy, Chapter 3's three (T9.4), and Chapter 4's three (T10.6).
     expect(regularIds).toEqual(
       new Set([
         'gus',
@@ -32,6 +32,9 @@ describe('customers.json', () => {
         'marisol',
         'pell',
         'juno',
+        'harlow',
+        'lou',
+        'okafor',
       ]),
     );
 
