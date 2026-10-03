@@ -34,6 +34,7 @@ import { mountDialoguePlayer } from './ui/dialoguePlayer';
 import { mountChapterTransition } from './ui/chapterTransition';
 import chapter1Scenes from './data/dialogue/chapter1.json';
 import chapter2Scenes from './data/dialogue/chapter2.json';
+import eventScenes from './data/dialogue/events.json';
 import { startBakeNotifier } from './ui/bakeNotifier';
 import { createSettingsStore } from './ui/settings';
 import { mountSettings } from './ui/settingsScreen';
@@ -119,7 +120,11 @@ const dialogue = mountDialoguePlayer(
   overlayRoot,
   data,
   parseScenes(data, {
-    scenes: [...chapter1Scenes.scenes, ...chapter2Scenes.scenes],
+    scenes: [
+      ...chapter1Scenes.scenes,
+      ...chapter2Scenes.scenes,
+      ...eventScenes.scenes,
+    ],
   }),
 );
 store.subscribe((state, events) => {
@@ -129,6 +134,22 @@ store.subscribe((state, events) => {
     const sceneId = chapter?.tasks.find((t) => t.id === event.taskId)?.sceneId;
     if (sceneId) void dialogue.play(sceneId);
   }
+});
+// Event scenes (T8.7), by naming convention: `event-<id>-start` when an event
+// begins, and `event-<id>-win` or `-lose` once its result card is dismissed.
+let shownResult = store.getState().eventResult;
+store.subscribe((state, events) => {
+  for (const event of events) {
+    if (event.type === 'eventStarted') {
+      void dialogue.play(`event-${event.eventId}-start`);
+    }
+  }
+  if (shownResult && !state.eventResult) {
+    void dialogue.play(
+      `event-${shownResult.eventId}-${shownResult.won ? 'win' : 'lose'}`,
+    );
+  }
+  shownResult = state.eventResult;
 });
 const transition = mountChapterTransition(overlayRoot, store, dialogue);
 if (initial.chapterId !== loaded.chapterId) {

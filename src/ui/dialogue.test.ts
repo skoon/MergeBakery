@@ -8,6 +8,7 @@ import type { GameData } from '../core/types';
 import sample from '../data/dialogue/sample.json';
 import chapter1Scenes from '../data/dialogue/chapter1.json';
 import chapter2Scenes from '../data/dialogue/chapter2.json';
+import eventScenes from '../data/dialogue/events.json';
 import {
   missingSceneIds,
   parseScenes,
@@ -140,6 +141,33 @@ describe('speakerView', () => {
     expect(
       speakerView(data, { speaker: 'edith', text: 'Hi' }).portraitKey,
     ).toBe('portrait-edith-neutral');
+  });
+});
+
+describe('Event scenes (T8.7)', () => {
+  const scenes = parseScenes(data, eventScenes);
+
+  it('has a start, win and lose scene for every event', () => {
+    for (const id of data.events.keys()) {
+      for (const suffix of ['start', 'win', 'lose']) {
+        expect(scenes.has(`event-${id}-${suffix}`), `${id} ${suffix}`).toBe(
+          true,
+        );
+      }
+    }
+  });
+
+  it('keeps each scene to 3–6 lines of at most 140 characters', () => {
+    for (const scene of scenes.values()) {
+      expect(scene.lines.length, scene.id).toBeGreaterThanOrEqual(3);
+      expect(scene.lines.length, scene.id).toBeLessThanOrEqual(6);
+      for (const line of scene.lines) {
+        expect(
+          line.text.length,
+          `${scene.id}: ${line.text}`,
+        ).toBeLessThanOrEqual(140);
+      }
+    }
   });
 });
 

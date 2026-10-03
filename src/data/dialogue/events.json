@@ -1,0 +1,289 @@
+{
+  "scenes": [
+    {
+      "id": "event-bake-off-start",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "PRESS RELEASE: MegaBun is thrilled to announce the Bake-Off Showdown, a celebration of bread-adjacent excellence."
+        },
+        {
+          "speaker": "narrator",
+          "text": "A letter signed 'a concerned customer': 'Their entry is a cake designed by committee. It has eleven layers and no opinions.'"
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Don't count the layers, dear. Count the smiles. A good cake is a conversation, not a spreadsheet."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Judges' orders are on the counter. The Contest Mixer is humming. Make the town proud."
+        }
+      ]
+    },
+    {
+      "id": "event-bake-off-win",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The committee cake has sagged into something that resembles a hat. The crowd votes with its forks."
+        },
+        {
+          "speaker": "narrator",
+          "text": "PRESS RELEASE: MegaBun congratulates itself on a record-breaking participation trophy."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Well! Frosting like that, I'd have given you the recipe for free."
+        }
+      ]
+    },
+    {
+      "id": "event-bake-off-lose",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "MegaBun's cake wins by a nose, mostly because it leans on the judge's table."
+        },
+        {
+          "speaker": "narrator",
+          "text": "PRESS RELEASE: MegaBun takes full credit for the town's baking spirit. The town takes the leftovers home."
+        },
+        {
+          "speaker": "grandma",
+          "text": "They won the ribbon. You won the crowd's second helpings. I know which I'd rather have."
+        }
+      ]
+    },
+    {
+      "id": "event-street-fair-start",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "MegaBun has opened a stall across the harbor. A giant sign reads: ARTISANAL FAIR EXPERIENCE™."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Buns-A-Lot, in a very warm bun costume, hands out coupons for 3% off."
+        },
+        {
+          "speaker": "narrator",
+          "text": "A letter from a concerned customer: 'He's going to try 4% by lunch. Please hold the line. P.S. Your scones are incredible.'"
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Every customer you fill is one who walks over here. Warm samples beat coupons every time."
+        }
+      ]
+    },
+    {
+      "id": "event-street-fair-win",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "By afternoon the queue at MegaBun's stall is a single man holding a 6% coupon and a deep sense of doubt."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Buns-A-Lot quietly removes his costume head, wipes his brow, and takes a sample of your tart."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Never mock the intern. Feed him. He's the only one over there who knows what bread is."
+        }
+      ]
+    },
+    {
+      "id": "event-street-fair-lose",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "MegaBun's stall wins the afternoon with a 9% coupon and a bouncy castle shaped like a bun."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The customers drift back anyway, clutching coupons and craving something that tastes like the 1990s."
+        },
+        {
+          "speaker": "grandma",
+          "text": "They came for the coupons and stayed for the cake. That's the order I'd prefer, but I'll take either."
+        }
+      ]
+    },
+    {
+      "id": "event-taste-test-start",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The judges have arrived at the town square. One of them is, unmistakably, Chad Crustworth's mother."
+        },
+        {
+          "speaker": "narrator",
+          "text": "PRESS RELEASE: MegaBun's samples will arrive microwaved in their original packaging, in the interest of authenticity."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Three plates, three judges. Make each one better than the one before."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The Tasting Table is open. High-tier orders only today."
+        }
+      ]
+    },
+    {
+      "id": "event-taste-test-win",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The final judge puts down her fork and says, with some ceremony, 'Chad would be so proud. Of you.'"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Chad is reported to be 'reviewing the feedback' for several days."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "A mother's vote is the only one that can't be bought. Frame that scorecard."
+        }
+      ]
+    },
+    {
+      "id": "event-taste-test-lose",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "MegaBun's samples win a round on the strength of the packaging. The judges are mostly worried about the plastic."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Chad's mother votes for you anyway. It isn't enough, but it is noted."
+        },
+        {
+          "speaker": "grandma",
+          "text": "Two out of three judges can be wrong. It happens. Three out of three, never."
+        }
+      ]
+    },
+    {
+      "id": "event-flour-shortage-start",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "MegaBun has bought every sack of flour in town. A press release calls this 'a supply chain synergy opportunity'."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The Flour Mill is running slow. A cease-and-desist letter arrives, politely, about 'unauthorized baking'."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Under the third floorboard, dear. I always kept a little something put by."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Grandma's Secret Stash is yours for the duration. Use it wisely."
+        }
+      ]
+    },
+    {
+      "id": "event-flour-shortage-win",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "MegaBun's lawyers send a second letter. It begins 'We regret to inform you that your baking is lovely.'"
+        },
+        {
+          "speaker": "narrator",
+          "text": "The Flour Mill is back to speed and humming. Somewhere a warehouse of flour sits, unloved and unsold."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "They bought the flour. They can't buy the knowing what to do with it."
+        }
+      ]
+    },
+    {
+      "id": "event-flour-shortage-lose",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "MegaBun's warehouse gets all the flour and, apparently, no one to bake with it."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Their lawyers send a third letter. It contains a recipe for 'artisanal bread product', with a typo in the word bread."
+        },
+        {
+          "speaker": "grandma",
+          "text": "We'll manage. We always have. Pass me the second-best flour and I'll show you what I mean."
+        }
+      ]
+    },
+    {
+      "id": "event-charity-sale-start",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The town is raising money for the lighthouse. MegaBun has pledged a single, enormous novelty check."
+        },
+        {
+          "speaker": "narrator",
+          "text": "It is the size of a door. It is, famously, signed in a colour marker that does not appear on any bank's list."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "A lighthouse is just a very tall way of saying 'we haven't forgotten you'. Let's keep it lit."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The Bake Sale Table is set. Every order helps."
+        }
+      ]
+    },
+    {
+      "id": "event-charity-sale-win",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The check is presented at the square with great ceremony. It bounces, audibly, off the stage."
+        },
+        {
+          "speaker": "narrator",
+          "text": "You raise more than the posted amount. The lighthouse is lit by evening, and it is a very good lighthouse."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Money is just crumbs. It's the baking that fills the plate."
+        }
+      ]
+    },
+    {
+      "id": "event-charity-sale-lose",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The check clears, narrowly, and the lighthouse gets its repairs. MegaBun puts out a press release about it."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Everyone agrees the town's cake did most of the actual work. The press release does not mention the cake."
+        },
+        {
+          "speaker": "grandma",
+          "text": "A lit lighthouse is a lit lighthouse. We still had the better bake sale."
+        }
+      ]
+    }
+  ]
+}
