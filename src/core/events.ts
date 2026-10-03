@@ -3,10 +3,14 @@
  * actions (T8.1, T8.2). The event generator comes in T8.3, event orders in T8.4.
  */
 
+import { eligibleCustomers, pickUniform } from './orders';
 import { placeGenerator } from './placement';
+import { weightedPick } from './rng';
 import type {
   ActionResult,
   BoardItem,
+  ItemId,
+  Order,
   EventDef,
   GameData,
   GameEvent,
@@ -70,6 +74,57 @@ function clearEventItems(
 }
 
 /**
+ * A new event order with id state.nextOrderId: a walk-in asks for 1–2 items from
+ * the event generator's product chains, up to the event's maxTier. It pays the
+ * items' sellValue in coins and earns pointsPerOrder per item in Hometown Pride.
+ */
+function generateEventOrder(
+  data: GameData,
+  state: GameState,
+  def: EventDef,
+  rng: Rng,
+): Order {
+  const generator = data.generators.get(def.generatorItemId);
+  if (!generator) {
+    throw new Error(
+      `generateEventOrder: "${def.generatorItemId}" has no generator`,
+    );
+  }
+  const chains = new Set(
+    generator.spawnTable.map((e) => data.items.get(e.itemId)?.chainId),
+  );
+  const candidates = [...data.items.values()].filter(
+    (i) => chains.has(i.chainId) && i.tier <= def.orders.maxTier,
+  );
+  if (candidates.length === 0) {
+    throw new Error(`generateEventOrder: no items for event "${def.id}"`);
+  }
+  const walkIns = [...data.customers.values()].filter(
+    (c) => c.kind === 'walkIn',
+  );
+  const customer = pickUniform(eligibleCustomers(walkIns, state), rng);
+
+  const count =
+    def.orders.minItems +
+    Math.floor(rng.next() * (def.orders.maxItems - def.orders.minItems + 1));
+  const table = candidates.map((i) => ({ itemId: i.id, weight: 1 }));
+  const wants: ItemId[] = [];
+  for (let i = 0; i < count; i++) wants.push(weightedPick(table, rng));
+
+  const coins = wants.reduce(
+    (sum, id) => sum + (data.items.get(id)?.sellValue ?? 0),
+    0,
+  );
+  return {
+    id: state.nextOrderId,
+    customerId: customer.id,
+    wants,
+    reward: { coins, stars: 0, xp: 0 },
+    eventPoints: def.pointsPerOrder * count,
+  };
+}
+
+/**
  * The tick half of events. Ends the running event once its time is up (win if
  * the points reach MegaBun's final score; a win pays trophyGems and is recorded
  * in `trophies`), schedules the next one `gapAfterSec` after the end, and starts
@@ -91,16 +146,25 @@ export function tickEvents(
     if (!def) throw new Error(`tickEvents: unknown event "${active.eventId}"`);
     const won = active.points >= megabunScore(def, def.durationSec);
     const cleared = clearEventItems(data, next);
+    // Milestones reached but not claimed are paid now, so a lost event still pays.
+    const unclaimed = def.milestones.filter(
+      (m, i) =>
+        m.points <= active.points && !active.claimedMilestones.includes(i),
+    );
+    const milestoneCoins = unclaimed.reduce((n, m) => n + m.reward.coins, 0);
+    const milestoneGems = unclaimed.reduce((n, m) => n + m.reward.gems, 0);
     next = {
       ...cleared.state,
       event: null,
+      orders: cleared.state.orders.filter((o) => o.eventPoints === undefined),
       eventResult: {
         eventId: def.id,
         won,
         points: active.points,
         coins: cleared.coins,
       },
-      gems: next.gems + (won ? def.trophyGems : 0),
+      coins: cleared.state.coins + milestoneCoins,
+      gems: next.gems + milestoneGems + (won ? def.trophyGems : 0),
       trophies: won ? [...next.trophies, def.id] : next.trophies,
       nextEventAt: active.endsAt + def.gapAfterSec * 1000,
     };
@@ -144,6 +208,22 @@ export function tickEvents(
           }
         }
       }
+    }
+  }
+
+  // Keep the running event's orders topped up.
+  const running = next.event && data.events.get(next.event.eventId);
+  if (running) {
+    const open = (): number =>
+      next.orders.filter((o) => o.eventPoints !== undefined).length;
+    while (open() < running.orders.maxOpen) {
+      const order = generateEventOrder(data, next, running, rng);
+      next = {
+        ...next,
+        orders: [...next.orders, order],
+        nextOrderId: next.nextOrderId + 1,
+      };
+      events.push({ type: 'orderArrived', orderId: order.id });
     }
   }
 

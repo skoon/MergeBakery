@@ -724,6 +724,7 @@ describe('parseGameData: chapters and the Shop (T7.1)', () => {
           gapAfterSec: 10,
           generatorItemId: 'nope',
           pointsPerOrder: 5,
+          orders: { maxOpen: 1, minItems: 1, maxItems: 2, maxTier: 2 },
           milestones: [
             { points: 20, reward: { coins: 1, gems: 0 } },
             { points: 10, reward: { coins: 1, gems: 0 } },

@@ -6,6 +6,7 @@ import {
   tickEvents,
 } from './events';
 import { createRng } from './rng';
+import { deliverOrder } from './deliver';
 import { stateWith, testData } from './testing';
 import type { EventDef, GameData, GameState } from './types';
 
@@ -17,6 +18,8 @@ const def: EventDef = {
   gapAfterSec: 1209600,
   generatorItemId: 'flour-mill-1',
   pointsPerOrder: 10,
+  // 0 keeps the schedule tests free of orders; the order tests below raise it.
+  orders: { maxOpen: 0, minItems: 1, maxItems: 2, maxTier: 2 },
   milestones: [
     { points: 20, reward: { coins: 50, gems: 1 } },
     { points: 50, reward: { coins: 100, gems: 2 } },
@@ -181,9 +184,19 @@ describe('tickEvents', () => {
       points: 99,
       coins: 0,
     });
-    expect(r.state.gems).toBe(state.gems);
+    // Both milestones (1 + 2 gems) were reached; no trophy gems.
+    expect(r.state.gems).toBe(state.gems + 3);
     expect(r.state.trophies).toEqual([]);
     expect(r.state.nextEventAt).toBe(def.durationSec * 1000 + 14 * DAY);
+  });
+
+  it('pays reached milestones that were never claimed when the event ends', () => {
+    const state = running(50, [0]);
+    const r = tickEvents(data, state, rng(), def.durationSec * 1000);
+    if (!r.ok) throw new Error('expected ok');
+    // Milestone 1 (50 points) was reached and unclaimed; milestone 0 was claimed.
+    expect(r.state.coins).toBe(state.coins + 100);
+    expect(r.state.gems).toBe(state.gems + 2);
   });
 
   it('ends a won event: trophy gems and a trophy', () => {
@@ -191,7 +204,7 @@ describe('tickEvents', () => {
     const r = tickEvents(data, state, rng(), def.durationSec * 1000);
     if (!r.ok) throw new Error('expected ok');
     expect(r.state.eventResult?.won).toBe(true);
-    expect(r.state.gems).toBe(state.gems + def.trophyGems);
+    expect(r.state.gems).toBe(state.gems + 3 + def.trophyGems);
     expect(r.state.trophies).toEqual(['bakeOff']);
     expect(r.events).toEqual([
       { type: 'eventEnded', eventId: 'bakeOff', won: true },
@@ -316,5 +329,55 @@ describe('event items', () => {
     expect(r.state.pantry.items).toEqual([]);
     expect(r.state.coins).toBe(10 + 3 + 6 + 3);
     expect(r.state.eventResult?.coins).toBe(12);
+  });
+});
+
+describe('event orders', () => {
+  const orderData: GameData = {
+    ...data,
+    events: new Map([
+      [def.id, { ...def, orders: { ...def.orders, maxOpen: 2 } }],
+    ]),
+  };
+
+  it('tops up to maxOpen event orders from the event chain, up to maxTier', () => {
+    const r = tickEvents(orderData, running(0), rng(), 1000);
+    if (!r.ok) throw new Error('expected ok');
+    const eventOrders = r.state.orders.filter((o) => o.eventPoints);
+    expect(eventOrders).toHaveLength(2);
+    for (const o of eventOrders) {
+      expect(o.eventPoints).toBe(10 * o.wants.length);
+      for (const id of o.wants) {
+        const item = testData.items.get(id);
+        expect(item?.chainId).toBe('flour');
+        expect(item?.tier).toBeLessThanOrEqual(2);
+      }
+    }
+    expect(r.state.nextOrderId).toBe(running(0).nextOrderId + 2);
+    // A second tick adds nothing.
+    const again = tickEvents(orderData, r.state, rng(), 2000);
+    expect(again.ok && again.state).toBe(r.state);
+  });
+
+  it('adds event points on delivery and keeps the order out of the regular slots', () => {
+    const r = tickEvents(orderData, running(0), rng(), 1000);
+    if (!r.ok) throw new Error('expected ok');
+    const order = r.state.orders[0]!;
+    const cells = Object.fromEntries(
+      order.wants.map((id, i) => [i, id] as const),
+    );
+    const board = stateWith(cells).board;
+    const d = deliverOrder(orderData, { ...r.state, board }, order.id, 1000);
+    if (!d.ok) throw new Error('expected ok');
+    expect(d.state.event?.points).toBe(order.eventPoints);
+    expect(d.state.coins).toBe(r.state.coins + order.reward.coins);
+  });
+
+  it('drops event orders when the event ends', () => {
+    const r = tickEvents(orderData, running(0), rng(), 1000);
+    if (!r.ok) throw new Error('expected ok');
+    const ended = tickEvents(orderData, r.state, rng(), def.durationSec * 1000);
+    if (!ended.ok) throw new Error('expected ok');
+    expect(ended.state.orders.filter((o) => o.eventPoints)).toEqual([]);
   });
 });

@@ -181,6 +181,12 @@ const eventDefSchema: z.ZodType<EventDef> = z.strictObject({
   gapAfterSec: z.number(),
   generatorItemId: z.string(),
   pointsPerOrder: z.number(),
+  orders: z.strictObject({
+    maxOpen: z.number(),
+    minItems: z.number(),
+    maxItems: z.number(),
+    maxTier: z.number(),
+  }),
   milestones: z.array(
     z.strictObject({ points: z.number(), reward: eventRewardSchema }),
   ),
@@ -528,6 +534,29 @@ function validateCrossReferences(parsed: ParsedSections): string[] {
           );
         }
       }
+    }
+    const rules = event.orders;
+    if (
+      rules.maxOpen < 1 ||
+      rules.minItems < 1 ||
+      rules.minItems > rules.maxItems ||
+      rules.maxTier < 1
+    ) {
+      problems.push(`${where}: orders rules are out of range`);
+    }
+    if (
+      generator !== undefined &&
+      !generator.spawnTable.some((entry) => {
+        const chain = itemById.get(entry.itemId)?.chainId;
+        return (
+          chain !== undefined &&
+          items.items.filter((i) => i.chainId === chain).length >= rules.maxTier
+        );
+      })
+    ) {
+      problems.push(
+        `${where}: orders.maxTier is above its event chain's top tier`,
+      );
     }
     if (!chapters.some((c) => c.id === event.minChapter)) {
       problems.push(

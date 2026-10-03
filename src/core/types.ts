@@ -12,7 +12,8 @@
  * four `GameState` fields (`event`, `nextEventAt`, `eventResult`, `trophies`),
  * `Order.eventPoints`, `claimMilestone`, `dismissEventResult`, three events and
  * two reject reasons (T8.1, Scott, Oct 3). Save version 2. Later additions
- * (T8.2, T8.3): `EventDef.gapAfterSec`, `ChainKind` 'event', `EventResult.coins`.
+ * (T8.2–T8.4): `EventDef.gapAfterSec`, `EventDef.orders`, `ChainKind` 'event',
+ * `EventResult.coins`.
  *
  * Conventions every core function follows:
  * - Core functions are pure: they never mutate their inputs and return new
@@ -206,6 +207,15 @@ export interface MegabunCurvePoint {
   readonly score: number;
 }
 
+/** How many event orders are open at once, and what they ask for. */
+export interface EventOrderRules {
+  readonly maxOpen: number;
+  readonly minItems: number;
+  readonly maxItems: number;
+  /** Highest tier asked for, in the event's product chains. */
+  readonly maxTier: number;
+}
+
 /** A kind of event (Bake-Off Showdown, Street Fair Standoff, ...). */
 export interface EventDef {
   readonly id: EventId;
@@ -217,8 +227,9 @@ export interface EventDef {
   readonly gapAfterSec: number;
   /** The event generator placed on the board when the event starts. */
   readonly generatorItemId: ItemId;
-  /** Hometown Pride per event order delivered. */
+  /** Hometown Pride per item in a delivered event order. */
   readonly pointsPerOrder: number;
+  readonly orders: EventOrderRules;
   /** In ascending order of points. */
   readonly milestones: readonly EventMilestone[];
   /** In ascending order of atSec; the player wins by ending with at least the last score. */

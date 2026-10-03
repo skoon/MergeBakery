@@ -33,7 +33,7 @@ function orderKindRules(data: GameData, kind: CustomerKind): OrderKindRules {
 }
 
 /** Picks one element uniformly. Calls rng.next() exactly once. Throws on an empty array. */
-function pickUniform<T>(items: readonly T[], rng: Rng): T {
+export function pickUniform<T>(items: readonly T[], rng: Rng): T {
   const index = Math.min(
     items.length - 1,
     Math.floor(rng.next() * items.length),
@@ -169,7 +169,7 @@ export function nextTask(
 }
 
 /** All customers of `kind` with no currently open order; every customer of that kind if that would be empty. */
-function eligibleCustomers(
+export function eligibleCustomers(
   pool: readonly Customer[],
   state: GameState,
 ): readonly Customer[] {
@@ -289,7 +289,10 @@ export function refillOrders(
   let currentState = state;
   const events: GameEvent[] = [];
 
-  while (currentState.orders.length < data.economy.orders.maxOpen) {
+  // Event orders (T8.4) are extra: they don't take a regular order's slot.
+  const regularOpen = (s: GameState): number =>
+    s.orders.filter((o) => o.eventPoints === undefined).length;
+  while (regularOpen(currentState) < data.economy.orders.maxOpen) {
     const order = generateOrder(data, currentState, rng);
     currentState = {
       ...currentState,

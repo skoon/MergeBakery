@@ -110,6 +110,10 @@ export function deliverOrder(
     stars: state.stars + order.reward.stars,
     orders: newOrders,
     nextOrderAt: newNextOrderAt,
+    event:
+      order.eventPoints !== undefined && state.event
+        ? { ...state.event, points: state.event.points + order.eventPoints }
+        : state.event,
   };
 
   // Add XP and get level-up events
