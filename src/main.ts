@@ -32,6 +32,7 @@ import { parseScenes } from './ui/dialogue';
 import { mountDialoguePlayer } from './ui/dialoguePlayer';
 import { mountChapterTransition } from './ui/chapterTransition';
 import chapter1Scenes from './data/dialogue/chapter1.json';
+import chapter2Scenes from './data/dialogue/chapter2.json';
 import { startBakeNotifier } from './ui/bakeNotifier';
 import { createSettingsStore } from './ui/settings';
 import { mountSettings } from './ui/settingsScreen';
@@ -115,7 +116,9 @@ mountRushBubble(overlayRoot, store, boardView, () => Date.now());
 const dialogue = mountDialoguePlayer(
   overlayRoot,
   data,
-  parseScenes(data, chapter1Scenes),
+  parseScenes(data, {
+    scenes: [...chapter1Scenes.scenes, ...chapter2Scenes.scenes],
+  }),
 );
 store.subscribe((state, events) => {
   const chapter = data.chapters.get(state.chapterId);

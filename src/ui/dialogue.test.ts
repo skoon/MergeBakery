@@ -7,6 +7,7 @@ import { loadGameData } from '../core/data';
 import type { GameData } from '../core/types';
 import sample from '../data/dialogue/sample.json';
 import chapter1Scenes from '../data/dialogue/chapter1.json';
+import chapter2Scenes from '../data/dialogue/chapter2.json';
 import {
   missingSceneIds,
   parseScenes,
@@ -24,6 +25,7 @@ function dataReferring(
   const chapter = data.chapters.get('chapter1');
   if (!chapter) throw new Error('chapter1 is missing');
   const chapters = new Map(data.chapters);
+  chapters.delete('chapter2');
   chapters.set('chapter1', {
     ...chapter,
     introSceneId,
@@ -141,8 +143,10 @@ describe('speakerView', () => {
   });
 });
 
-describe('Chapter 1 scenes (T5.5)', () => {
-  const scenes = parseScenes(data, chapter1Scenes);
+describe('Chapter 1 and 2 scenes (T5.5, T7.6)', () => {
+  const scenes = parseScenes(data, {
+    scenes: [...chapter1Scenes.scenes, ...chapter2Scenes.scenes],
+  });
 
   it('parses and covers every scene the chapter refers to', () => {
     expect(missingSceneIds(data, scenes)).toEqual([]);

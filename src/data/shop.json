@@ -37,7 +37,7 @@
       "name": "Energy snack",
       "kind": "energy",
       "energy": 25,
-      "price": 150,
+      "price": 300,
       "fromChapter": "chapter1"
     },
     {
@@ -45,7 +45,7 @@
       "name": "Energy feast",
       "kind": "energy",
       "energy": 100,
-      "price": 500,
+      "price": 1000,
       "fromChapter": "chapter1"
     }
   ]

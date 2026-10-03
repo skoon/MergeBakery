@@ -2,7 +2,7 @@
   "id": "chapter2",
   "name": "The Café Terrace",
   "sceneKey": "cafe-terrace",
-  "introSceneId": null,
+  "introSceneId": "ch2-intro",
   "tasks": [
     {
       "id": "cafe-sweep-terrace",
@@ -57,7 +57,7 @@
       "featuredItems": ["sugar-cube", "egg-pair"],
       "beforeSpriteKey": "cafe-terrace-wipe-tables-before",
       "afterSpriteKey": "cafe-terrace-wipe-tables-after",
-      "sceneId": null
+      "sceneId": "ch2-priya"
     },
     {
       "id": "cafe-string-lights",
@@ -112,7 +112,7 @@
       "featuredItems": ["cookie", "egg-carton"],
       "beforeSpriteKey": "cafe-terrace-plant-herbs-before",
       "afterSpriteKey": "cafe-terrace-plant-herbs-after",
-      "sceneId": null
+      "sceneId": "ch2-bramble"
     },
     {
       "id": "cafe-umbrellas",
@@ -182,7 +182,7 @@
       "featuredItems": ["custard-cup", "cookie-stack"],
       "beforeSpriteKey": "cafe-terrace-tune-piano-before",
       "afterSpriteKey": "cafe-terrace-tune-piano-after",
-      "sceneId": null
+      "sceneId": "ch2-theo"
     },
     {
       "id": "cafe-striped-awning",
@@ -287,7 +287,7 @@
       "featuredItems": ["cookie-tin", "chocolate-bar"],
       "beforeSpriteKey": "cafe-terrace-lanterns-before",
       "afterSpriteKey": "cafe-terrace-lanterns-after",
-      "sceneId": null
+      "sceneId": "ch2-neighbors"
     },
     {
       "id": "cafe-mural",
@@ -337,7 +337,7 @@
       "featuredItems": ["wedding-cake", "cookie-tin"],
       "beforeSpriteKey": "cafe-terrace-second-recipe-page-before",
       "afterSpriteKey": "cafe-terrace-second-recipe-page-after",
-      "sceneId": null
+      "sceneId": "ch2-recipe-page"
     },
     {
       "id": "cafe-grand-opening",
@@ -352,7 +352,7 @@
       "featuredItems": ["wedding-cake", "gift-hamper"],
       "beforeSpriteKey": "cafe-terrace-grand-opening-before",
       "afterSpriteKey": "cafe-terrace-grand-opening-after",
-      "sceneId": null
+      "sceneId": "ch2-grand-opening"
     }
   ]
 }

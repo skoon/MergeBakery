@@ -10,6 +10,8 @@ import { testData } from '../core/testing';
 
 const SEEDS = [1, 2, 3, 4, 5];
 const OPTIONS = { ...DEFAULT_OPTIONS, maxSessionMin: 20 };
+// Long enough for the bot to get through Chapter 2 as well.
+const REPORT_DAYS = 10;
 
 function mean(values: number[]): number {
   return values.length === 0
@@ -27,11 +29,11 @@ function printReport(reports: SimReport[]): void {
   if (!first) return;
 
   lines.push(
-    `\nBalance report: ${reports.length.toString()} seeds, ${OPTIONS.days.toString()} days, sessions at ${OPTIONS.sessionStarts.join(', ')} h\n`,
+    `\nBalance report: ${reports.length.toString()} seeds, ${REPORT_DAYS.toString()} days, sessions at ${OPTIONS.sessionStarts.join(', ')} h\n`,
   );
   lines.push('Per session (mean over seeds):');
   lines.push(
-    'day.s   min   taps  merges orders stars tasks  bar-empty@min  orders-on-bar  lvl-ups  ended',
+    'day.s   min   taps  merges orders stars tasks  bar-empty@min  orders-on-bar  lvl-ups  coins  bought  ended',
   );
   first.sessions.forEach((_, i) => {
     const s = reports.map((r) => r.sessions[i]).filter((x) => x !== undefined);
@@ -52,6 +54,8 @@ function printReport(reports: SimReport[]): void {
         (empty.length ? fmt(mean(empty)) : 'never').padStart(14),
         fmt(mean(s.map((x) => x.ordersOnFullBar))).padStart(14),
         fmt(mean(s.map((x) => x.levelUps))).padStart(8),
+        fmt(mean(s.map((x) => x.coinsAtEnd)), 0).padStart(6),
+        fmt(mean(s.map((x) => x.bought.length))).padStart(7),
         `  ${[...new Set(s.map((x) => x.endedBecause))].join('/')}`,
       ].join(' '),
     );
@@ -59,11 +63,11 @@ function printReport(reports: SimReport[]): void {
 
   lines.push('\nPer seed:');
   for (const r of reports) {
-    const done = r.chapterDoneAt
-      ? `day ${r.chapterDoneAt.day.toString()}, session ${r.chapterDoneAt.session.toString()}`
-      : `not finished (${r.tasksDone.toString()}/20 tasks)`;
+    const done = Object.entries(r.chapterDoneAt)
+      .map(([id, at]) => `${id} d${at.day.toString()}s${at.session.toString()}`)
+      .join(', ');
     lines.push(
-      `  seed ${r.seed.toString()}: chapter ${done}; first croissant after ${r.firstCroissantAtMin === null ? 'never' : `${fmt(r.firstCroissantAtMin)} min played`}; level ${r.finalLevel.toString()}, ${r.finalStars.toString()} stars left, ${r.finalCoins.toString()} coins`,
+      `  seed ${r.seed.toString()}: chapters done: ${done || 'none'} (${r.tasksDone.toString()} tasks); first croissant after ${r.firstCroissantAtMin === null ? 'never' : `${fmt(r.firstCroissantAtMin)} min played`}; level ${r.finalLevel.toString()}, ${r.finalStars.toString()} stars left, ${r.finalCoins.toString()} coins`,
     );
   }
   console.log(lines.join('\n'));
@@ -88,9 +92,9 @@ describe('simulate', () => {
     expect(report.sessions[0]?.merges).toBeGreaterThan(0);
   });
 
-  it('prints the balance report', { timeout: 120_000 }, () => {
+  it('prints the balance report', { timeout: 300_000 }, () => {
     const reports = SEEDS.map((seed) =>
-      simulate(testData, { ...OPTIONS, seed }),
+      simulate(testData, { ...OPTIONS, days: REPORT_DAYS, seed }),
     );
     printReport(reports);
     expect(reports).toHaveLength(SEEDS.length);

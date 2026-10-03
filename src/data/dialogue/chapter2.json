@@ -1,0 +1,246 @@
+{
+  "scenes": [
+    {
+      "id": "ch2-intro",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Down the lane, behind a gate hanging by one hinge, a terrace waits under a tangle of ivy. Grandma's last letter said it misses her."
+        },
+        {
+          "speaker": "narrator",
+          "text": "It does look lonely. Four wobbly tables, a piano under a bedsheet, and a fountain that gave up years ago."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "This is where I did my best baking, dear. Warm evenings, fairy lights, everyone with a second helping they swore they didn't want."
+        },
+        {
+          "speaker": "grandma",
+          "text": "The shop feeds the street. The terrace is where the street sits down and stays a while. Both matter."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Bring more hens, more sugar and a bigger oven. And don't let anyone tell you cake is a frivolous thing to be good at."
+        },
+        {
+          "speaker": "narrator",
+          "text": "You find the broom behind the gate. Time to sweep."
+        }
+      ]
+    },
+    {
+      "id": "ch2-priya",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "A woman with a sketchbook under one arm stops at the freshly wiped tables and does a slow lap, like a judge at a county fair."
+        },
+        {
+          "speaker": "priya",
+          "text": "Hm. Good bones. Honestly, great bones. Nobody has loved this place properly in a long time."
+        },
+        {
+          "speaker": "priya",
+          "expression": "happy",
+          "text": "I'm Priya. I design wedding cakes, and I've been looking for somewhere with this much character. And, apparently, this many pigeons."
+        },
+        {
+          "speaker": "priya",
+          "text": "Your gran once made me a lemon cupcake when I'd failed my first apprenticeship. I still think about it. The cupcake, and the kindness."
+        },
+        {
+          "speaker": "priya",
+          "expression": "happy",
+          "text": "Cupcakes, cake slices, the occasional truffle. If you can make those, I'll be your most opinionated customer."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Priya is now a regular."
+        }
+      ]
+    },
+    {
+      "id": "ch2-bramble",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "An elderly man in a flat cap leans over the new herb planters with the air of someone inspecting a rival's work."
+        },
+        {
+          "speaker": "bramble",
+          "text": "Rosemary's too close to the mint. Mint takes over. Mint always takes over. Nobody listens."
+        },
+        {
+          "speaker": "bramble",
+          "text": "Bramble. I keep the allotment behind the church. Forty years of tomatoes, and I'll thank you not to ask about the slugs."
+        },
+        {
+          "speaker": "bramble",
+          "expression": "happy",
+          "text": "Your grandmother swapped me a tin of oat cookies for a bag of runner beans every autumn. Best trade I ever made."
+        },
+        {
+          "speaker": "bramble",
+          "expression": "happy",
+          "text": "I'll take cookies, if you've got them. And eggs, by the carton. My hens have gone on strike."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mr. Bramble is now a regular."
+        }
+      ]
+    },
+    {
+      "id": "ch2-theo",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The old piano gives one clear note, then a second. Someone has been sitting at the bench for a while, listening."
+        },
+        {
+          "speaker": "theo",
+          "text": "Oh. Sorry. I heard it being tuned and I couldn't help myself. It's a Brandt upright. They don't make them like this."
+        },
+        {
+          "speaker": "theo",
+          "expression": "happy",
+          "text": "I'm Theo. I play in the evenings at the harbor hotel, and I've been wandering the lane for a month looking for a piano I liked."
+        },
+        {
+          "speaker": "theo",
+          "text": "Your gran used to let me practice here after closing. In exchange, I got whatever was left in the custard pot."
+        },
+        {
+          "speaker": "theo",
+          "expression": "happy",
+          "text": "Custard cups, crème brûlée, anything with caramel. And if the piano's free on Friday nights, I'd love to play."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Theo is now a regular."
+        }
+      ]
+    },
+    {
+      "id": "ch2-neighbors",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "As the paper lanterns glow, familiar faces come wandering up the lane, each pretending to be passing by."
+        },
+        {
+          "speaker": "gus",
+          "expression": "happy",
+          "text": "Lanterns! Haven't seen those lit since your gran's last summer. Saw them from the harbor and had to check."
+        },
+        {
+          "speaker": "edith",
+          "text": "I taught half this street to sit up straight at a table. Please don't make me prove it. Pass me a cake slice."
+        },
+        {
+          "speaker": "mina",
+          "expression": "happy",
+          "text": "I brought flowers for every table! Fine, three tables. The bucket only goes so far."
+        },
+        {
+          "speaker": "dex",
+          "expression": "impatient",
+          "text": "I'm just here for a quick, unofficial look. Please ignore the notebook. It says \"Competitor Terrace: Alarmingly Charming.\""
+        },
+        {
+          "speaker": "dex",
+          "text": "Between us, MegaBun's been asking about café terraces. Whole new product line. Something called a \"Third Place Experience.\""
+        },
+        {
+          "speaker": "gus",
+          "text": "Third place? This is the first place. They can keep their numbers."
+        },
+        {
+          "speaker": "narrator",
+          "text": "A cheer goes up. It's the loudest this terrace has been in years."
+        }
+      ]
+    },
+    {
+      "id": "ch2-recipe-page",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The mural is up, the bunting sways. Behind the frame is another folded page, pressed flat, with a pinch of sugar still on it."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "You found the second one. I knew you would. I'm proud of you, dear."
+        },
+        {
+          "speaker": "grandma",
+          "text": "Cake is only a few simple things: sugar, eggs, butter and a bit of nerve. The nerve is the part nobody writes down."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Make it for the people who are sitting here, not the people who might someday. They'll taste the difference."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The page goes into the Recipe Book, right beside the first."
+        }
+      ]
+    },
+    {
+      "id": "ch2-grand-opening",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Fairy lights on, parasols up, piano in tune. The terrace gate swings wide, and for the first time in years, it doesn't squeak."
+        },
+        {
+          "speaker": "priya",
+          "expression": "happy",
+          "text": "I brought a tiered cake. Three tiers. I know, I know, but it deserved it. Don't tell the pigeons."
+        },
+        {
+          "speaker": "bramble",
+          "expression": "happy",
+          "text": "Mint's behaving, tomatoes are in, and there's cookies. Best summer I can remember. Don't tell anyone I said so."
+        },
+        {
+          "speaker": "theo",
+          "expression": "happy",
+          "text": "Friday night's mine, then. I've been practicing something slow and sweet. It goes well with caramel."
+        },
+        {
+          "speaker": "gus",
+          "expression": "happy",
+          "text": "Two places to eat on one street. Gran would've said that was greedy. Then she'd have asked for a third."
+        },
+        {
+          "speaker": "narrator",
+          "text": "A shadow falls across the table. A woman in a very sharp suit studies the terrace through very expensive glasses."
+        },
+        {
+          "speaker": "narrator",
+          "text": "She says nothing. She takes a photo of the cake, a photo of the piano, and a photo of you. Then she leaves."
+        },
+        {
+          "speaker": "dex",
+          "expression": "impatient",
+          "text": "That's Vice President of Neighborhood Synergy. She doesn't come out for just any bakery. This is... new."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tucked under a sugar bowl is one last envelope, in loopy handwriting you know by now."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Well done again, dear. Now keep your eyes open. Someone has noticed you. That's either very good or very interesting."
+        }
+      ]
+    }
+  ]
+}

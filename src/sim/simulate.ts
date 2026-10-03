@@ -13,6 +13,7 @@ import { dispatch } from '../core/dispatch';
 import { matchOrderItems } from '../core/deliver';
 import { canMerge } from '../core/merge';
 import { createNewGame } from '../core/newGame';
+import { shopItemsFor } from '../core/shop';
 import { nextTask } from '../core/orders';
 import type {
   CellIndex,
@@ -32,6 +33,7 @@ const ACTION_SEC = {
   deliver: 3,
   sell: 2,
   bonus: 1.5,
+  buy: 3,
   bake: 4,
   task: 5,
 } as const;
@@ -62,6 +64,9 @@ export interface SessionReport {
   orders: number;
   stars: number;
   tasks: string[];
+  /** Shop rows bought this session. */
+  bought: string[];
+  coinsAtEnd: number;
   /** Minutes from the session's start until energy first ran out, or null if it didn't. */
   energyEmptyAtMin: number | null;
   /** Orders delivered before energy first ran out. */
@@ -74,8 +79,8 @@ export interface SimReport {
   seed: number;
   sessions: SessionReport[];
   tasksDone: number;
-  /** Day and session the chapter's last task completed in, or null if it didn't. */
-  chapterDoneAt: { day: number; session: number } | null;
+  /** Day and session each chapter's last task completed in, by chapter id. */
+  chapterDoneAt: Record<string, { day: number; session: number }>;
   /** Simulated minutes of play before the first croissant went into the oven, or null. */
   firstCroissantAtMin: number | null;
   finalLevel: number;
@@ -90,6 +95,8 @@ class Bot {
   state: GameState;
   now: Timestamp;
   playedMs = 0;
+  readonly bought = new Set<string>();
+  purchases: string[] = [];
   firstCroissantAtMin: number | null = null;
   private events: GameEvent[] = [];
   private readonly data: GameData;
@@ -224,6 +231,36 @@ class Bot {
     return false;
   }
 
+  /**
+   * Shop: a generator row the first time it's affordable (cheapest first),
+   * and the biggest energy pack affordable once energy has run out.
+   */
+  private shop(): boolean {
+    const rows = shopItemsFor(this.data, this.state);
+    const generators = rows
+      .filter((r) => r.kind === 'generator' && !this.bought.has(r.id))
+      .sort((a, b) => a.price - b.price);
+    for (const row of generators) {
+      if (this.state.coins < row.price) break; // keep saving for the cheapest
+      if (this.act('buy', { type: 'buyShopItem', shopItemId: row.id })) {
+        this.bought.add(row.id);
+        this.purchases.push(row.id);
+        return true;
+      }
+    }
+    if (this.energy() >= this.data.economy.energy.perTap) return false;
+    const packs = rows
+      .filter((r) => r.kind === 'energy' && r.price <= this.state.coins)
+      .sort((a, b) => b.price - a.price);
+    for (const row of packs) {
+      if (this.act('buy', { type: 'buyShopItem', shopItemId: row.id })) {
+        this.purchases.push(row.id);
+        return true;
+      }
+    }
+    return false;
+  }
+
   private collectBonus(): boolean {
     const cells = this.state.board.cells;
     for (let i = 0; i < cells.length; i++) {
@@ -238,6 +275,40 @@ class Bot {
       }
     }
     return false;
+  }
+
+  /**
+   * A Golden Whisk dropped on the highest-tier single item that could merge
+   * further: the whisk becomes a copy, and the pair merges next.
+   */
+  private useWhisk(): boolean {
+    const cells = this.state.board.cells;
+    const whisk = cells.findIndex(
+      (c) =>
+        c.kind === 'item' &&
+        this.data.chains.get(this.data.items.get(c.item.itemId)?.chainId ?? '')
+          ?.kind === 'wildcard',
+    );
+    if (whisk === -1) return false;
+    let best: { cell: CellIndex; tier: number } | null = null;
+    cells.forEach((c, i) => {
+      if (c.kind !== 'item' || c.item.cobwebbed || c.item.generator) return;
+      const def = this.data.items.get(c.item.itemId);
+      const kind = this.data.chains.get(def?.chainId ?? '')?.kind;
+      if (!def || (kind !== 'ingredient' && kind !== 'baked')) return;
+      if (def.tier > this.data.economy.goldenWhiskMaxTier) return;
+      if (!canMerge(this.data, def.id, def.id)) return;
+      if (best && def.tier <= best.tier) return;
+      best = { cell: i, tier: def.tier };
+    });
+    return (
+      best !== null &&
+      this.act('merge', {
+        type: 'drop',
+        from: whisk,
+        to: (best as { cell: CellIndex }).cell,
+      })
+    );
   }
 
   /** The lowest-tier pair that merges, leaving items an order or recipe needs alone. */
@@ -267,6 +338,50 @@ class Bot {
     );
   }
 
+  /**
+   * Fallback when nothing else merges: items held back for a lower-tier order
+   * can block a higher-tier want in the same chain (syrup kept for one order
+   * while another needs the cocoa bean they'd merge into). Merge a spare pair
+   * of any item below the highest tier an open order wants in its chain.
+   */
+  private mergeTowardNeed(): boolean {
+    const cells = this.state.board.cells;
+    const wants = this.state.orders.flatMap((o) => o.wants);
+    const topWanted = new Map<ChainId, number>();
+    for (const id of wants) {
+      const def = this.data.items.get(id);
+      if (def) {
+        topWanted.set(
+          def.chainId,
+          Math.max(topWanted.get(def.chainId) ?? 0, def.tier),
+        );
+      }
+    }
+    for (let from = 0; from < cells.length; from++) {
+      const a = cells[from];
+      if (a?.kind !== 'item' || a.item.cobwebbed || a.item.generator) continue;
+      const def = this.data.items.get(a.item.itemId);
+      if (!def || def.tier >= (topWanted.get(def.chainId) ?? 0)) continue;
+      const copies: CellIndex[] = [];
+      cells.forEach((c, i) => {
+        if (c.kind === 'item' && !c.item.cobwebbed && c.item.itemId === def.id)
+          copies.push(i);
+      });
+      const kept = wants.filter((id) => id === def.id).length;
+      if (copies.length < kept + 2 || !canMerge(this.data, def.id, def.id))
+        continue;
+      const [x, y] = copies.slice(-2);
+      if (
+        x !== undefined &&
+        y !== undefined &&
+        this.act('merge', { type: 'drop', from: x, to: y })
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private tap(): boolean {
     if (this.energy() < this.data.economy.energy.perTap) return false;
     if (!this.state.board.cells.some((c) => c.kind === 'empty')) return false;
@@ -290,17 +405,38 @@ class Bot {
   }
 
   /** Board full: sell the cheapest item nothing needs. */
-  private sell(): boolean {
-    if (this.state.board.cells.some((c) => c.kind === 'empty')) return false;
+  private sell(tidy = false): boolean {
+    // `tidy`: a player clears dead weight before the board is quite full.
+    const empties = this.state.board.cells.filter(
+      (c) => c.kind === 'empty',
+    ).length;
+    if (empties > (tidy ? 12 : 0)) return false;
     const reserved = this.reserved();
+    const cells = this.state.board.cells;
+    // An item of tier 3+ with no twin on the board, or at the top of its chain, is dead weight: selling
+    // only the cheapest spawns would leave the board clogged with them.
+    const hasTwin = (i: number, id: string) =>
+      cells.some(
+        (c, j) => j !== i && c.kind === 'item' && c.item.itemId === id,
+      );
     let cheapest: { cell: CellIndex; value: number } | null = null;
-    this.state.board.cells.forEach((cell, i) => {
+    let stuck: { cell: CellIndex; value: number } | null = null;
+    cells.forEach((cell, i) => {
       if (cell.kind !== 'item' || cell.item.generator || reserved.has(i))
         return;
-      const value = this.data.items.get(cell.item.itemId)?.sellValue ?? 0;
-      if (value > 0 && (!cheapest || value < cheapest.value))
-        cheapest = { cell: i, value };
+      const def = this.data.items.get(cell.item.itemId);
+      const value = def?.sellValue ?? 0;
+      if (value === 0) return;
+      if (!cheapest || value < cheapest.value) cheapest = { cell: i, value };
+      if (
+        (def?.tier ?? 0) >= 3 &&
+        (!hasTwin(i, cell.item.itemId) ||
+          !canMerge(this.data, cell.item.itemId, cell.item.itemId)) &&
+        (!stuck || value > stuck.value)
+      )
+        stuck = { cell: i, value };
     });
+    cheapest = tidy ? stuck : (stuck ?? cheapest);
     return (
       cheapest !== null &&
       this.act('sell', {
@@ -317,8 +453,12 @@ class Bot {
       this.deliver() ||
       this.renovate() ||
       this.kitchen() ||
+      this.shop() ||
       this.collectBonus() ||
+      this.useWhisk() ||
       this.merge() ||
+      this.mergeTowardNeed() ||
+      this.sell(true) ||
       this.tap() ||
       this.sell()
     );
@@ -331,10 +471,12 @@ export function simulate(
 ): SimReport {
   const start = Date.UTC(2026, 0, 1);
   const bot = new Bot(data, options.seed, start);
-  const chapter = data.chapters.get(bot.state.chapterId);
-  const lastTask = chapter?.tasks.at(-1)?.id;
+  const allTasks = [...data.chapters.values()].flatMap((c) => c.tasks);
+  const lastTasks = new Map(
+    [...data.chapters.values()].map((c) => [c.tasks.at(-1)?.id, c.id]),
+  );
   const sessions: SessionReport[] = [];
-  let chapterDoneAt: SimReport['chapterDoneAt'] = null;
+  const chapterDoneAt: SimReport['chapterDoneAt'] = {};
 
   for (let day = 1; day <= options.days; day++) {
     options.sessionStarts.forEach((hour, index) => {
@@ -349,6 +491,8 @@ export function simulate(
         orders: 0,
         stars: 0,
         tasks: [],
+        bought: [],
+        coinsAtEnd: 0,
         energyEmptyAtMin: null,
         ordersOnFullBar: 0,
         levelUps: 0,
@@ -357,6 +501,7 @@ export function simulate(
       const starsBefore = bot.state.stars;
       let starsSpent = 0;
       bot.takeEvents();
+      bot.purchases = [];
 
       while (bot.step()) {
         for (const event of bot.takeEvents()) {
@@ -370,10 +515,10 @@ export function simulate(
           if (event.type === 'taskCompleted') {
             const taskId = event.taskId;
             report.tasks.push(taskId);
-            starsSpent +=
-              chapter?.tasks.find((t) => t.id === taskId)?.starCost ?? 0;
-            if (taskId === lastTask && !chapterDoneAt) {
-              chapterDoneAt = { day, session: index + 1 };
+            starsSpent += allTasks.find((t) => t.id === taskId)?.starCost ?? 0;
+            const finished = lastTasks.get(taskId);
+            if (finished && !chapterDoneAt[finished]) {
+              chapterDoneAt[finished] = { day, session: index + 1 };
             }
           }
         }
@@ -389,6 +534,8 @@ export function simulate(
         }
       }
 
+      report.bought = bot.purchases;
+      report.coinsAtEnd = bot.state.coins;
       report.minutes = (bot.now - sessionStart) / 60_000;
       report.stars = bot.state.stars - starsBefore + starsSpent;
       sessions.push(report);
