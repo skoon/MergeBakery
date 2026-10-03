@@ -16,6 +16,8 @@ Scope decided Oct 1: Chapter 2's content plus the Shop; the MegaBun competitive 
 - [x] T7.8 The Shop: shop.json, `buyShopItem`, the Shop screen (Sonnet) — after T7.1
 - [x] T7.9 Balance pass across both chapters with the Shop (Opus). The simulator now plays past Chapter 1 and buys from the Shop (bot also uses Golden Whisks, merges toward open orders, sells dead weight). Scott approved raising the energy packs from 150/500 to 300/1000 (the only repeatable coin sink). After: all 5 seeds finish Chapter 2, 2–4 bot-days after Chapter 1 (days 4–6), and the bot ends with hundreds of coins, not thousands. Chapter 2 task costs unchanged
 - [ ] T7.10 Phase-end review (T-O2), then Scott's Chapter 2 playtest (T-O5). Gate passed Oct 2 (typecheck, lint, 699 tests, `npm run build`). Playtest under way; the transition card and the Café Terrace art had not been checked in a browser before it
+- [ ] Bug (playtest): dragging an item from the Pantry to the Kitchen selects all the text/elements on the page. Likely needs `user-select: none` (and/or `preventDefault` on dragstart/pointerdown) on the pantry drag source
+- [ ] Bug (playtest): on the Recipes tab the fruit generator extends past the tab's edge and is hard to see. It should wrap to the next line
 
 # Phase 5 — Chapter 1, UI, audio, and polish (done)
 
