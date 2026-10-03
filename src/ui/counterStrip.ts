@@ -28,7 +28,10 @@ export function mountCounterStrip(
 
     for (const card of cards) {
       const cardEl = document.createElement('div');
-      cardEl.className = 'counter-card';
+      cardEl.className =
+        card.eventPoints === undefined
+          ? 'counter-card'
+          : 'counter-card counter-card--event';
       // The tutorial (T5.12) finds a ready order's card by this.
       cardEl.dataset.orderId = String(card.orderId);
 
@@ -70,7 +73,10 @@ export function mountCounterStrip(
 
       const reward = document.createElement('div');
       reward.className = 'counter-card-reward';
-      reward.textContent = `${card.coins}c ${card.stars}★`;
+      reward.textContent =
+        card.eventPoints === undefined
+          ? `${card.coins}c ${card.stars}★`
+          : `${card.coins}c +${card.eventPoints} pride`;
       cardEl.appendChild(reward);
 
       const deliverButton = document.createElement('button');

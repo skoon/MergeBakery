@@ -13,6 +13,8 @@ export interface OrderCard {
   wants: { itemId: ItemId; name: string; spriteKey: string; ready: boolean }[];
   coins: number;
   stars: number;
+  /** Hometown Pride this order earns; present only on event orders. */
+  eventPoints?: number;
   fillable: boolean;
 }
 
@@ -55,6 +57,9 @@ export function counterCards(data: GameData, state: GameState): OrderCard[] {
       wants,
       coins: order.reward.coins,
       stars: order.reward.stars,
+      ...(order.eventPoints !== undefined && {
+        eventPoints: order.eventPoints,
+      }),
       fillable: wants.every((w) => w.ready),
     };
   });

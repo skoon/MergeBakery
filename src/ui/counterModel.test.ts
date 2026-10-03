@@ -8,6 +8,22 @@ import { stateWith, testData } from '../core/testing';
 import { counterCards } from './counterModel';
 
 describe('counterCards', () => {
+  it('carries the points of an event order, and leaves them off a regular one', () => {
+    const regular: Order = {
+      id: 1,
+      customerId: 'gus',
+      wants: ['apple'],
+      reward: { coins: 10, stars: 1, xp: 2 },
+    };
+    const event: Order = { ...regular, id: 2, eventPoints: 20 };
+    const cards = counterCards(
+      testData,
+      stateWith({}, { orders: [regular, event] }),
+    );
+    expect(cards[0]).not.toHaveProperty('eventPoints');
+    expect(cards[1]?.eventPoints).toBe(20);
+  });
+
   it('returns no cards when there are no orders', () => {
     const state = stateWith({}, { orders: [] });
 

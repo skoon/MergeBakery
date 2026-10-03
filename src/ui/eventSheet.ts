@@ -108,6 +108,7 @@ export function mountEventSheet(
     });
     head.appendChild(close);
     sheet.appendChild(head);
+    sheet.appendChild(el('p', 'event-sheet__howto', model.howTo));
 
     sheet.appendChild(
       bar('Hometown Pride', model.points, model.playerProgress, 'you'),

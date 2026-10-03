@@ -61,6 +61,12 @@ describe('eventModel', () => {
     expect(eventModel(data, at(60), 500_000)?.ahead).toBe(true);
   });
 
+  it('says how to play, naming the generator', () => {
+    const m = eventModel(data, at(0), 0);
+    expect(m?.howTo).toContain('Tap the Flour Mill');
+    expect(m?.howTo).toContain('Hometown Pride');
+  });
+
   it('marks milestones claimed, ready or locked', () => {
     const m = eventModel(data, at(60, [0]), 0);
     expect(m?.milestones.map((x) => x.status)).toEqual(['claimed', 'ready']);

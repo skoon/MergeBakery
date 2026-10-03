@@ -11,6 +11,14 @@ describe('discover with real data', () => {
   const data = loadGameData();
   const initialState = createNewGame(data, 1, 0);
 
+  it('ignores event generators and event items: no card, nothing recorded', () => {
+    for (const id of ['contest-mixer-1', 'sprinkles', 'tiered-cake']) {
+      const r = discover(data, initialState, id);
+      expect(r.state).toBe(initialState);
+      expect(r.events).toEqual([]);
+    }
+  });
+
   it('adds a new item to discovered and pendingDiscoveries', () => {
     // Pick an item not in the initial game state
     // Checking if there's an item not yet discovered

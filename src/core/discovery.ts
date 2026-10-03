@@ -32,6 +32,16 @@ export function discover(
     throw new Error(`discover: unknown item id "${itemId}"`);
   }
 
+  // Event items and generators are temporary and have no Recipe Book page, so
+  // they never get a discovery card.
+  const chainKind = data.chains.get(item.chainId)?.kind;
+  const isEventGenerator = [...data.events.values()].some(
+    (e) => e.generatorItemId === itemId,
+  );
+  if (chainKind === 'event' || isEventGenerator) {
+    return { state, events: [] };
+  }
+
   // If already discovered, return the same state object with no events.
   if (state.discovered.includes(itemId)) {
     return { state, events: [] };

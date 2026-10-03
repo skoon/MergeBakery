@@ -15,6 +15,8 @@ export interface MilestoneView {
 
 export interface EventModel {
   readonly name: string;
+  /** One sentence on how to play the event. */
+  readonly howTo: string;
   /** "2 d 4 h", "3 h 12 min", "5 min". */
   readonly timeLeft: string;
   readonly points: number;
@@ -84,8 +86,11 @@ export function eventModel(
     };
   });
 
+  const generatorName =
+    data.items.get(def.generatorItemId)?.name ?? 'event generator';
   return {
     name: def.name,
+    howTo: `Tap the ${generatorName} on the board and merge what it makes. Deliver the pink-bordered orders at the counter to earn Hometown Pride, then claim your rewards here.`,
     timeLeft: formatTimeLeft(active.endsAt - now),
     points: active.points,
     megabun,
