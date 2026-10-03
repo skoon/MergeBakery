@@ -10,6 +10,7 @@
 
 import { bakeStatus } from '../core/bakes';
 import { dispatch } from '../core/dispatch';
+import { megabunScore } from '../core/events';
 import { matchOrderItems } from '../core/deliver';
 import { canMerge } from '../core/merge';
 import { createNewGame } from '../core/newGame';
@@ -75,8 +76,23 @@ export interface SessionReport {
   endedBecause: 'out of moves' | 'time cap';
 }
 
+/** One MegaBun event the bot played, start to finish. */
+export interface EventRun {
+  eventId: string;
+  startDay: number;
+  won: boolean;
+  points: number;
+  /** MegaBun's final score, which the player must reach. */
+  target: number;
+  /** Sessions from the event's start until the bot's points reached the target, or null. */
+  sessionsToTarget: number | null;
+  /** Sessions the bot played while the event ran. */
+  sessionsRun: number;
+}
+
 export interface SimReport {
   seed: number;
+  events: EventRun[];
   sessions: SessionReport[];
   tasksDone: number;
   /** Day and session each chapter's last task completed in, by chapter id. */
@@ -477,6 +493,11 @@ export function simulate(
   );
   const sessions: SessionReport[] = [];
   const chapterDoneAt: SimReport['chapterDoneAt'] = {};
+  const eventRuns: EventRun[] = [];
+  let sessionCount = 0;
+  let running: { id: string; startDay: number; startSession: number } | null =
+    null;
+  let reachedAt: number | null = null;
 
   for (let day = 1; day <= options.days; day++) {
     options.sessionStarts.forEach((hour, index) => {
@@ -502,12 +523,38 @@ export function simulate(
       let starsSpent = 0;
       bot.takeEvents();
       bot.purchases = [];
+      sessionCount++;
 
       while (bot.step()) {
         for (const event of bot.takeEvents()) {
           if (event.type === 'spawned') report.taps++;
           if (event.type === 'merged') report.merges++;
           if (event.type === 'levelUp') report.levelUps++;
+          if (event.type === 'eventStarted') {
+            running = {
+              id: event.eventId,
+              startDay: day,
+              startSession: sessionCount,
+            };
+            reachedAt = null;
+          }
+          if (event.type === 'eventEnded' && running) {
+            const def = data.events.get(running.id);
+            const result = bot.state.eventResult;
+            eventRuns.push({
+              eventId: running.id,
+              startDay: running.startDay,
+              won: event.won,
+              points: result?.points ?? 0,
+              target: Math.round(def ? megabunScore(def, def.durationSec) : 0),
+              sessionsToTarget:
+                reachedAt === null
+                  ? null
+                  : reachedAt - running.startSession + 1,
+              sessionsRun: sessionCount - running.startSession + 1,
+            });
+            running = null;
+          }
           if (event.type === 'orderDelivered') {
             report.orders++;
             if (report.energyEmptyAtMin === null) report.ordersOnFullBar++;
@@ -534,6 +581,13 @@ export function simulate(
         }
       }
 
+      if (running && reachedAt === null) {
+        const def = data.events.get(running.id);
+        const points = bot.state.event?.points ?? 0;
+        if (def && points >= megabunScore(def, def.durationSec)) {
+          reachedAt = sessionCount;
+        }
+      }
       report.bought = bot.purchases;
       report.coinsAtEnd = bot.state.coins;
       report.minutes = (bot.now - sessionStart) / 60_000;
@@ -544,6 +598,7 @@ export function simulate(
 
   return {
     seed: options.seed,
+    events: eventRuns,
     sessions,
     tasksDone: bot.state.completedTasks.length,
     chapterDoneAt,

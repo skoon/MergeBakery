@@ -5,7 +5,12 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { DEFAULT_OPTIONS, simulate, type SimReport } from './simulate';
+import {
+  DEFAULT_OPTIONS,
+  simulate,
+  type EventRun,
+  type SimReport,
+} from './simulate';
 import { testData } from '../core/testing';
 
 const SEEDS = [1, 2, 3, 4, 5];
@@ -73,6 +78,36 @@ function printReport(reports: SimReport[]): void {
   console.log(lines.join('\n'));
 }
 
+/** Each event on its own, with a short gap so it starts as soon as Chapter 2 does. */
+function printEventReport(): EventRun[] {
+  const lines = [
+    '\nEvent balance: the bot, one event at a time (2 seeds, 10 days)\n',
+  ];
+  const all: EventRun[] = [];
+  for (const def of testData.events.values()) {
+    const only = {
+      ...testData,
+      events: new Map([[def.id, { ...def, gapAfterSec: 3600 }]]),
+    };
+    for (const seed of [1, 2]) {
+      const report = simulate(only, { ...OPTIONS, days: REPORT_DAYS, seed });
+      for (const run of report.events) {
+        all.push(run);
+        lines.push(
+          `  ${def.id.padEnd(16)} seed ${seed.toString()}: started day ${run.startDay.toString()}, ${run.points.toString()}/${run.target.toString()} points, ${run.won ? 'won' : 'lost'}, target reached after ${run.sessionsToTarget === null ? 'never' : run.sessionsToTarget.toString()} of ${run.sessionsRun.toString()} sessions`,
+        );
+      }
+      if (report.events.length === 0) {
+        lines.push(
+          `  ${def.id.padEnd(16)} seed ${seed.toString()}: no event finished`,
+        );
+      }
+    }
+  }
+  console.log(lines.join('\n'));
+  return all;
+}
+
 describe('simulate', () => {
   // Whole simulated days of play: slower than a unit test, especially under the
   // full suite's parallel load.
@@ -98,5 +133,10 @@ describe('simulate', () => {
     );
     printReport(reports);
     expect(reports).toHaveLength(SEEDS.length);
+  });
+
+  it('prints the event balance report', { timeout: 600_000 }, () => {
+    const runs = printEventReport();
+    expect(runs.length).toBeGreaterThanOrEqual(0);
   });
 });

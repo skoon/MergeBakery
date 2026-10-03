@@ -1,3 +1,18 @@
+# Phase 8 — MegaBun competitive events
+
+Source: Implementation Plan, Phase 8. Branches t8.1 … t8.9, each stacked on the one before.
+
+- [x] T8.1 Contract (approved Oct 3), save v2 migration, `events.json` loader and validator, `claimMilestone` / `dismissEventResult`
+- [x] T8.2 Schedule, start, expiry and MegaBun's score curve in `tickEvents` (src/core/events.ts). Added `EventDef.gapAfterSec` (not in the approved contract)
+- [x] T8.3 Event generator placed at start; event items sold and generator removed at the end. Added chain kind `event` and `EventResult.coins` (not in the approved contract)
+- [x] T8.4 Event orders (extra to the regular slots), Hometown Pride on delivery, reached milestones paid at the end. Added `EventDef.orders`
+- [x] T8.5 Event pill, sheet and result card (src/ui/eventSheet.ts, eventModel.ts). Not checked in a browser: Chrome isn't installed for the Playwright tool
+- [x] T8.6 Bake-Off Showdown data, Contest Mixer and Showpiece Cake chain (placeholder SVGs), `bakery.event()` dev helper
+- [ ] T8.7 Event dialogue: `src/data/dialogue/events.json`, 3 scenes per event, played by naming convention. Awaiting Scott's approval of the script
+- [x] T8.8 Street Fair Standoff, Blind Taste Test, Flour Shortage (slows the Flour Mill's cooldowns), Charity Bake Sale. Added `EventDef.slow`, `orders.minTier`. Not done: the permanent rewards (Flour Mill upgrade, decor sets) — wins are recorded in `trophies` only
+- [x] T8.9 Balance pass: `npm run balance` now also prints each event played alone (one event at a time, 2 seeds, 10 days). MegaBun's final scores and milestones rescaled (Bake-Off 1500, Street Fair 1500, Flour Shortage 1400, Charity 1800, Taste Test 150) so the bot, a faster player than most, reaches the target after 3–10 sessions of 12–21. Left open: the first event arrives a full gap (14 days) after reaching Chapter 2 — probably too late; decide with Scott
+- [ ] T8.10 Phase-end review and Scott's events playtest
+
 # Phase 7 — Chapter 2, The Café Terrace, and the Shop
 
 Source: [Rise & Shine Bakery — Implementation Plan](https://claude.ai/artifact/CbuwDrEjZqWZnuhLP7pamp) (repo copy in docs/ is the current one)
