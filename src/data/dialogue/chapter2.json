@@ -241,6 +241,33 @@
           "text": "Well done again, dear. Now keep your eyes open. Someone has noticed you. That's either very good or very interesting."
         }
       ]
+    },
+    {
+      "id": "ch2-wren",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "A figure in a trench coat, sunglasses and a fedora lingers by the chalk sign. It is a sunny afternoon. He is the least subtle man alive."
+        },
+        {
+          "speaker": "wren",
+          "text": "I'm not from MegaBun. Ignore the orange lanyard. It's a coincidence. A very orange coincidence."
+        },
+        {
+          "speaker": "wren",
+          "expression": "happy",
+          "text": "Name's Wren. Fine. I'm in 'market research'. But I've had your scone every morning for a week and I'd like to keep my job and my breakfast."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Feed him, dear. A man who dresses like that clearly needs a second helping and a friend."
+        },
+        {
+          "speaker": "wren",
+          "text": "I'll send word whenever they're planning something. Croissants, cookies, cupcakes: whatever you can spare. Strictly off the record."
+        }
+      ]
     }
   ]
 }

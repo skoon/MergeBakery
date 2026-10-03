@@ -48,7 +48,7 @@ describe('Chapter 2 tasks', () => {
     const customers = tasks.flatMap((t) =>
       t.unlocks.flatMap((u) => (u.kind === 'customer' ? [u.customerId] : [])),
     );
-    expect(customers.sort()).toEqual(['bramble', 'priya', 'theo']);
+    expect(customers.sort()).toEqual(['bramble', 'priya', 'theo', 'wren']);
   });
 
   it('features only real ingredient or baked items', () => {

@@ -50,6 +50,13 @@
       "favoriteItems": ["custard-cup", "creme-brulee", "caramel"]
     },
     {
+      "id": "wren",
+      "name": "Wren",
+      "kind": "regular",
+      "portraitKey": "portrait-wren",
+      "favoriteItems": ["croissant", "cookie-stack", "cupcake"]
+    },
+    {
       "id": "walkin-hiker",
       "name": "Hiker",
       "kind": "walkIn",

@@ -248,11 +248,16 @@
         "y": 0.66
       },
       "prerequisites": ["cafe-third-oven"],
-      "unlocks": [],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "wren"
+        }
+      ],
       "featuredItems": ["cookie-tin", "cocoa-bean"],
       "beforeSpriteKey": "cafe-terrace-chalk-sign-before",
       "afterSpriteKey": "cafe-terrace-chalk-sign-after",
-      "sceneId": null
+      "sceneId": "ch2-wren"
     },
     {
       "id": "cafe-flower-pots",
