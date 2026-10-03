@@ -8,7 +8,7 @@ Source: Implementation Plan, Phase 8. Branches t8.1 … t8.9, each stacked on th
 - [x] T8.4 Event orders (extra to the regular slots), Hometown Pride on delivery, reached milestones paid at the end. Added `EventDef.orders`
 - [x] T8.5 Event pill, sheet and result card (src/ui/eventSheet.ts, eventModel.ts). Not checked in a browser: Chrome isn't installed for the Playwright tool
 - [x] T8.6 Bake-Off Showdown data, Contest Mixer and Showpiece Cake chain (placeholder SVGs), `bakery.event()` dev helper
-- [ ] T8.7 Event dialogue: `src/data/dialogue/events.json`, 3 scenes per event, played by naming convention. Awaiting Scott's approval of the script
+- [x] T8.7 Event dialogue: `src/data/dialogue/events.json`, 3 scenes per event, played by naming convention. Scott approved the script Oct 3
 - [x] T8.8 Street Fair Standoff, Blind Taste Test, Flour Shortage (slows the Flour Mill's cooldowns), Charity Bake Sale. Added `EventDef.slow`, `orders.minTier`. Not done: the permanent rewards (Flour Mill upgrade, decor sets) — wins are recorded in `trophies` only
 - [x] T8.9 Balance pass: `npm run balance` now also prints each event played alone (one event at a time, 2 seeds, 10 days). MegaBun's final scores and milestones rescaled (Bake-Off 1500, Street Fair 1500, Flour Shortage 1400, Charity 1800, Taste Test 150) so the bot, a faster player than most, reaches the target after 3–10 sessions of 12–21. Left open: the first event arrives a full gap (14 days) after reaching Chapter 2 — probably too late; decide with Scott
 - [ ] T8.10 Phase-end review done Oct 3 (seams read: tick composition, save v1 → v2 load, unknown event ids in old saves now dropped instead of throwing). Remaining: Scott's events playtest, including the browser check of the T8.5 UI
