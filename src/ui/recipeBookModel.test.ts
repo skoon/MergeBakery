@@ -21,6 +21,8 @@ describe('recipeBookPages', () => {
       'cupcake',
       'tart',
       'scone',
+      'brownie',
+      'bonbon',
     ]);
   });
 

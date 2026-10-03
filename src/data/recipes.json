@@ -34,6 +34,20 @@
       "inputs": ["flour-bag", "butter-block", "berry"],
       "output": "scone",
       "bakeSec": 180
+    },
+    {
+      "id": "bake-brownie",
+      "name": "Brownie",
+      "inputs": ["flour-bag", "cocoa-bean", "egg-pair"],
+      "output": "brownie",
+      "bakeSec": 900
+    },
+    {
+      "id": "bake-bonbon",
+      "name": "Bonbon",
+      "inputs": ["cocoa-bean", "cream-jug"],
+      "output": "bonbon",
+      "bakeSec": 1200
     }
   ]
 }

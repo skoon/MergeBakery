@@ -195,6 +195,20 @@
       "kind": "baked",
       "color": "#c98a4b",
       "completionGems": 4
+    },
+    {
+      "id": "brownie",
+      "name": "Brownies",
+      "kind": "baked",
+      "color": "#6b3a24",
+      "completionGems": 4
+    },
+    {
+      "id": "bonbon",
+      "name": "Bonbons",
+      "kind": "baked",
+      "color": "#8a3a6a",
+      "completionGems": 4
     }
   ],
   "items": [
@@ -1161,6 +1175,76 @@
       "tier": 3,
       "spriteKey": "cream-tea",
       "sellValue": 120,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "brownie",
+      "name": "Brownie",
+      "chainId": "brownie",
+      "tier": 1,
+      "spriteKey": "brownie",
+      "sellValue": 60,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "brownie-tray",
+      "name": "Brownie tray",
+      "chainId": "brownie",
+      "tier": 2,
+      "spriteKey": "brownie-tray",
+      "sellValue": 120,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "chocolate-cake",
+      "name": "Chocolate cake",
+      "chainId": "brownie",
+      "tier": 3,
+      "spriteKey": "chocolate-cake",
+      "sellValue": 240,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "chocolate-tower",
+      "name": "Chocolate tower",
+      "chainId": "brownie",
+      "tier": 4,
+      "spriteKey": "chocolate-tower",
+      "sellValue": 480,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "bonbon",
+      "name": "Bonbon",
+      "chainId": "bonbon",
+      "tier": 1,
+      "spriteKey": "bonbon",
+      "sellValue": 80,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "bonbon-box",
+      "name": "Bonbon box",
+      "chainId": "bonbon",
+      "tier": 2,
+      "spriteKey": "bonbon-box",
+      "sellValue": 160,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "bonbon-tin",
+      "name": "Bonbon tin",
+      "chainId": "bonbon",
+      "tier": 3,
+      "spriteKey": "bonbon-tin",
+      "sellValue": 320,
       "note": null,
       "collectReward": null
     }

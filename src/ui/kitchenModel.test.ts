@@ -193,13 +193,25 @@ describe('recipeAvailable', () => {
     expect(availableIds(withSugar)).toContain('bake-fruit-tart');
   });
 
+  it('offers the chocolate recipes once cocoa is within reach (T11.1)', () => {
+    const base = {
+      0: 'flour-mill-1',
+      1: 'dairy-fridge-1',
+      2: 'hen-coop-1',
+    } as const;
+    expect(availableIds(stateWith(base))).not.toContain('bake-brownie');
+    const sugar = stateWith({ ...base, 3: 'sugar-tin-1' });
+    expect(availableIds(sugar)).toContain('bake-brownie');
+    expect(availableIds(sugar)).toContain('bake-bonbon');
+  });
+
   it('offers only the croissant with the Chapter 1 generators', () => {
     const state = stateWith({ 0: 'flour-mill-1', 1: 'dairy-fridge-1' });
 
     expect(availableIds(state)).toEqual(['bake-croissant']);
   });
 
-  it('offers every recipe once the Hen Coop and Sugar Tin are owned', () => {
+  it('offers the Chapter 1 and 2 recipes once the Hen Coop and Sugar Tin are owned', () => {
     const state = stateWith({
       0: 'flour-mill-1',
       1: 'dairy-fridge-1',
@@ -207,10 +219,13 @@ describe('recipeAvailable', () => {
       3: 'sugar-tin-1',
     });
 
+    // The chocolate line (T11.1) joins them: cocoa comes from the Sugar Tin.
     expect(availableIds(state)).toEqual([
       'bake-cookie',
       'bake-croissant',
       'bake-cupcake',
+      'bake-brownie',
+      'bake-bonbon',
     ]);
   });
 
