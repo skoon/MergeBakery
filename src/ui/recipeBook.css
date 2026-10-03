@@ -3,7 +3,7 @@
 .book-tabs {
   display: flex;
   gap: var(--space-2);
-  overflow-x: auto;
+  flex-wrap: wrap;
   padding-bottom: var(--space-2);
   margin-bottom: var(--space-3);
 }
