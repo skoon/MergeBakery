@@ -25,6 +25,7 @@ import { catchUpTutorial } from './core/tutorial';
 import { catchUpChapter } from './core/renovation';
 import { mountRecipeBook } from './ui/recipeBook';
 import { mountLocationView } from './ui/locationView';
+import { mountStaffPanel } from './ui/staffPanel';
 import { mountShop } from './ui/shopScreen';
 import { mountDiscoveryCard } from './ui/discoveryCard';
 import { mountRushBubble } from './ui/rushBubble';
@@ -176,6 +177,7 @@ mountNavBar(nav, screensRoot, router, [
     label: 'Bakery',
     mount: (container) => {
       mountLocationView(container, store, settings);
+      mountStaffPanel(container, store);
     },
   },
   {

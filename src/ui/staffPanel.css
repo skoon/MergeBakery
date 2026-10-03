@@ -1,0 +1,96 @@
+/* Staff panel on the Bakery screen (T10.4). */
+
+.staff-panel {
+  margin-top: var(--space-4);
+}
+
+.staff-panel[hidden] {
+  display: none;
+}
+
+.staff-panel__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.staff-panel__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  color: var(--color-crust);
+}
+
+.staff-panel__rep {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.staff-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+  padding: var(--space-2);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--color-crust);
+  border-radius: var(--space-2);
+}
+
+.staff-card__portrait {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  image-rendering: pixelated;
+  background: var(--color-cream);
+  border-radius: 50%;
+}
+
+.staff-card__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.staff-card__name,
+.staff-card__blurb,
+.staff-card__why,
+.staff-card__on {
+  margin: 0;
+}
+
+.staff-card__name {
+  font-weight: 700;
+}
+
+.staff-card__blurb,
+.staff-card__why,
+.staff-card__on {
+  font-size: var(--font-size-sm);
+}
+
+.staff-card__action {
+  flex: none;
+  text-align: right;
+}
+
+.staff-card__hire {
+  padding: var(--space-1) var(--space-3);
+  font: inherit;
+  font-weight: 700;
+  color: var(--color-cream);
+  background: var(--color-crust);
+  border: none;
+  border-radius: var(--space-2);
+  cursor: pointer;
+}
+
+.staff-card__hire:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.staff-card__select {
+  max-width: 120px;
+  font: inherit;
+  font-size: var(--font-size-sm);
+}

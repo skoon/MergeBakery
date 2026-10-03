@@ -15,8 +15,10 @@ export interface OrderCard {
   stars: number;
   /** Hometown Pride this order earns; present only on event orders. */
   eventPoints?: number;
-  /** When a catering order expires; present only on catering orders (T9.3). */
-  cateringExpiresAt?: number;
+  /** Catering (T9.3) and wholesale (T10.4) orders expire; the card says which and when. */
+  timed?: { label: 'Catering' | 'Wholesale'; expiresAt: number };
+  /** Wholesale: how many of the batch the player holds, of how many. */
+  batch?: { have: number; need: number };
   fillable: boolean;
 }
 
@@ -35,6 +37,16 @@ export function counterCards(data: GameData, state: GameState): OrderCard[] {
 
     const matches = matchOrderItems(state, order.wants);
 
+    // A wholesale batch counts items in the Pantry too; it shows as one icon and a count.
+    const need = order.wants.length;
+    const onBoard = matches.filter((m) => m !== null).length;
+    const inPantry = order.wholesale
+      ? state.pantry.items.filter(
+          (p) => p.itemId === order.wants[0] && !p.cobwebbed,
+        ).length
+      : 0;
+    const have = Math.min(need, onBoard + inPantry);
+
     const wants = order.wants.map((itemId, i) => {
       const item = data.items.get(itemId);
       if (item === undefined) {
@@ -48,6 +60,9 @@ export function counterCards(data: GameData, state: GameState): OrderCard[] {
       };
     });
 
+    const shownWants = order.wholesale
+      ? wants.slice(0, 1).map((w) => ({ ...w, ready: have >= need }))
+      : wants;
     return {
       orderId: order.id,
       customerName: customer.name,
@@ -56,14 +71,26 @@ export function counterCards(data: GameData, state: GameState): OrderCard[] {
         customer.kind === 'regular'
           ? `${customer.portraitKey}-neutral`
           : customer.portraitKey,
-      wants,
+      wants: shownWants,
       coins: order.reward.coins,
       stars: order.reward.stars,
       ...(order.eventPoints !== undefined && {
         eventPoints: order.eventPoints,
       }),
-      ...(order.catering && { cateringExpiresAt: order.catering.expiresAt }),
-      fillable: wants.every((w) => w.ready),
+      ...(order.catering && {
+        timed: {
+          label: 'Catering' as const,
+          expiresAt: order.catering.expiresAt,
+        },
+      }),
+      ...(order.wholesale && {
+        timed: {
+          label: 'Wholesale' as const,
+          expiresAt: order.wholesale.expiresAt,
+        },
+        batch: { have, need },
+      }),
+      fillable: order.wholesale ? have >= need : wants.every((w) => w.ready),
     };
   });
 }

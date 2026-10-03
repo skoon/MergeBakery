@@ -8,6 +8,32 @@ import { stateWith, testData } from '../core/testing';
 import { counterCards } from './counterModel';
 
 describe('counterCards', () => {
+  it('shows a wholesale batch as one icon with a count, topped up from the Pantry', () => {
+    const batch: Order = {
+      id: 3,
+      customerId: 'gus',
+      wants: Array.from({ length: 6 }, () => 'apple'),
+      reward: { coins: 50, stars: 0, xp: 0, reputation: 12 },
+      wholesale: { expiresAt: 7000 },
+    };
+    const apple = { itemId: 'apple', cobwebbed: false, generator: null };
+    const short = stateWith(
+      { 0: 'apple', 1: 'apple', 2: 'apple' },
+      { orders: [batch], pantry: { capacity: 4, items: [apple] } },
+    );
+    const [card] = counterCards(testData, short);
+    expect(card?.wants).toHaveLength(1);
+    expect(card?.batch).toEqual({ have: 4, need: 6 });
+    expect(card?.fillable).toBe(false);
+    expect(card?.timed).toEqual({ label: 'Wholesale', expiresAt: 7000 });
+    const full = stateWith(
+      { 0: 'apple', 1: 'apple', 2: 'apple', 3: 'apple' },
+      { orders: [batch], pantry: { capacity: 4, items: [apple, apple] } },
+    );
+    expect(counterCards(testData, full)[0]?.fillable).toBe(true);
+    expect(counterCards(testData, full)[0]?.wants[0]?.ready).toBe(true);
+  });
+
   it('carries when a catering order expires, and only on catering orders', () => {
     const regular: Order = {
       id: 1,
@@ -24,8 +50,8 @@ describe('counterCards', () => {
       testData,
       stateWith({}, { orders: [regular, catering] }),
     );
-    expect(cards[0]).not.toHaveProperty('cateringExpiresAt');
-    expect(cards[1]?.cateringExpiresAt).toBe(9000);
+    expect(cards[0]).not.toHaveProperty('timed');
+    expect(cards[1]?.timed).toEqual({ label: 'Catering', expiresAt: 9000 });
   });
 
   it('carries the points of an event order, and leaves them off a regular one', () => {

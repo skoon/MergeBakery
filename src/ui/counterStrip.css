@@ -150,3 +150,15 @@
   font-weight: 700;
   color: var(--color-crust);
 }
+
+.counter-card-want-count {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 0 2px;
+  font-size: calc(0.65rem * var(--text-scale));
+  font-weight: 700;
+  color: var(--color-cream);
+  background: var(--color-crust);
+  border-radius: 4px;
+}

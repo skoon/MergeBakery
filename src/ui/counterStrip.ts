@@ -10,7 +10,7 @@ import { formatTimeLeft } from './eventModel';
 
 /** Catering first (it expires), then event orders, then the regular queue. */
 const priority = (c: OrderCard): number =>
-  c.cateringExpiresAt !== undefined ? 0 : c.eventPoints !== undefined ? 1 : 2;
+  c.timed !== undefined ? 0 : c.eventPoints !== undefined ? 1 : 2;
 
 export function mountCounterStrip(
   counter: HTMLElement,
@@ -34,7 +34,7 @@ export function mountCounterStrip(
       cardEl.className = 'counter-card';
       if (card.eventPoints !== undefined)
         cardEl.classList.add('counter-card--event');
-      if (card.cateringExpiresAt !== undefined) {
+      if (card.timed !== undefined) {
         cardEl.classList.add('counter-card--catering');
       }
       // The tutorial (T5.12) finds a ready order's card by this.
@@ -49,11 +49,12 @@ export function mountCounterStrip(
       const name = document.createElement('div');
       name.className = 'counter-card-name';
       name.textContent = card.customerName;
-      if (card.cateringExpiresAt !== undefined) {
-        // A catering card trades the name for its countdown; the portrait's alt keeps the name.
+      if (card.timed !== undefined) {
+        // A timed card trades the name for its countdown; the portrait's alt keeps the name.
         name.classList.add('counter-card-timer');
-        name.dataset.expiresAt = String(card.cateringExpiresAt);
-        name.textContent = `Catering ${formatTimeLeft(card.cateringExpiresAt - Date.now())}`;
+        name.dataset.expiresAt = String(card.timed.expiresAt);
+        name.dataset.label = card.timed.label;
+        name.textContent = `${card.timed.label} ${formatTimeLeft(card.timed.expiresAt - Date.now())}`;
       }
       cardEl.appendChild(name);
 
@@ -76,6 +77,13 @@ export function mountCounterStrip(
           check.setAttribute('aria-hidden', 'true');
           check.textContent = '✓';
           wantEl.appendChild(check);
+        }
+
+        if (card.batch) {
+          const count = document.createElement('span');
+          count.className = 'counter-card-want-count';
+          count.textContent = `${card.batch.have.toString()}/${card.batch.need.toString()}`;
+          wantEl.appendChild(count);
         }
 
         wantsEl.appendChild(wantEl);
@@ -114,7 +122,7 @@ export function mountCounterStrip(
       '.counter-card-timer',
     )) {
       const left = Number(timer.dataset.expiresAt) - Date.now();
-      timer.textContent = `Catering ${formatTimeLeft(left)}`;
+      timer.textContent = `${timer.dataset.label ?? ''} ${formatTimeLeft(left)}`;
     }
   }, 30_000);
 }
