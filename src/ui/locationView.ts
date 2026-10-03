@@ -41,7 +41,9 @@ export function mountLocationView(
   popover.hidden = true;
 
   scene.append(backdrop, spots, popover);
-  container.append(header, scene);
+  const shelf = document.createElement('p');
+  shelf.className = 'location-trophies';
+  container.append(header, scene, shelf);
 
   let selected: TaskId | null = null;
   /** Each spot's state at the last render, to spot the one that just completed. */
@@ -97,6 +99,9 @@ export function mountLocationView(
     progress.className = 'location-header__progress';
     progress.textContent = `${model.doneCount.toString()}/${model.total.toString()} done · ★ ${model.stars.toString()}`;
     header.append(name, progress);
+
+    shelf.hidden = model.trophies.length === 0;
+    shelf.textContent = `Trophies: ${model.trophies.join(', ')}`;
 
     setImageArt(backdrop, model.sceneKey);
 

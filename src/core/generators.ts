@@ -17,6 +17,7 @@ import { getCell, nearestEmpty, setCell } from './board';
 import { addEnergy, spendEnergy } from './energy';
 import { weightedPick } from './rng';
 import { discover } from './discovery';
+import { perkCooldownMultiplier } from './events';
 
 /**
  * Spends energy to tap a generator item, spawning an item at the nearest
@@ -98,10 +99,10 @@ export function tapGenerator(
   const newCharges = charges - 1;
   // An event can slow one generator chain's cooldowns (Flour Shortage).
   const slow = state.event && data.events.get(state.event.eventId)?.slow;
+  const tappedChain = data.items.get(tappedItem.itemId)?.chainId ?? '';
   const slowed =
-    slow && data.items.get(tappedItem.itemId)?.chainId === slow.chainId
-      ? slow.cooldownMultiplier
-      : 1;
+    (slow && tappedChain === slow.chainId ? slow.cooldownMultiplier : 1) *
+    perkCooldownMultiplier(data, state, tappedChain);
   const newCooldownEndsAt =
     newCharges === 0 ? now + generatorDef.cooldownSec * slowed * 1000 : null;
   const updatedTappedItem: BoardItem = {

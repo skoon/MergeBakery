@@ -30,6 +30,8 @@ export interface LocationModel {
   doneCount: number;
   total: number;
   stars: number;
+  /** Names of the events won, each once, for the trophy shelf. */
+  trophies: string[];
 }
 
 export function locationModel(data: GameData, state: GameState): LocationModel {
@@ -71,5 +73,8 @@ export function locationModel(data: GameData, state: GameState): LocationModel {
     doneCount: spots.filter((s) => s.state === 'done').length,
     total: spots.length,
     stars: state.stars,
+    trophies: [...new Set(state.trophies)].map(
+      (id) => data.events.get(id)?.name ?? id,
+    ),
   };
 }

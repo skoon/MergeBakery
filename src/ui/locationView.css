@@ -180,3 +180,14 @@
   opacity: 0.5;
   cursor: default;
 }
+
+.location-trophies {
+  margin: var(--space-3) 0 0;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-crust);
+}
+
+.location-trophies[hidden] {
+  display: none;
+}

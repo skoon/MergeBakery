@@ -227,6 +227,8 @@ export interface EventDef {
   readonly durationSec: number;
   /** Seconds from this event's end to the next one's start (about two weeks). */
   readonly gapAfterSec: number;
+  /** Seconds from reaching `minChapter` to the first event; `gapAfterSec` when absent. */
+  readonly firstAfterSec?: number;
   /** The event generator placed on the board when the event starts. */
   readonly generatorItemId: ItemId;
   /** Hometown Pride per item in a delivered event order. */
@@ -241,6 +243,11 @@ export interface EventDef {
   readonly milestones: readonly EventMilestone[];
   /** In ascending order of atSec; the player wins by ending with at least the last score. */
   readonly megabunCurve: readonly MegabunCurvePoint[];
+  /** A permanent upgrade after winning this event: that generator chain's cooldowns shrink. */
+  readonly perk?: {
+    readonly chainId: ChainId;
+    readonly cooldownMultiplier: number;
+  };
   /** Gems paid for winning; the win is also recorded in GameState.trophies. */
   readonly trophyGems: number;
 }

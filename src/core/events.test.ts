@@ -3,6 +3,7 @@ import {
   claimMilestone,
   dismissEventResult,
   megabunScore,
+  perkCooldownMultiplier,
   tickEvents,
 } from './events';
 import { createRng } from './rng';
@@ -442,6 +443,47 @@ describe('the real events', () => {
     const state = stateWith({}, { chapterId: 'chapter1' });
     const r = tickEvents(testData, state, rng(), 0);
     expect(r.ok && r.state.nextEventAt).toBeNull();
+  });
+});
+
+describe('the first event', () => {
+  it('comes firstAfterSec after the player reaches the chapter, not a full gap', () => {
+    const early: GameData = {
+      ...data,
+      events: new Map([[def.id, { ...def, firstAfterSec: (4 * DAY) / 1000 }]]),
+    };
+    const r = tickEvents(early, stateWith({}), rng(), 1000);
+    expect(r.ok && r.state.nextEventAt).toBe(1000 + 4 * DAY);
+  });
+
+  it('is 4 days into Chapter 2 in the real data', () => {
+    for (const real of testData.events.values()) {
+      expect(real.firstAfterSec).toBe(4 * 86400);
+    }
+  });
+});
+
+describe('perkCooldownMultiplier', () => {
+  const perkData: GameData = {
+    ...testData,
+    events: new Map([
+      [
+        'a',
+        {
+          ...def,
+          id: 'a',
+          perk: { chainId: 'flour-mill', cooldownMultiplier: 0.8 },
+        },
+      ],
+    ]),
+  };
+  it('applies the perk of a won event once, however often it was won', () => {
+    expect(perkCooldownMultiplier(perkData, stateWith({}), 'flour-mill')).toBe(
+      1,
+    );
+    const won = stateWith({}, { trophies: ['a', 'a'] });
+    expect(perkCooldownMultiplier(perkData, won, 'flour-mill')).toBe(0.8);
+    expect(perkCooldownMultiplier(perkData, won, 'dairy-fridge')).toBe(1);
   });
 });
 

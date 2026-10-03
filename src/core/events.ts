@@ -19,6 +19,23 @@ import type {
   Timestamp,
 } from './types';
 
+/**
+ * The cooldown multiplier for a generator chain: 1, times each won event's perk
+ * for that chain (once per event, however many times it was won).
+ */
+export function perkCooldownMultiplier(
+  data: GameData,
+  state: GameState,
+  chainId: string,
+): number {
+  let multiplier = 1;
+  for (const id of new Set(state.trophies)) {
+    const perk = data.events.get(id)?.perk;
+    if (perk?.chainId === chainId) multiplier *= perk.cooldownMultiplier;
+  }
+  return multiplier;
+}
+
 /** MegaBun's score `elapsedSec` into an event: linear between curve points, flat after the last. */
 export function megabunScore(def: EventDef, elapsedSec: number): number {
   const curve = def.megabunCurve;
@@ -193,7 +210,11 @@ export function tickEvents(
       if (next.nextEventAt === null) {
         const first = eligible[0];
         if (first) {
-          next = { ...next, nextEventAt: now + first.gapAfterSec * 1000 };
+          next = {
+            ...next,
+            nextEventAt:
+              now + (first.firstAfterSec ?? first.gapAfterSec) * 1000,
+          };
         }
       } else if (now >= next.nextEventAt) {
         const def = eligible[Math.floor(rng.next() * eligible.length)];

@@ -179,6 +179,7 @@ const eventDefSchema: z.ZodType<EventDef> = z.strictObject({
   minChapter: z.string(),
   durationSec: z.number(),
   gapAfterSec: z.number(),
+  firstAfterSec: z.number().optional(),
   generatorItemId: z.string(),
   pointsPerOrder: z.number(),
   orders: z.strictObject({
@@ -188,6 +189,9 @@ const eventDefSchema: z.ZodType<EventDef> = z.strictObject({
     minTier: z.number().optional(),
     maxTier: z.number(),
   }),
+  perk: z
+    .strictObject({ chainId: z.string(), cooldownMultiplier: z.number() })
+    .optional(),
   slow: z
     .strictObject({ chainId: z.string(), cooldownMultiplier: z.number() })
     .optional(),
@@ -570,6 +574,16 @@ function validateCrossReferences(parsed: ParsedSections): string[] {
     ) {
       problems.push(
         `${where}: slow must name a generator chain and a multiplier of at least 1`,
+      );
+    }
+    if (
+      event.perk !== undefined &&
+      (chainById.get(event.perk.chainId)?.kind !== 'generator' ||
+        event.perk.cooldownMultiplier <= 0 ||
+        event.perk.cooldownMultiplier > 1)
+    ) {
+      problems.push(
+        `${where}: perk must name a generator chain and a multiplier above 0 and at most 1`,
       );
     }
     if (!chapters.some((c) => c.id === event.minChapter)) {

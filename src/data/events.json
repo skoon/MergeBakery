@@ -69,7 +69,8 @@
           "score": 1500
         }
       ],
-      "trophyGems": 15
+      "trophyGems": 15,
+      "firstAfterSec": 345600
     },
     {
       "id": "street-fair",
@@ -140,7 +141,8 @@
           "score": 1500
         }
       ],
-      "trophyGems": 12
+      "trophyGems": 12,
+      "firstAfterSec": 345600
     },
     {
       "id": "taste-test",
@@ -216,7 +218,8 @@
           "score": 150
         }
       ],
-      "trophyGems": 20
+      "trophyGems": 20,
+      "firstAfterSec": 345600
     },
     {
       "id": "flour-shortage",
@@ -291,6 +294,11 @@
       "slow": {
         "chainId": "flour-mill",
         "cooldownMultiplier": 2
+      },
+      "firstAfterSec": 345600,
+      "perk": {
+        "chainId": "flour-mill",
+        "cooldownMultiplier": 0.8
       }
     },
     {
@@ -362,7 +370,8 @@
           "score": 1800
         }
       ],
-      "trophyGems": 18
+      "trophyGems": 18,
+      "firstAfterSec": 345600
     }
   ]
 }
