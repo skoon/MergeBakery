@@ -278,6 +278,7 @@ const orderRulesSchema: z.ZodType<OrderRules> = z.strictObject({
   refillDelaySec: z.number(),
   regularChancePercent: z.number(),
   featuredWeight: z.number(),
+  lowTierBias: z.number().optional(),
   walkIn: orderKindRulesSchema,
   regular: orderKindRulesSchema,
   catering: z

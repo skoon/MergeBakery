@@ -93,12 +93,21 @@ export interface EventRun {
 export interface SimReport {
   seed: number;
   events: EventRun[];
+  /** Catering orders that arrived, were delivered, and ran out of time, and generator upgrades from them. */
+  catering: {
+    arrived: number;
+    delivered: number;
+    expired: number;
+    upgrades: number;
+  };
   sessions: SessionReport[];
   tasksDone: number;
   /** Day and session each chapter's last task completed in, by chapter id. */
   chapterDoneAt: Record<string, { day: number; session: number }>;
   /** Simulated minutes of play before the first croissant went into the oven, or null. */
   firstCroissantAtMin: number | null;
+  /** The state when the last session ended, for diagnosing where a run got stuck. */
+  finalState: GameState;
   finalLevel: number;
   finalStars: number;
   finalCoins: number;
@@ -113,6 +122,9 @@ class Bot {
   playedMs = 0;
   readonly bought = new Set<string>();
   purchases: string[] = [];
+  /** Catering orders seen (every action, so none slip by between steps), and how they ended. */
+  readonly catering = { arrived: 0, delivered: 0, expired: 0, upgrades: 0 };
+  private readonly cateringIds = new Set<number>();
   firstCroissantAtMin: number | null = null;
   private events: GameEvent[] = [];
   private readonly data: GameData;
@@ -132,6 +144,19 @@ class Bot {
     if (!result.ok) return false;
     this.state = result.state;
     this.events.push(...result.events);
+    for (const o of result.state.orders) {
+      if (o.catering && !this.cateringIds.has(o.id)) {
+        this.cateringIds.add(o.id);
+        this.catering.arrived++;
+      }
+    }
+    for (const e of result.events) {
+      if (e.type === 'cateringExpired') this.catering.expired++;
+      if (e.type === 'generatorUpgraded') this.catering.upgrades++;
+      if (e.type === 'orderDelivered' && this.cateringIds.has(e.orderId)) {
+        this.catering.delivered++;
+      }
+    }
     if (kind) {
       const ms = ACTION_SEC[kind] * 1000;
       this.now += ms;
@@ -599,10 +624,12 @@ export function simulate(
   return {
     seed: options.seed,
     events: eventRuns,
+    catering: bot.catering,
     sessions,
     tasksDone: bot.state.completedTasks.length,
     chapterDoneAt,
     firstCroissantAtMin: bot.firstCroissantAtMin,
+    finalState: bot.state,
     finalLevel: bot.state.level,
     finalStars: bot.state.stars,
     finalCoins: bot.state.coins,

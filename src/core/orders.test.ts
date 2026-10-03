@@ -335,7 +335,12 @@ describe('generateOrder', () => {
       ...testData,
       economy: {
         ...testData.economy,
-        orders: { ...testData.economy.orders, regularChancePercent: 100 },
+        // No low-tier bias: this test is about favourites alone.
+        orders: {
+          ...testData.economy.orders,
+          regularChancePercent: 100,
+          lowTierBias: 0,
+        },
       },
     };
 
@@ -364,6 +369,38 @@ describe('generateOrder', () => {
     ]) {
       expect((counts[itemId] ?? 0) / total).toBeLessThan(favoriteShare);
     }
+  });
+
+  it('favours low tiers more as lowTierBias grows', () => {
+    // A regular (maxTier 7) can ask for the tier 6 cheese wedge; walk-ins can't.
+    const state = {
+      ...producibleState,
+      unlockedCustomers: ['gus'],
+      discovered: [...producibleState.discovered, 'cheese-wedge'],
+    };
+    const lowShare = (bias: number): number => {
+      const biased: GameData = {
+        ...testData,
+        economy: {
+          ...testData.economy,
+          orders: {
+            ...testData.economy.orders,
+            regularChancePercent: 100,
+            lowTierBias: bias,
+          },
+        },
+      };
+      let low = 0;
+      let total = 0;
+      for (let seed = 1; seed <= 400; seed++) {
+        for (const id of generateOrder(biased, state, createRng(seed)).wants) {
+          total++;
+          if ((testData.items.get(id)?.tier ?? 9) <= 2) low++;
+        }
+      }
+      return low / total;
+    };
+    expect(lowShare(2)).toBeGreaterThan(lowShare(0));
   });
 
   it('picks regulars about regularChancePercent of the time when one is unlocked', () => {

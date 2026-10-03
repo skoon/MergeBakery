@@ -365,6 +365,12 @@ export interface OrderRules {
   readonly regularChancePercent: number;
   /** Weight multiplier for items the next renovation task features. */
   readonly featuredWeight: number;
+  /**
+   * How strongly orders favour low tiers: an item's weight is divided by
+   * tier^lowTierBias. 0 or absent is no bias. Keeps late-game orders from
+   * costing far more than they pay as more chains are discovered.
+   */
+  readonly lowTierBias?: number;
   readonly walkIn: OrderKindRules;
   readonly regular: OrderKindRules;
   readonly catering?: CateringRules;

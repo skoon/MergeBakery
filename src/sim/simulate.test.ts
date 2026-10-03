@@ -16,7 +16,7 @@ import { testData } from '../core/testing';
 const SEEDS = [1, 2, 3, 4, 5];
 const OPTIONS = { ...DEFAULT_OPTIONS, maxSessionMin: 20 };
 // Long enough for the bot to get through Chapter 2 as well.
-const REPORT_DAYS = 10;
+const REPORT_DAYS = 16;
 
 function mean(values: number[]): number {
   return values.length === 0
@@ -72,7 +72,7 @@ function printReport(reports: SimReport[]): void {
       .map(([id, at]) => `${id} d${at.day.toString()}s${at.session.toString()}`)
       .join(', ');
     lines.push(
-      `  seed ${r.seed.toString()}: chapters done: ${done || 'none'} (${r.tasksDone.toString()} tasks); first croissant after ${r.firstCroissantAtMin === null ? 'never' : `${fmt(r.firstCroissantAtMin)} min played`}; level ${r.finalLevel.toString()}, ${r.finalStars.toString()} stars left, ${r.finalCoins.toString()} coins`,
+      `  seed ${r.seed.toString()}: chapters done: ${done || 'none'} (${r.tasksDone.toString()} tasks); first croissant after ${r.firstCroissantAtMin === null ? 'never' : `${fmt(r.firstCroissantAtMin)} min played`}; catering ${r.catering.arrived.toString()} seen / ${r.catering.delivered.toString()} delivered / ${r.catering.expired.toString()} expired / ${r.catering.upgrades.toString()} upgrades; level ${r.finalLevel.toString()}, ${r.finalStars.toString()} stars left, ${r.finalCoins.toString()} coins`,
     );
   }
   console.log(lines.join('\n'));
@@ -81,7 +81,7 @@ function printReport(reports: SimReport[]): void {
 /** Each event on its own, with a short gap so it starts as soon as Chapter 2 does. */
 function printEventReport(): EventRun[] {
   const lines = [
-    '\nEvent balance: the bot, one event at a time (2 seeds, 10 days)\n',
+    `\nEvent balance: the bot, one event at a time (2 seeds, ${REPORT_DAYS.toString()} days)\n`,
   ];
   const all: EventRun[] = [];
   for (const def of testData.events.values()) {

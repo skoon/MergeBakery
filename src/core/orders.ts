@@ -231,7 +231,7 @@ export function generateOrder(
   const featuredItems = nextTask(data, state)?.featuredItems ?? [];
   const featuredWeight = data.economy.orders.featuredWeight;
   const table: WeightedEntry[] = candidates.map((item) => {
-    let weight = 1;
+    let weight = 1 / item.tier ** (data.economy.orders.lowTierBias ?? 0);
     if (featuredItems.includes(item.id)) {
       weight *= featuredWeight;
     }

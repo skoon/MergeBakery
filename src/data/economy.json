@@ -49,6 +49,7 @@
     "refillDelaySec": 90,
     "regularChancePercent": 40,
     "featuredWeight": 3,
+    "lowTierBias": 2,
     "walkIn": {
       "minItems": 2,
       "maxItems": 3,
@@ -67,14 +68,14 @@
     },
     "catering": {
       "minChapter": "chapter3",
-      "chancePercent": 15,
+      "chancePercent": 6,
       "minTier": 3,
       "maxTier": 4,
       "windowSec": 86400,
       "coinMultiplier": 6,
       "stars": 5,
       "xp": 20,
-      "upgradeChancePercent": 25
+      "upgradeChancePercent": 15
     }
   }
 }
