@@ -1,6 +1,6 @@
 # Rise & Shine Bakery — Implementation Plan
 
-Sep 24, 2026 · @Scott
+Sep 24, 2026 · updated Oct 2, 2026 · @Scott
 
 ## Approach
 
@@ -22,7 +22,7 @@ This plan builds the MVP from the GDD: a playable Chapter 1 (Grandma's Corner Sh
 - Every core task ships with Vitest tests. Rendering tasks ship with a manual check listed in "Done when."
 - Numbers (energy regen, costs, drop rates) come from JSON in `src/data/`, never hard-coded.
 
-**Out of MVP scope:** Chapters 2–5, MegaBun competitive events, staff helpers, wholesale orders, cloud save. The events system gets its own plan once Chapter 1 is fun.
+**Scope.** Phases 0–5 built the Chapter 1 MVP. Phase 7 added Chapter 2 and the Shop. Phases 8–12 (below) cover the MegaBun events, Chapters 3–5 and a whole-game pass, so the plan now reaches the full five-chapter story. Cloud save and Bakery Alliances stay out of scope.
 
 ## Task brief template
 
@@ -188,7 +188,7 @@ Open items found during the build. T6.1–T6.3 follow T5.14's art process: pixel
 | T6.4 | Remaining charges on each generator, a small count on its cell | Haiku | T5.9 (tier-badge placement) | The count drops with each tap and hides during the cooldown overlay |
 | T6.5 | Rush a generator's cooldown with gems, priced like `rushBake`. Contract change approved under T-O1: `rushCooldown` action, `cooldownRushed` event. Done | Opus (contract), then Sonnet | T-O1 approval | A spent generator can be rushed for gems; the cost matches `rushGemsPerMinute` |
 | T6.6 | Chapter 2 renovation tasks that unlock the Hen Coop and Sugar Tin (and with them Cookie and Cupcake) | Part of the next plan (T-O6) | T-O6 | — |
-| T6.7 | Fruit Crate generator, once a recipe uses fruit (Chapter 3 in the GDD) | Part of a later plan | — | — |
+| T6.7 | Fruit Crate generator, once a recipe uses fruit (Chapter 3 in the GDD) | Folded into T9.1 | — | — |
 
 ## Phase 7: Chapter 2, The Café Terrace, and the Shop
 
@@ -214,7 +214,105 @@ Chapter 1 passed its playtest (T-O5, Oct 1). Chapter 2 is the GDD's Café Terrac
 | T7.9 | Balance pass (T-O3): extend the simulator to play across chapters and use the Shop; tune Chapter 2's task costs and the Shop's prices | Opus | T7.4, T7.8 | Chapter 2 takes about 2–3 days after Chapter 1, and coins have somewhere to go |
 | T7.10 | Phase-end review (T-O2) and a Chapter 2 playtest (T-O5) | Opus, then Scott | All above | Lint, typecheck, tests and build pass; Scott plays Chapter 2 through |
 
-**Phase 8 (after Chapter 2 plays well):** the MegaBun competitive events from the GDD, starting with the Bake-Off Showdown: an event generator, Hometown Pride points, MegaBun's scripted score curve, a milestone track, and the 3–5 day timer.
+## The road to all five chapters
+
+Phases 8–12 finish the GDD's story: the MegaBun events, then Chapters 3, 4 and 5, then a launch pass. Each chapter phase repeats Phase 7's shape (contract change if needed, systems, data, regulars, dialogue, art, balance, review and playtest), so a chapter's tasks follow the same order and the same approval gates. The events come first because the GDD wants them from Chapter 2 and they give the early chapters their replay value; Chapters 3–5 then each add one event type and one system.
+
+| Phase | Chapter / scope | New systems | GDD story beat |
+| --- | --- | --- | --- |
+| 8 | MegaBun events (Chapter 2 on) | Event generator, Hometown Pride, milestone track, rival score curve | Underdog comedy against MegaBun |
+| 9 | Chapter 3: Harbor Market Stall | Fruit Crate, fruit recipes, catering orders | Cater the town festival |
+| 10 | Chapter 4: The Wholesale Kitchen | Wholesale orders, reputation, Deck Oven in the Shop, staff | Supply the grocery chain; hire staff |
+| 11 | Chapter 5: Rise & Shine Factory | Automation helpers, chocolate line, finale | Face MegaBun's buyout offer |
+| 12 | Whole-game pass | Cross-chapter balance, full playthrough, polish | Full story playable end to end |
+
+Each chapter keeps the GDD's target of 15–25 renovation tasks (Chapters 1 and 2 use 20) and about 2–3 days of play. Ids are prefixed per chapter (`cafe-`, `harbor-`, `wholesale-`, `factory-`) so they stay unique across files.
+
+## Phase 8: MegaBun competitive events
+
+Available once Chapter 2 is reached. Five event types, built one at a time on a shared event framework. The Bake-Off Showdown ships first and proves the framework; the others reuse it. Events are limited to 3–5 days, about one every two weeks, and never overlap.
+
+**Contract change (T-O1), to approve before T8.1.** In `types.ts`: an `EventState` in `GameState` (active event id, start and end timestamps, points, claimed milestones, MegaBun's score) and the actions `startEvent`, `deliverEventOrder`, `claimMilestone`. This is a `GameState` change, so it needs a save migration (v1 to v2, using the T4.6 scaffold).
+
+| ID | Task | Model | Depends on | Done when |
+| --- | --- | --- | --- | --- |
+| T8.1 | The contract change above, the v1 to v2 migration, and `events.json` (event types, durations, milestone tracks, MegaBun's score curve) with loader and validator | Opus | Scott's approval | Typecheck passes; an old save loads with no active event |
+| T8.2 | `core/events.ts`: schedule (one event per ~2 weeks, never overlapping), `startEvent`, expiry, and MegaBun's score as a pure function of elapsed time. A player can beat the curve in 6–8 sessions | Sonnet | T8.1 | Tests: start, expiry, no overlap, the score at fixed times |
+| T8.3 | Event generator: one per event, placed on the board. Its items can't merge with regular chains and turn into coins when the event ends | Sonnet | T8.2 | Tests: no cross-chain merges, conversion at expiry, no leftovers |
+| T8.4 | Event orders and Hometown Pride: event orders in the counter queue, points on delivery, the milestone track paying at fixed totals | Sonnet | T8.2 | Tests: points, each milestone pays once, a lost event still pays reached milestones |
+| T8.5 | Event UI: banner with timer, progress bar against MegaBun, milestone track, event generator art, result card (win or lose with Chad's comic cutscene) | Sonnet | T8.4 | A full event can be played in a browser |
+| T8.6 | Bake-Off Showdown: `events.json` entry, event orders, the sagging committee cake, trophy decor and gem rewards | Sonnet | T8.5 | Scott plays one event start to finish |
+| T8.7 | Dialogue and the MegaBun spy regular: hint letters during events, a comic scene per event, tone rules from the GDD (jokes punch up at corporate habits, never at staff) | Sonnet | T8.5 | Scott approves the script |
+| T8.8 | Remaining event types, one task each, reusing the framework: Street Fair Standoff (customers move queues), Blind Taste Test (3 high-tier items in a row), Flour Shortage (slower Flour Mill, temporary Grandma's Secret Stash), Charity Bake Sale (shared town goal) | Sonnet | T8.6 | Each type plays through; the permanent rewards (Flour Mill upgrade, decor sets) persist |
+| T8.9 | Balance pass (T-O3): the simulator plays events; tune curves, milestone totals and rewards so losing costs nothing and winning takes 6–8 sessions | Opus | T8.8 | The bot beats a Bake-Off in the target number of sessions |
+| T8.10 | Phase-end review (T-O2) and an events playtest (T-O5) | Opus, then Scott | All above | Lint, typecheck, tests and build pass; Scott plays two events |
+
+## Phase 9: Chapter 3, Harbor Market Stall
+
+The Fruit Crate arrives (folds in T6.7), a recipe finally uses fruit, and catering orders begin. The story beat is catering the town festival.
+
+**Contract change (T-O1), if needed.** The GDD's catering order carries a 24-hour deadline, a large coin payout, 5 stars and a generator-upgrade chance. `Order` already allows `expiresAt`; check whether the type needs a `kind` field and a catering reward shape before T9.2.
+
+| ID | Task | Model | Depends on | Done when |
+| --- | --- | --- | --- | --- |
+| T9.1 | Fruit recipes (at least a fruit tart and a pastry that uses fruit), added to `recipes.json`, and the Fruit Crate generator and tiers in `generators.json`. Kitchen and order generation pick them up through `producibleChains` | Haiku | Phase 7 | The validator passes; the Kitchen lists the fruit recipes once the Crate exists |
+| T9.2 | Catering orders: one high-tier item within 24 hours, large coins, 5 stars, a generator-upgrade chance. Generation rules, expiry, a place in the counter queue | Sonnet | T9.1, T-O1 if needed | Tests: one at most at a time, expiry, reward rolls on a seeded rng |
+| T9.3 | Catering UI: a distinct card in the counter strip with a countdown | Sonnet | T9.2 | A catering order can be seen, filled and expired in a browser |
+| T9.4 | Three new regulars for Chapter 3 and their portraits (9 files) | Sonnet | T7.3 (style) | The loader accepts them; Scott approves the portraits |
+| T9.5 | `chapter3.json`: 20 tasks (ids `harbor-`), unlocking the Fruit Crate, the new regulars and the festival stall; the Shop gains Chapter 3 rows (`fromChapter: 3`) | Sonnet | T7.2, T9.1, T9.4 | The loader accepts it; a full-chapter test |
+| T9.6 | Chapter 3 dialogue: intro, scenes for the new regulars, the festival finale | Sonnet | T9.4, T9.5 | Scott approves the script; `missingSceneIds` is empty |
+| T9.7 | Harbor Market Stall art: scene (96 × 128), 40 before/after pictures, fruit recipe items, Fruit Crate tiers | Sonnet | T9.5 | Every Chapter 3 sprite key has a PNG; Scott approves each batch |
+| T9.8 | Balance pass (T-O3): Chapters 1–3 end to end, catering payouts and Shop prices | Opus | T9.5 | Chapter 3 takes about 2–3 days; catering is worth doing but never required |
+| T9.9 | Phase-end review (T-O2) and a Chapter 3 playtest (T-O5) | Opus, then Scott | All above | Lint, typecheck, tests and build pass; Scott plays Chapter 3 through |
+
+## Phase 10: Chapter 4, The Wholesale Kitchen
+
+The business becomes a company: wholesale orders, the Deck Oven, and staff. This is the first chapter that adds a persistent system to `GameState`.
+
+**Contract change (T-O1), to approve before T10.1.** In `types.ts`: a `wholesale` order kind (a batch of 5–10 identical items, paying coins and company reputation), `reputation` in `GameState`, and `Staff { id, role, assignedTo, lastActedAt }` with actions `hireStaff` and `assignStaff`. A `GameState` change, so another save migration.
+
+| ID | Task | Model | Depends on | Done when |
+| --- | --- | --- | --- | --- |
+| T10.1 | The contract change above, its migration, `staff.json` (roles, hire costs, intervals) with loader and validator | Opus | Scott's approval | Typecheck passes; old saves load with no staff and zero reputation |
+| T10.2 | Wholesale orders: generation (one chain at a time, 5–10 identical items), delivery from board and Pantry, reputation payout | Sonnet | T10.1 | Tests: batch size, partial batches rejected, reputation granted |
+| T10.3 | Staff core: an auto-tap baker (taps one generator every few minutes) and a bake helper (speeds a slot), resolved from timestamps like cooldowns so offline play works | Sonnet | T10.1 | Tests: ticks at fixed times, offline catch-up through the T4.8 path, no energy spent from nothing |
+| T10.4 | Wholesale and staff UI: wholesale card with a progress count, a Staff screen to hire and assign | Sonnet | T10.2, T10.3 | Hire, assign, fill a wholesale order in a browser |
+| T10.5 | Deck Oven: the Chapter 4 renovation and a Shop row put one on the board; the Kitchen already handles the merge upgrade (T4.3) | Haiku | T7.8 | A Deck Oven with 3 slots is reachable from the Shop |
+| T10.6 | Three new regulars (including a grocery-chain buyer) and their portraits (9 files); staff portraits (2 to 3) | Sonnet | T7.3 (style) | The loader accepts them; Scott approves the portraits |
+| T10.7 | `chapter4.json`: 20 tasks (ids `wholesale-`), unlocking staff, wholesale and the new regulars | Sonnet | T10.2, T10.6 | The loader accepts it; a full-chapter test |
+| T10.8 | Chapter 4 dialogue: intro, hiring scenes (a MegaBun employee may quit and join as a baker, per the GDD), the grocery-chain deal | Sonnet | T10.6, T10.7 | Scott approves the script |
+| T10.9 | Wholesale Kitchen art: scene, 40 before/after pictures, staff sprites | Sonnet | T10.7 | Every Chapter 4 sprite key has a PNG; Scott approves each batch |
+| T10.10 | Balance pass (T-O3): wholesale payouts, staff costs and intervals. Staff must help without making taps pointless | Opus | T10.7 | Chapter 4 takes about 2–3 days; a staffed board still needs the player |
+| T10.11 | Phase-end review (T-O2) and a Chapter 4 playtest (T-O5) | Opus, then Scott | All above | Lint, typecheck, tests and build pass; Scott plays Chapter 4 through |
+
+## Phase 11: Chapter 5, Rise & Shine Factory
+
+The finale. Automation helpers extend Phase 10's staff, the chocolate line completes the sugar chain's top tiers (cocoa bean to truffle box already exist as items), and the story ends with MegaBun's buyout offer.
+
+| ID | Task | Model | Depends on | Done when |
+| --- | --- | --- | --- | --- |
+| T11.1 | Chocolate line recipes (chocolate cake, truffle box and friends) in `recipes.json`; the Kitchen and orders pick them up | Haiku | Phase 7 | The validator passes; recipes appear once Cocoa bean is reachable |
+| T11.2 | Automation helpers: machines that run a generator or a recipe on a loop, built on Phase 10's staff timestamps (no new save shape if `Staff` allows a `machine` role; otherwise a T-O1 change) | Sonnet | T10.3 | Tests: loops, offline catch-up, a full board pauses the machine |
+| T11.3 | Three new regulars and portraits (9 files); the buyout cast (Chad Crustworth, Buns-A-Lot) as story portraits | Sonnet | T7.3 (style) | The loader accepts them; Scott approves the portraits |
+| T11.4 | `chapter5.json`: 20 tasks (ids `factory-`), the last unlocking the finale. The last chapter stays put (T7.2), so the finale is a scene, not a transition | Sonnet | T11.1, T11.2, T11.3 | The loader accepts it; a full-chapter test |
+| T11.5 | The finale: Chad's buyout offer, the player's choice or answer, the ending scene and credits. Decide with Scott whether there is one ending or two | Scott decides, Sonnet builds | T11.4 | Scott approves the script; the game can be finished and the save shows it |
+| T11.6 | Factory art: scene, 40 before/after pictures, machine sprites, chocolate items | Sonnet | T11.4 | Every Chapter 5 sprite key has a PNG; Scott approves each batch |
+| T11.7 | Balance pass (T-O3): Chapters 1–5 end to end | Opus | T11.4 | The whole game takes about 10–14 days for a fast player |
+| T11.8 | Phase-end review (T-O2) and a Chapter 5 playtest (T-O5) | Opus, then Scott | All above | Lint, typecheck, tests and build pass; Scott plays to the ending |
+
+## Phase 12: Whole-game pass
+
+Nothing new is added here. This phase makes the five chapters feel like one game.
+
+| ID | Task | Model | Depends on | Done when |
+| --- | --- | --- | --- | --- |
+| T12.1 | Simulator regression: `npm run balance` plays all five chapters and the events from a fresh save, with pass thresholds in the test run | Opus | Phase 11 | The bot finishes in the target days on 5 seeds |
+| T12.2 | Save migration audit: load a save from each past version through to current; fix any gaps | Sonnet | Phase 11 | Tests load a fixture per version |
+| T12.3 | Audio pass: a music track (the channel exists but has no track), per-chapter themes if wanted, event stings | Sonnet | Phase 11 | Music plays and obeys its volume; Scott approves |
+| T12.4 | Performance and size check against the GDD targets: 60 fps on a mid-range phone, under 5 MB initial download, first merge within 10 seconds | Sonnet | Phase 11 | Measured numbers recorded in the README |
+| T12.5 | Full playthrough, fresh save to the ending, with every fix collected into one list | Scott | T12.1–T12.4 | The list is empty or accepted; the full story plays end to end |
+
+**After launch (not planned):** Bakery Alliances (shared global MegaBun score), optional monetization behind one config, and cloud save all wait until the five chapters are fun.
 
 ## Work kept for Opus or Scott
 
@@ -227,4 +325,4 @@ These tasks need judgment across the whole codebase or taste calls, so they stay
 | T-O3 | Balancing pass: simulate 3 days of play from the JSON data and tune energy, costs, and drop rates to the GDD targets. Done after Phase 5 with `npm run balance`: generator charges ×3, order tiers 5/7, task costs ×2 (6–16 stars, above the GDD's 3–8), level XP ×2; Then walk-ins of 2–3 items (2 stars) and a 90 s order refill to calm the first session (5 tasks down to ~2). Chapter 1 now takes about 3 days for a fast player. Open: a coin sink, orders per session above target | Opus | After Phase 3, again after Phase 5 |
 | T-O4 | Art style sheet: palette per chain, outline weight, highlight style, one reference item per chain. Settled by the switch to pixel art: the finished item PNGs are the reference (1 px `#3a2414` outline, chain-color fills, highlight top-left, shade bottom-right) | Scott, with Opus drafting | Before T5.14 |
 | T-O5 | Playtests: fun check at Milestone 1 (T2.9) and a Chapter 1 run-through at the end | Scott | After T2.9 and after Phase 5 |
-| T-O6 | Next plan: Chapter 2 and the Shop (Phase 7, written Oct 1), then the MegaBun competitive events system (Phase 8) | Opus | After Chapter 1 playtest |
+| T-O6 | Next plan: Chapter 2 and the Shop (Phase 7, written Oct 1); events and Chapters 3–5 (Phases 8–12, written Oct 2) | Opus | After Chapter 1 playtest |
