@@ -43,6 +43,18 @@ const scenesFileSchema = z.strictObject({
 
 const SPECIAL_SPEAKERS: ReadonlySet<string> = new Set(['grandma', 'narrator']);
 
+/** MegaBun's cast (T11.5): story characters who never place orders, so they aren't customers. */
+const STORY_SPEAKERS: Readonly<
+  Record<string, { name: string; portraitKey: string }>
+> = {
+  chad: { name: 'Chad Crustworth', portraitKey: 'portrait-chad' },
+  bunsalot: { name: 'Buns-A-Lot', portraitKey: 'portrait-bunsalot' },
+  'mrs-crustworth': {
+    name: 'Mrs. Crustworth',
+    portraitKey: 'portrait-mrs-crustworth',
+  },
+};
+
 /**
  * Validates `{ "scenes": Scene[] }` and returns the scenes by id. Throws one
  * Error listing every problem: a bad shape, a duplicate id, an empty scene,
@@ -79,7 +91,8 @@ export function parseScenes(
       if (
         !SPECIAL_SPEAKERS.has(line.speaker) &&
         !data.customers.has(line.speaker) &&
-        !data.staff.has(line.speaker)
+        !data.staff.has(line.speaker) &&
+        !(line.speaker in STORY_SPEAKERS)
       ) {
         problems.push(
           `scene "${scene.id}" line ${i.toString()}: unknown speaker "${line.speaker}"`,
@@ -127,6 +140,13 @@ export function speakerView(
   }
   if (line.speaker === 'grandma') {
     return { name: 'Grandma', portraitKey: `portrait-grandma-${expression}` };
+  }
+  const story = STORY_SPEAKERS[line.speaker];
+  if (story) {
+    return {
+      name: story.name,
+      portraitKey: `${story.portraitKey}-${expression}`,
+    };
   }
   // Staff (T10.8) speak like customers: their own name and portrait.
   const customer =

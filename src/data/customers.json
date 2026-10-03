@@ -99,6 +99,27 @@
       "favoriteItems": ["whisked-eggs", "custard-cup", "jam-jar"]
     },
     {
+      "id": "bex",
+      "name": "Bex",
+      "kind": "regular",
+      "portraitKey": "portrait-bex",
+      "favoriteItems": ["brownie-tray", "chocolate-cake", "truffle-box"]
+    },
+    {
+      "id": "dill",
+      "name": "Foreman Dill",
+      "kind": "regular",
+      "portraitKey": "portrait-dill",
+      "favoriteItems": ["bonbon-box", "gift-hamper", "wedding-cake"]
+    },
+    {
+      "id": "moss",
+      "name": "Moss",
+      "kind": "regular",
+      "portraitKey": "portrait-moss",
+      "favoriteItems": ["bonbon", "brownie", "pastry-platter"]
+    },
+    {
       "id": "walkin-hiker",
       "name": "Hiker",
       "kind": "walkIn",

@@ -81,7 +81,7 @@ describe('parseScenes', () => {
           id: 'bad-lines',
           lines: [
             { speaker: 'narrator', text: '   ' },
-            { speaker: 'chad', text: 'Synergy.' },
+            { speaker: 'stranger', text: 'Synergy.' },
           ],
         },
       ],
@@ -97,7 +97,7 @@ describe('parseScenes', () => {
     expect(message).toMatch(/"a": duplicate id/);
     expect(message).toMatch(/"empty": has no lines/);
     expect(message).toMatch(/"bad-lines" line 0: empty text/);
-    expect(message).toMatch(/"bad-lines" line 1: unknown speaker "chad"/);
+    expect(message).toMatch(/"bad-lines" line 1: unknown speaker "stranger"/);
   });
 });
 
@@ -132,6 +132,20 @@ describe('speakerView', () => {
     expect(
       speakerView(data, { speaker: 'trevor', expression: 'happy', text: 'Hi' }),
     ).toEqual({ name: 'Trevor', portraitKey: 'portrait-trevor-happy' });
+  });
+
+  it('lets the MegaBun cast speak without being customers', () => {
+    const scenes = parseScenes(data, {
+      scenes: [{ id: 's', lines: [{ speaker: 'chad', text: 'Hi' }] }],
+    });
+    expect(scenes.has('s')).toBe(true);
+    expect(data.customers.has('chad')).toBe(false);
+    expect(
+      speakerView(data, { speaker: 'mrs-crustworth', text: 'Hi' }),
+    ).toEqual({
+      name: 'Mrs. Crustworth',
+      portraitKey: 'portrait-mrs-crustworth-neutral',
+    });
   });
 
   it('shows Grandma', () => {
