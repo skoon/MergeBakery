@@ -68,6 +68,7 @@ function makeGameData(): GameData {
     },
     shop: new Map(),
     events: new Map(),
+    staff: new Map(),
   };
 }
 
@@ -98,6 +99,8 @@ function makeState(overrides: Partial<GameState> = {}): GameState {
     nextEventAt: null,
     eventResult: null,
     trophies: [],
+    reputation: 0,
+    staff: [],
     ...overrides,
   };
 }

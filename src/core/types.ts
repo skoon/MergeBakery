@@ -16,7 +16,11 @@
  * `slow`, `perk`, `ChainKind` 'event', `EventResult.coins`. Catering orders
  * (T9.2, Scott, Oct 3): `CateringRules`, `OrderRules.catering`, `Order.catering`,
  * `cateringExpired` and `generatorUpgraded`. `OrderRules.lowTierBias` (T9.8,
- * Scott, Oct 3).
+ * Scott, Oct 3). Wholesale and staff (T10.1, Scott, Oct 3), save version 3:
+ * `GameState.reputation` and `staff`, `StaffDef`, `StaffFile`, `StaffState`,
+ * `GameData.staff`, `Order.wholesale`, `OrderReward.reputation`,
+ * `WholesaleRules`, `OrderRules.wholesale`, `hireStaff`, `assignStaff`,
+ * `notEnoughReputation`, `staffHired`, `staffActed` and `wholesaleExpired`.
  *
  * Conventions every core function follows:
  * - Core functions are pure: they never mutate their inputs and return new
@@ -42,6 +46,7 @@ export type SceneId = string;
 export type OrderId = number;
 export type ShopItemId = string;
 export type EventId = string;
+export type StaffId = string;
 
 /** Milliseconds since the Unix epoch, as from Date.now(). */
 export type Timestamp = number;
@@ -259,6 +264,38 @@ export interface EventsFile {
   readonly events: readonly EventDef[];
 }
 
+// ─── Static data: staff (staff.json) ────────────────────────────────────────
+
+/**
+ * - tapper: taps one generator chain on its own every `intervalSec`, spending no
+ *   energy but using the generator's charges and a free cell for each spawn.
+ * - baker: every bake started takes `bakeTimeMultiplier` of its normal time.
+ */
+export type StaffRole = 'tapper' | 'baker';
+
+export interface StaffDef {
+  readonly id: StaffId;
+  readonly name: string;
+  readonly role: StaffRole;
+  /** In coins. */
+  readonly hireCost: number;
+  /** Company reputation needed before this person can be hired. */
+  readonly minReputation: number;
+  /** Tapper only: seconds between taps. */
+  readonly intervalSec?: number;
+  /** Tapper only: the most taps an absence can add up to when the game was closed. */
+  readonly maxCatchUp?: number;
+  /** Baker only: 0–1; 0.8 is bakes 20% faster. */
+  readonly bakeTimeMultiplier?: number;
+  readonly portraitKey: string;
+  /** Not offered before the player reaches this chapter. */
+  readonly minChapter: ChapterId;
+}
+
+export interface StaffFile {
+  readonly staff: readonly StaffDef[];
+}
+
 // ─── Static data: customers (customers.json) ────────────────────────────────
 
 /** Regulars are named townsfolk unlocked by renovation; walk-ins are an always-available pool. */
@@ -338,6 +375,25 @@ export interface OrderKindRules {
   readonly xpPerTier: number;
 }
 
+/** Wholesale orders (T10.1): a batch of identical items for the grocery chain. */
+export interface WholesaleRules {
+  /** Not offered before the player reaches this chapter. */
+  readonly minChapter: ChapterId;
+  /** Chance that a new order is a wholesale order, when none is open. */
+  readonly chancePercent: number;
+  readonly minItems: number;
+  readonly maxItems: number;
+  readonly minTier: number;
+  readonly maxTier: number;
+  /** Coins paid = the batch's total sellValue × this. */
+  readonly coinMultiplier: number;
+  /** Company reputation earned per item delivered. */
+  readonly reputationPerItem: number;
+  readonly xpPerTier: number;
+  /** Seconds the player has to fill it. */
+  readonly windowSec: number;
+}
+
 /** Catering orders (T9.2): one high-tier baked item within a day, paying well. */
 export interface CateringRules {
   /** Not offered before the player reaches this chapter. */
@@ -375,6 +431,7 @@ export interface OrderRules {
   readonly walkIn: OrderKindRules;
   readonly regular: OrderKindRules;
   readonly catering?: CateringRules;
+  readonly wholesale?: WholesaleRules;
 }
 
 export interface Economy {
@@ -443,6 +500,8 @@ export interface GameData {
   readonly shop: ReadonlyMap<ShopItemId, ShopItem>;
   /** In data order. */
   readonly events: ReadonlyMap<EventId, EventDef>;
+  /** In data order. */
+  readonly staff: ReadonlyMap<StaffId, StaffDef>;
 }
 
 // ─── Game state ─────────────────────────────────────────────────────────────
@@ -498,6 +557,8 @@ export interface Order {
   readonly reward: OrderReward;
   /** Hometown Pride this order earns; present only on event orders. */
   readonly eventPoints?: number;
+  /** Present only on wholesale orders (T10.1). */
+  readonly wholesale?: { readonly expiresAt: Timestamp };
   /** Present only on catering orders (T9.2). */
   readonly catering?: {
     readonly expiresAt: Timestamp;
@@ -509,6 +570,8 @@ export interface OrderReward {
   readonly coins: number;
   readonly stars: number;
   readonly xp: number;
+  /** Company reputation (wholesale orders only). */
+  readonly reputation?: number;
 }
 
 export interface Bake {
@@ -601,6 +664,18 @@ export interface GameState {
   readonly eventResult: EventResult | null;
   /** Events won, one entry each time, for trophy decor. */
   readonly trophies: readonly EventId[];
+  /** Company reputation, earned by wholesale orders; gates hiring staff. */
+  readonly reputation: number;
+  /** Everyone hired so far. */
+  readonly staff: readonly StaffState[];
+}
+
+export interface StaffState {
+  readonly staffId: StaffId;
+  /** Tappers only: the generator chain they work; null when idle. */
+  readonly assignedChain: ChainId | null;
+  /** When they last acted (or were hired); the next action is intervalSec later. */
+  readonly lastActedAt: Timestamp;
 }
 
 // ─── Actions, results, and events ───────────────────────────────────────────
@@ -639,6 +714,13 @@ type ActionBody =
   /** Claim a reached milestone of the running event (T8.1). */
   | { readonly type: 'claimMilestone'; readonly index: number }
   | { readonly type: 'dismissEventResult' }
+  | { readonly type: 'hireStaff'; readonly staffId: StaffId }
+  /** Point a tapper at a generator chain, or null to rest them. */
+  | {
+      readonly type: 'assignStaff';
+      readonly staffId: StaffId;
+      readonly chainId: ChainId | null;
+    }
   | { readonly type: 'dismissDiscovery'; readonly itemId: ItemId }
   | { readonly type: 'setTutorialStep'; readonly step: TutorialStep }
   /** Time passing: order refills and cooldowns. Sent on an interval and on load. */
@@ -677,7 +759,8 @@ export type RejectReason =
   | 'prerequisitesMissing'
   | 'alreadyCompleted'
   | 'noActiveEvent'
-  | 'milestoneNotReached';
+  | 'milestoneNotReached'
+  | 'notEnoughReputation';
 
 /** What happened, for animation, audio, and UI cards. The state is the source of truth. */
 export type GameEvent =
@@ -746,6 +829,14 @@ export type GameEvent =
       readonly coins: number;
     }
   | { readonly type: 'cateringExpired'; readonly orderId: OrderId }
+  | { readonly type: 'wholesaleExpired'; readonly orderId: OrderId }
+  | { readonly type: 'staffHired'; readonly staffId: StaffId }
+  | {
+      readonly type: 'staffActed';
+      readonly staffId: StaffId;
+      readonly itemId: ItemId;
+      readonly cell: CellIndex;
+    }
   | {
       readonly type: 'generatorUpgraded';
       readonly cell: CellIndex;

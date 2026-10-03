@@ -1,0 +1,36 @@
+{
+  "staff": [
+    {
+      "id": "sam",
+      "name": "Sam the Stockboy",
+      "role": "tapper",
+      "hireCost": 1500,
+      "minReputation": 10,
+      "intervalSec": 300,
+      "maxCatchUp": 12,
+      "portraitKey": "portrait-sam",
+      "minChapter": "chapter3"
+    },
+    {
+      "id": "trevor",
+      "name": "Trevor",
+      "role": "baker",
+      "hireCost": 2500,
+      "minReputation": 25,
+      "bakeTimeMultiplier": 0.8,
+      "portraitKey": "portrait-trevor",
+      "minChapter": "chapter3"
+    },
+    {
+      "id": "rosa",
+      "name": "Rosa the Runner",
+      "role": "tapper",
+      "hireCost": 3500,
+      "minReputation": 50,
+      "intervalSec": 240,
+      "maxCatchUp": 16,
+      "portraitKey": "portrait-rosa",
+      "minChapter": "chapter3"
+    }
+  ]
+}

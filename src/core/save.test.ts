@@ -310,7 +310,14 @@ describe('loading a version 1 save (T8.1)', () => {
       state: Record<string, unknown>;
     };
     // What a v1 file looked like: no event fields at all.
-    for (const key of ['event', 'nextEventAt', 'eventResult', 'trophies']) {
+    for (const key of [
+      'event',
+      'nextEventAt',
+      'eventResult',
+      'trophies',
+      'reputation',
+      'staff',
+    ]) {
       delete file.state[key];
     }
     file.version = 1;

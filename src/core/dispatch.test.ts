@@ -67,6 +67,7 @@ function makeGameData(): GameData {
     },
     shop: new Map(),
     events: new Map(),
+    staff: new Map(),
   };
 }
 
@@ -97,6 +98,8 @@ function makeState(overrides: Partial<GameState> = {}): GameState {
     nextEventAt: null,
     eventResult: null,
     trophies: [],
+    reputation: 0,
+    staff: [],
     ...overrides,
   };
 }
@@ -125,6 +128,8 @@ function makeThrowingHandlers(): Handlers {
     completeTask: notCalled,
     buyShopItem: notCalled,
     claimMilestone: notCalled,
+    hireStaff: notCalled,
+    assignStaff: notCalled,
     dismissEventResult: notCalled,
     dismissDiscovery: notCalled,
     setTutorialStep: notCalled,
@@ -156,6 +161,8 @@ const SAMPLE_ACTIONS: readonly Action[] = [
   { type: 'completeTask', taskId: 'task-1', now: NOW },
   { type: 'buyShopItem', shopItemId: 'shop-1', now: NOW },
   { type: 'claimMilestone', index: 0, now: NOW },
+  { type: 'hireStaff', staffId: 'x', now: NOW },
+  { type: 'assignStaff', staffId: 'x', chainId: null, now: NOW },
   { type: 'dismissEventResult', now: NOW },
   { type: 'dismissDiscovery', itemId: 'wheat-stalk', now: NOW },
   { type: 'setTutorialStep', step: 'firstMerge', now: NOW },
@@ -163,8 +170,8 @@ const SAMPLE_ACTIONS: readonly Action[] = [
 ];
 
 describe('dispatch', () => {
-  it('covers all 21 action types', () => {
-    expect(SAMPLE_ACTIONS).toHaveLength(21);
+  it('covers all 23 action types', () => {
+    expect(SAMPLE_ACTIONS).toHaveLength(23);
   });
 
   it.each(SAMPLE_ACTIONS.map((action) => ({ action })))(

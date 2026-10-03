@@ -9,6 +9,7 @@ import { dismissDiscovery } from './discovery';
 import { applyDrop } from './drop';
 import { collectBonus, rushCooldown, tapGenerator } from './generators';
 import { claimMilestone, dismissEventResult, tickEvents } from './events';
+import { assignStaff, hireStaff } from './staff';
 import { loadRecipe } from './kitchen';
 import { refillOrders } from './orders';
 import { mergeOvens } from './ovens';
@@ -104,6 +105,10 @@ function routeAction(
       return handlers.claimMilestone(data, state, action, rng);
     case 'dismissEventResult':
       return handlers.dismissEventResult(data, state, action, rng);
+    case 'hireStaff':
+      return handlers.hireStaff(data, state, action, rng);
+    case 'assignStaff':
+      return handlers.assignStaff(data, state, action, rng);
     case 'dismissDiscovery':
       return handlers.dismissDiscovery(data, state, action, rng);
     case 'setTutorialStep':
@@ -159,6 +164,10 @@ export const dispatch: Dispatch = createDispatch({
   claimMilestone: (data, state, action) =>
     claimMilestone(data, state, action.index),
   dismissEventResult: (_data, state) => dismissEventResult(state),
+  hireStaff: (data, state, action) =>
+    hireStaff(data, state, action.staffId, action.now),
+  assignStaff: (data, state, action) =>
+    assignStaff(data, state, action.staffId, action.chainId),
   dismissDiscovery: (data, state, action) =>
     dismissDiscovery(data, state, action.itemId),
   setTutorialStep: (data, state, action) =>

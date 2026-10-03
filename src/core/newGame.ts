@@ -85,5 +85,7 @@ export function createNewGame(
     nextEventAt: null,
     eventResult: null,
     trophies: [],
+    reputation: 0,
+    staff: [],
   };
 }

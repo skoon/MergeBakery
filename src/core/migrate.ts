@@ -18,7 +18,8 @@ export type Migration = (save: SaveObject) => SaveObject;
 
 /**
  * The game's migrations. v1 → v2 adds the MegaBun event fields (T8.1): no
- * event running, none scheduled yet, no result to show, no trophies.
+ * event running, none scheduled yet, no result to show, no trophies. v2 → v3
+ * adds company reputation and staff (T10.1): none of either yet.
  */
 export const MIGRATIONS: Readonly<Record<number, Migration>> = {
   1: (save) => ({
@@ -29,6 +30,14 @@ export const MIGRATIONS: Readonly<Record<number, Migration>> = {
       nextEventAt: null,
       eventResult: null,
       trophies: [],
+    },
+  }),
+  2: (save) => ({
+    ...save,
+    state: {
+      ...(save['state'] as Record<string, unknown>),
+      reputation: 0,
+      staff: [],
     },
   }),
 };

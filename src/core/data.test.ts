@@ -216,6 +216,7 @@ function makeFixture(): RawGameData {
     },
     shop: { items: [] },
     events: { events: [] },
+    staff: { staff: [] },
   };
 }
 
@@ -740,6 +741,29 @@ describe('parseGameData: chapters and the Shop (T7.1)', () => {
     expect(() => parseGameData(raw)).toThrow(
       /generatorItemId[\s\S]*milestone points[\s\S]*runs past durationSec/,
     );
+  });
+
+  it('rejects staff with a missing role field, a bad chapter or a repeat id', () => {
+    const raw = makeFixture();
+    const person = {
+      id: 'sam',
+      name: 'Sam',
+      role: 'tapper',
+      hireCost: 10,
+      minReputation: 0,
+      portraitKey: 'portrait-sam',
+      minChapter: 'nowhere',
+    };
+    obj(raw).staff = {
+      staff: [person, { ...person, role: 'baker' }],
+    };
+    expect(() => parseGameData(raw)).toThrow(
+      /duplicate id "sam"[\s\S]*unknown chapter[\s\S]*tapper needs[\s\S]*baker needs/,
+    );
+  });
+
+  it('loads the real staff.json', () => {
+    expect(loadGameData().staff.size).toBeGreaterThan(0);
   });
 
   it('loads the real shop.json', () => {

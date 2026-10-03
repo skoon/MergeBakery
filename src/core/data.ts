@@ -21,6 +21,8 @@ import type {
   EventDef,
   EventReward,
   EventsFile,
+  StaffDef,
+  StaffFile,
   Economy,
   GameData,
   GeneratorDef,
@@ -57,6 +59,7 @@ export interface RawGameData {
   newGame: unknown; // newGame.json
   shop: unknown; // shop.json
   events: unknown; // events.json
+  staff: unknown; // staff.json
 }
 
 // ─── Zod schemas: items and chains (items.json) ─────────────────────────────
@@ -208,6 +211,25 @@ const eventsFileSchema: z.ZodType<EventsFile> = z.strictObject({
   events: z.array(eventDefSchema),
 });
 
+// ─── Zod schemas: staff (staff.json) ────────────────────────────────────────
+
+const staffDefSchema: z.ZodType<StaffDef> = z.strictObject({
+  id: z.string(),
+  name: z.string(),
+  role: z.enum(['tapper', 'baker']),
+  hireCost: z.number(),
+  minReputation: z.number(),
+  intervalSec: z.number().optional(),
+  maxCatchUp: z.number().optional(),
+  bakeTimeMultiplier: z.number().optional(),
+  portraitKey: z.string(),
+  minChapter: z.string(),
+});
+
+const staffFileSchema: z.ZodType<StaffFile> = z.strictObject({
+  staff: z.array(staffDefSchema),
+});
+
 // ─── Zod schemas: customers (customers.json) ────────────────────────────────
 
 const customerKindSchema: z.ZodType<CustomerKind> = z.enum([
@@ -281,6 +303,20 @@ const orderRulesSchema: z.ZodType<OrderRules> = z.strictObject({
   lowTierBias: z.number().optional(),
   walkIn: orderKindRulesSchema,
   regular: orderKindRulesSchema,
+  wholesale: z
+    .strictObject({
+      minChapter: z.string(),
+      chancePercent: z.number(),
+      minItems: z.number(),
+      maxItems: z.number(),
+      minTier: z.number(),
+      maxTier: z.number(),
+      coinMultiplier: z.number(),
+      reputationPerItem: z.number(),
+      xpPerTier: z.number(),
+      windowSec: z.number(),
+    })
+    .optional(),
   catering: z
     .strictObject({
       minChapter: z.string(),
@@ -373,6 +409,7 @@ interface ParsedSections {
   readonly newGame: NewGameConfig;
   readonly shop: ShopFile;
   readonly events: EventsFile;
+  readonly staff: StaffFile;
 }
 
 /** Every id in `ids` must be distinct; reports each duplicate once. */
@@ -444,6 +481,7 @@ function validateCrossReferences(parsed: ParsedSections): string[] {
     newGame,
     shop,
     events,
+    staff,
   } = parsed;
 
   const chainById = new Map<ChainId, Chain>(items.chains.map((c) => [c.id, c]));
@@ -810,6 +848,61 @@ function validateCrossReferences(parsed: ParsedSections): string[] {
     }
   }
 
+  // Wholesale: a known chapter, a batch of 5 or more, a sane tier range.
+  const wholesale = economy.orders.wholesale;
+  if (wholesale !== undefined) {
+    if (!chapters.some((c) => c.id === wholesale.minChapter)) {
+      problems.push(
+        `economy.orders.wholesale: minChapter "${wholesale.minChapter}" names an unknown chapter`,
+      );
+    }
+    if (
+      wholesale.minItems < 1 ||
+      wholesale.minItems > wholesale.maxItems ||
+      wholesale.minTier < 1 ||
+      wholesale.minTier > wholesale.maxTier ||
+      wholesale.windowSec <= 0 ||
+      wholesale.coinMultiplier <= 0 ||
+      wholesale.chancePercent < 0 ||
+      wholesale.chancePercent > 100
+    ) {
+      problems.push('economy.orders.wholesale: a value is out of range');
+    }
+  }
+
+  // Staff: ids unique, known chapter, and the fields their role needs.
+  checkUnique(
+    staff.staff.map((s) => s.id),
+    'staff',
+    problems,
+  );
+  for (const person of staff.staff) {
+    const where = `staff "${person.id}"`;
+    if (!chapters.some((c) => c.id === person.minChapter)) {
+      problems.push(
+        `${where}: minChapter "${person.minChapter}" names an unknown chapter`,
+      );
+    }
+    if (person.hireCost < 0 || person.minReputation < 0) {
+      problems.push(`${where}: hireCost and minReputation can't be negative`);
+    }
+    if (person.role === 'tapper') {
+      if ((person.intervalSec ?? 0) <= 0 || (person.maxCatchUp ?? 0) < 1) {
+        problems.push(
+          `${where}: a tapper needs a positive intervalSec and a maxCatchUp of at least 1`,
+        );
+      }
+    } else if (
+      person.bakeTimeMultiplier === undefined ||
+      person.bakeTimeMultiplier <= 0 ||
+      person.bakeTimeMultiplier >= 1
+    ) {
+      problems.push(
+        `${where}: a baker needs a bakeTimeMultiplier between 0 and 1`,
+      );
+    }
+  }
+
   // Catering: a known chapter, a sane tier range, positive window and multiplier.
   const catering = economy.orders.catering;
   if (catering !== undefined) {
@@ -938,6 +1031,7 @@ function buildGameData(parsed: ParsedSections): GameData {
     newGame: parsed.newGame,
     shop: new Map(parsed.shop.items.map((i) => [i.id, i])),
     events: new Map(parsed.events.events.map((e) => [e.id, e])),
+    staff: new Map(parsed.staff.staff.map((s) => [s.id, s])),
   };
 }
 
@@ -1009,6 +1103,13 @@ export function parseGameData(raw: RawGameData): GameData {
     shapeProblems,
   );
 
+  const staff = parseSection(
+    staffFileSchema,
+    raw.staff,
+    'staff.json',
+    shapeProblems,
+  );
+
   if (
     items === undefined ||
     generators === undefined ||
@@ -1019,7 +1120,8 @@ export function parseGameData(raw: RawGameData): GameData {
     chapters === undefined ||
     newGame === undefined ||
     shop === undefined ||
-    events === undefined
+    events === undefined ||
+    staff === undefined
   ) {
     throw new Error(shapeProblems.join('\n'));
   }
@@ -1035,6 +1137,7 @@ export function parseGameData(raw: RawGameData): GameData {
     newGame,
     shop,
     events,
+    staff,
   };
 
   const crossRefProblems = validateCrossReferences(parsed);
@@ -1083,5 +1186,6 @@ export function loadGameData(): GameData {
     newGame: readDataFile('newGame.json'),
     shop: readDataFile('shop.json'),
     events: readDataFile('events.json'),
+    staff: readDataFile('staff.json'),
   });
 }
