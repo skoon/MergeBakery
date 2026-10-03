@@ -12,7 +12,7 @@
  * four `GameState` fields (`event`, `nextEventAt`, `eventResult`, `trophies`),
  * `Order.eventPoints`, `claimMilestone`, `dismissEventResult`, three events and
  * two reject reasons (T8.1, Scott, Oct 3). Save version 2. Later additions
- * (T8.2–T8.4): `EventDef.gapAfterSec`, `EventDef.orders`, `ChainKind` 'event',
+ * (T8.2–T8.4): `EventDef.gapAfterSec`, `EventDef.orders`, `EventDef.slow`, `ChainKind` 'event',
  * `EventResult.coins`.
  *
  * Conventions every core function follows:
@@ -212,6 +212,8 @@ export interface EventOrderRules {
   readonly maxOpen: number;
   readonly minItems: number;
   readonly maxItems: number;
+  /** Lowest tier asked for; 1 when absent. */
+  readonly minTier?: number;
   /** Highest tier asked for, in the event's product chains. */
   readonly maxTier: number;
 }
@@ -230,6 +232,11 @@ export interface EventDef {
   /** Hometown Pride per item in a delivered event order. */
   readonly pointsPerOrder: number;
   readonly orders: EventOrderRules;
+  /** Slows a generator chain's cooldowns while the event runs (Flour Shortage). */
+  readonly slow?: {
+    readonly chainId: ChainId;
+    readonly cooldownMultiplier: number;
+  };
   /** In ascending order of points. */
   readonly milestones: readonly EventMilestone[];
   /** In ascending order of atSec; the player wins by ending with at least the last score. */

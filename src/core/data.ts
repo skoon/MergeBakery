@@ -185,8 +185,12 @@ const eventDefSchema: z.ZodType<EventDef> = z.strictObject({
     maxOpen: z.number(),
     minItems: z.number(),
     maxItems: z.number(),
+    minTier: z.number().optional(),
     maxTier: z.number(),
   }),
+  slow: z
+    .strictObject({ chainId: z.string(), cooldownMultiplier: z.number() })
+    .optional(),
   milestones: z.array(
     z.strictObject({ points: z.number(), reward: eventRewardSchema }),
   ),
@@ -540,7 +544,8 @@ function validateCrossReferences(parsed: ParsedSections): string[] {
       rules.maxOpen < 1 ||
       rules.minItems < 1 ||
       rules.minItems > rules.maxItems ||
-      rules.maxTier < 1
+      (rules.minTier ?? 1) > rules.maxTier ||
+      (rules.minTier ?? 1) < 1
     ) {
       problems.push(`${where}: orders rules are out of range`);
     }
@@ -556,6 +561,15 @@ function validateCrossReferences(parsed: ParsedSections): string[] {
     ) {
       problems.push(
         `${where}: orders.maxTier is above its event chain's top tier`,
+      );
+    }
+    if (
+      event.slow !== undefined &&
+      (chainById.get(event.slow.chainId)?.kind !== 'generator' ||
+        event.slow.cooldownMultiplier < 1)
+    ) {
+      problems.push(
+        `${where}: slow must name a generator chain and a multiplier of at least 1`,
       );
     }
     if (!chapters.some((c) => c.id === event.minChapter)) {

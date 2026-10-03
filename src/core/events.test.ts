@@ -6,6 +6,7 @@ import {
   tickEvents,
 } from './events';
 import { createRng } from './rng';
+import { tapGenerator } from './generators';
 import { deliverOrder } from './deliver';
 import { stateWith, testData } from './testing';
 import type { EventDef, GameData, GameState } from './types';
@@ -382,28 +383,87 @@ describe('event orders', () => {
   });
 });
 
-describe('the real Bake-Off Showdown', () => {
-  it('starts in Chapter 2 with its mixer and two orders for its own items', () => {
-    const state = stateWith({}, { chapterId: 'chapter2', nextEventAt: 0 });
-    const r = tickEvents(testData, state, rng(), 0);
-    if (!r.ok) throw new Error('expected ok');
-    expect(r.state.event?.eventId).toBe('bake-off');
-    const itemIds = r.state.board.cells.flatMap((c) =>
-      c.kind === 'item' ? [c.item.itemId] : [],
-    );
-    expect(itemIds).toContain('contest-mixer-1');
-    const eventOrders = r.state.orders.filter((o) => o.eventPoints);
-    expect(eventOrders).toHaveLength(2);
-    for (const o of eventOrders) {
-      for (const id of o.wants) {
-        expect(testData.items.get(id)?.chainId).toBe('showpiece');
+describe('the real events', () => {
+  for (const real of testData.events.values()) {
+    const only: GameData = {
+      ...testData,
+      events: new Map([[real.id, real]]),
+    };
+
+    it(`${real.id} starts in its chapter with its generator and valid orders`, () => {
+      const state = stateWith(
+        {},
+        { chapterId: real.minChapter, nextEventAt: 0 },
+      );
+      const r = tickEvents(only, state, rng(), 0);
+      if (!r.ok) throw new Error('expected ok');
+      expect(r.state.event?.eventId).toBe(real.id);
+      const itemIds = r.state.board.cells.flatMap((c) =>
+        c.kind === 'item' ? [c.item.itemId] : [],
+      );
+      expect(itemIds).toContain(real.generatorItemId);
+      const eventOrders = r.state.orders.filter((o) => o.eventPoints);
+      expect(eventOrders).toHaveLength(real.orders.maxOpen);
+      for (const o of eventOrders) {
+        expect(o.wants.length).toBeGreaterThanOrEqual(real.orders.minItems);
+        expect(o.wants.length).toBeLessThanOrEqual(real.orders.maxItems);
+        for (const id of o.wants) {
+          const item = testData.items.get(id);
+          expect(testData.chains.get(item?.chainId ?? '')?.kind).toBe('event');
+          expect(item?.tier).toBeGreaterThanOrEqual(real.orders.minTier ?? 1);
+          expect(item?.tier).toBeLessThanOrEqual(real.orders.maxTier);
+        }
       }
-    }
-  });
+    });
+  }
 
   it('is not offered in Chapter 1', () => {
     const state = stateWith({}, { chapterId: 'chapter1' });
     const r = tickEvents(testData, state, rng(), 0);
     expect(r.ok && r.state.nextEventAt).toBeNull();
+  });
+});
+
+describe('Flour Shortage', () => {
+  const slow = testData.events.get('flour-shortage');
+  const tap = (event: GameState['event']) => {
+    const state = stateWith({ 0: 'flour-mill-1' }, { event });
+    const cell = state.board.cells[0];
+    if (cell?.kind !== 'item' || !cell.item.generator) throw new Error('setup');
+    const spent: GameState = {
+      ...state,
+      board: {
+        ...state.board,
+        cells: state.board.cells.map((c, i) =>
+          i === 0 && c.kind === 'item'
+            ? {
+                kind: 'item' as const,
+                item: {
+                  ...c.item,
+                  generator: { charges: 1, cooldownEndsAt: null },
+                },
+              }
+            : c,
+        ),
+      },
+    };
+    const r = tapGenerator(testData, spent, 0, rng(), 1000);
+    if (!r.ok) throw new Error('expected ok');
+    const after = r.state.board.cells[0];
+    return after?.kind === 'item' ? after.item.generator?.cooldownEndsAt : null;
+  };
+
+  it('doubles the Flour Mill cooldown while it runs, and only then', () => {
+    const base = testData.generators.get('flour-mill-1')?.cooldownSec ?? 0;
+    const running = {
+      eventId: 'flour-shortage',
+      startedAt: 0,
+      endsAt: 1e9,
+      points: 0,
+      claimedMilestones: [],
+    };
+    expect(slow?.slow?.cooldownMultiplier).toBe(2);
+    expect(tap(null)).toBe(1000 + base * 1000);
+    expect(tap(running)).toBe(1000 + base * 2000);
   });
 });

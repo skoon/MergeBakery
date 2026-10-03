@@ -96,8 +96,14 @@ export function tapGenerator(
   };
 
   const newCharges = charges - 1;
+  // An event can slow one generator chain's cooldowns (Flour Shortage).
+  const slow = state.event && data.events.get(state.event.eventId)?.slow;
+  const slowed =
+    slow && data.items.get(tappedItem.itemId)?.chainId === slow.chainId
+      ? slow.cooldownMultiplier
+      : 1;
   const newCooldownEndsAt =
-    newCharges === 0 ? now + generatorDef.cooldownSec * 1000 : null;
+    newCharges === 0 ? now + generatorDef.cooldownSec * slowed * 1000 : null;
   const updatedTappedItem: BoardItem = {
     ...tappedItem,
     generator: { charges: newCharges, cooldownEndsAt: newCooldownEndsAt },

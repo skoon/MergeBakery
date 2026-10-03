@@ -128,6 +128,42 @@
       ],
       "charges": 30,
       "cooldownSec": 180
+    },
+    {
+      "itemId": "fair-cart-1",
+      "spawnTable": [
+        { "itemId": "fair-flyer", "weight": 70 },
+        { "itemId": "fair-sample", "weight": 30 }
+      ],
+      "charges": 30,
+      "cooldownSec": 180
+    },
+    {
+      "itemId": "taste-table-1",
+      "spawnTable": [
+        { "itemId": "taster-spoon", "weight": 70 },
+        { "itemId": "taster-plate", "weight": 30 }
+      ],
+      "charges": 24,
+      "cooldownSec": 180
+    },
+    {
+      "itemId": "stash-1",
+      "spawnTable": [
+        { "itemId": "stash-flour", "weight": 70 },
+        { "itemId": "stash-sack", "weight": 30 }
+      ],
+      "charges": 30,
+      "cooldownSec": 150
+    },
+    {
+      "itemId": "sale-table-1",
+      "spawnTable": [
+        { "itemId": "sale-bun", "weight": 70 },
+        { "itemId": "sale-box", "weight": 30 }
+      ],
+      "charges": 30,
+      "cooldownSec": 180
     }
   ],
   "rareDrops": {

@@ -118,6 +118,62 @@
       "kind": "event",
       "color": "#e0457b",
       "completionGems": 0
+    },
+    {
+      "id": "fair-cart",
+      "name": "Fair Cart",
+      "kind": "generator",
+      "color": "#2f9fc9",
+      "completionGems": 0
+    },
+    {
+      "id": "fair-goods",
+      "name": "Fair Goods",
+      "kind": "event",
+      "color": "#2f9fc9",
+      "completionGems": 0
+    },
+    {
+      "id": "taste-table",
+      "name": "Tasting Table",
+      "kind": "generator",
+      "color": "#7b4fc4",
+      "completionGems": 0
+    },
+    {
+      "id": "tasting",
+      "name": "Tasting Plates",
+      "kind": "event",
+      "color": "#7b4fc4",
+      "completionGems": 0
+    },
+    {
+      "id": "stash",
+      "name": "Grandma's Secret Stash",
+      "kind": "generator",
+      "color": "#c9a24a",
+      "completionGems": 0
+    },
+    {
+      "id": "stash-goods",
+      "name": "Stash Goods",
+      "kind": "event",
+      "color": "#c9a24a",
+      "completionGems": 0
+    },
+    {
+      "id": "sale-table",
+      "name": "Bake Sale Table",
+      "kind": "generator",
+      "color": "#3fae6a",
+      "completionGems": 0
+    },
+    {
+      "id": "sale-goods",
+      "name": "Sale Goods",
+      "kind": "event",
+      "color": "#3fae6a",
+      "completionGems": 0
     }
   ],
   "items": [
@@ -784,6 +840,206 @@
       "tier": 5,
       "spriteKey": "showstopper-cake",
       "sellValue": 32,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "fair-cart-1",
+      "name": "Fair Cart",
+      "chainId": "fair-cart",
+      "tier": 1,
+      "spriteKey": "fair-cart-1",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "fair-flyer",
+      "name": "Flyer",
+      "chainId": "fair-goods",
+      "tier": 1,
+      "spriteKey": "fair-flyer",
+      "sellValue": 2,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "fair-sample",
+      "name": "Sample tray",
+      "chainId": "fair-goods",
+      "tier": 2,
+      "spriteKey": "fair-sample",
+      "sellValue": 4,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "fair-banner",
+      "name": "Bunting banner",
+      "chainId": "fair-goods",
+      "tier": 3,
+      "spriteKey": "fair-banner",
+      "sellValue": 8,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "fair-stall",
+      "name": "Stall sign",
+      "chainId": "fair-goods",
+      "tier": 4,
+      "spriteKey": "fair-stall",
+      "sellValue": 16,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "taste-table-1",
+      "name": "Tasting Table",
+      "chainId": "taste-table",
+      "tier": 1,
+      "spriteKey": "taste-table-1",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "taster-spoon",
+      "name": "Taster spoon",
+      "chainId": "tasting",
+      "tier": 1,
+      "spriteKey": "taster-spoon",
+      "sellValue": 3,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "taster-plate",
+      "name": "Taster plate",
+      "chainId": "tasting",
+      "tier": 2,
+      "spriteKey": "taster-plate",
+      "sellValue": 6,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "taster-flight",
+      "name": "Taster flight",
+      "chainId": "tasting",
+      "tier": 3,
+      "spriteKey": "taster-flight",
+      "sellValue": 12,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "judges-platter",
+      "name": "Judges' platter",
+      "chainId": "tasting",
+      "tier": 4,
+      "spriteKey": "judges-platter",
+      "sellValue": 24,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "stash-1",
+      "name": "Grandma's Secret Stash",
+      "chainId": "stash",
+      "tier": 1,
+      "spriteKey": "stash-1",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "stash-flour",
+      "name": "Stashed flour",
+      "chainId": "stash-goods",
+      "tier": 1,
+      "spriteKey": "stash-flour",
+      "sellValue": 2,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "stash-sack",
+      "name": "Stash sack",
+      "chainId": "stash-goods",
+      "tier": 2,
+      "spriteKey": "stash-sack",
+      "sellValue": 4,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "stash-crate",
+      "name": "Stash crate",
+      "chainId": "stash-goods",
+      "tier": 3,
+      "spriteKey": "stash-crate",
+      "sellValue": 8,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "stash-reserve",
+      "name": "Reserve barrel",
+      "chainId": "stash-goods",
+      "tier": 4,
+      "spriteKey": "stash-reserve",
+      "sellValue": 16,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "sale-table-1",
+      "name": "Bake Sale Table",
+      "chainId": "sale-table",
+      "tier": 1,
+      "spriteKey": "sale-table-1",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "sale-bun",
+      "name": "Sale bun",
+      "chainId": "sale-goods",
+      "tier": 1,
+      "spriteKey": "sale-bun",
+      "sellValue": 2,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "sale-box",
+      "name": "Sale box",
+      "chainId": "sale-goods",
+      "tier": 2,
+      "spriteKey": "sale-box",
+      "sellValue": 4,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "sale-hamper",
+      "name": "Sale hamper",
+      "chainId": "sale-goods",
+      "tier": 3,
+      "spriteKey": "sale-hamper",
+      "sellValue": 8,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "sale-raffle-cake",
+      "name": "Raffle cake",
+      "chainId": "sale-goods",
+      "tier": 4,
+      "spriteKey": "sale-raffle-cake",
+      "sellValue": 16,
       "note": null,
       "collectReward": null
     }

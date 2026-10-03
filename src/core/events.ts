@@ -94,7 +94,10 @@ function generateEventOrder(
     generator.spawnTable.map((e) => data.items.get(e.itemId)?.chainId),
   );
   const candidates = [...data.items.values()].filter(
-    (i) => chains.has(i.chainId) && i.tier <= def.orders.maxTier,
+    (i) =>
+      chains.has(i.chainId) &&
+      i.tier >= (def.orders.minTier ?? 1) &&
+      i.tier <= def.orders.maxTier,
   );
   if (candidates.length === 0) {
     throw new Error(`generateEventOrder: no items for event "${def.id}"`);

@@ -70,6 +70,299 @@
         }
       ],
       "trophyGems": 15
+    },
+    {
+      "id": "street-fair",
+      "name": "Street Fair Standoff",
+      "minChapter": "chapter2",
+      "durationSec": 259200,
+      "gapAfterSec": 1209600,
+      "generatorItemId": "fair-cart-1",
+      "pointsPerOrder": 8,
+      "orders": {
+        "maxOpen": 3,
+        "minItems": 1,
+        "maxItems": 2,
+        "maxTier": 3
+      },
+      "milestones": [
+        {
+          "points": 40,
+          "reward": {
+            "coins": 100,
+            "gems": 0
+          }
+        },
+        {
+          "points": 100,
+          "reward": {
+            "coins": 0,
+            "gems": 2
+          }
+        },
+        {
+          "points": 170,
+          "reward": {
+            "coins": 250,
+            "gems": 0
+          }
+        },
+        {
+          "points": 260,
+          "reward": {
+            "coins": 0,
+            "gems": 4
+          }
+        },
+        {
+          "points": 360,
+          "reward": {
+            "coins": 0,
+            "gems": 8
+          }
+        }
+      ],
+      "megabunCurve": [
+        {
+          "atSec": 0,
+          "score": 0
+        },
+        {
+          "atSec": 86400,
+          "score": 60
+        },
+        {
+          "atSec": 172800,
+          "score": 170
+        },
+        {
+          "atSec": 259200,
+          "score": 360
+        }
+      ],
+      "trophyGems": 12
+    },
+    {
+      "id": "taste-test",
+      "name": "Blind Taste Test",
+      "minChapter": "chapter2",
+      "durationSec": 345600,
+      "gapAfterSec": 1209600,
+      "generatorItemId": "taste-table-1",
+      "pointsPerOrder": 15,
+      "orders": {
+        "maxOpen": 1,
+        "minItems": 3,
+        "maxItems": 3,
+        "minTier": 3,
+        "maxTier": 4
+      },
+      "milestones": [
+        {
+          "points": 45,
+          "reward": {
+            "coins": 150,
+            "gems": 0
+          }
+        },
+        {
+          "points": 90,
+          "reward": {
+            "coins": 0,
+            "gems": 3
+          }
+        },
+        {
+          "points": 150,
+          "reward": {
+            "coins": 350,
+            "gems": 0
+          }
+        },
+        {
+          "points": 225,
+          "reward": {
+            "coins": 0,
+            "gems": 5
+          }
+        },
+        {
+          "points": 300,
+          "reward": {
+            "coins": 0,
+            "gems": 10
+          }
+        }
+      ],
+      "megabunCurve": [
+        {
+          "atSec": 0,
+          "score": 0
+        },
+        {
+          "atSec": 86400,
+          "score": 40
+        },
+        {
+          "atSec": 172800,
+          "score": 110
+        },
+        {
+          "atSec": 259200,
+          "score": 200
+        },
+        {
+          "atSec": 345600,
+          "score": 300
+        }
+      ],
+      "trophyGems": 20
+    },
+    {
+      "id": "flour-shortage",
+      "name": "Flour Shortage",
+      "minChapter": "chapter2",
+      "durationSec": 259200,
+      "gapAfterSec": 1209600,
+      "generatorItemId": "stash-1",
+      "pointsPerOrder": 10,
+      "orders": {
+        "maxOpen": 2,
+        "minItems": 1,
+        "maxItems": 2,
+        "maxTier": 3
+      },
+      "milestones": [
+        {
+          "points": 40,
+          "reward": {
+            "coins": 100,
+            "gems": 0
+          }
+        },
+        {
+          "points": 100,
+          "reward": {
+            "coins": 0,
+            "gems": 2
+          }
+        },
+        {
+          "points": 180,
+          "reward": {
+            "coins": 300,
+            "gems": 0
+          }
+        },
+        {
+          "points": 260,
+          "reward": {
+            "coins": 0,
+            "gems": 4
+          }
+        },
+        {
+          "points": 320,
+          "reward": {
+            "coins": 0,
+            "gems": 8
+          }
+        }
+      ],
+      "megabunCurve": [
+        {
+          "atSec": 0,
+          "score": 0
+        },
+        {
+          "atSec": 86400,
+          "score": 70
+        },
+        {
+          "atSec": 172800,
+          "score": 190
+        },
+        {
+          "atSec": 259200,
+          "score": 320
+        }
+      ],
+      "trophyGems": 15,
+      "slow": {
+        "chainId": "flour-mill",
+        "cooldownMultiplier": 2
+      }
+    },
+    {
+      "id": "charity-sale",
+      "name": "Charity Bake Sale",
+      "minChapter": "chapter2",
+      "durationSec": 432000,
+      "gapAfterSec": 1209600,
+      "generatorItemId": "sale-table-1",
+      "pointsPerOrder": 10,
+      "orders": {
+        "maxOpen": 2,
+        "minItems": 1,
+        "maxItems": 2,
+        "maxTier": 3
+      },
+      "milestones": [
+        {
+          "points": 50,
+          "reward": {
+            "coins": 120,
+            "gems": 0
+          }
+        },
+        {
+          "points": 120,
+          "reward": {
+            "coins": 0,
+            "gems": 2
+          }
+        },
+        {
+          "points": 220,
+          "reward": {
+            "coins": 300,
+            "gems": 0
+          }
+        },
+        {
+          "points": 350,
+          "reward": {
+            "coins": 0,
+            "gems": 5
+          }
+        },
+        {
+          "points": 500,
+          "reward": {
+            "coins": 0,
+            "gems": 10
+          }
+        }
+      ],
+      "megabunCurve": [
+        {
+          "atSec": 0,
+          "score": 0
+        },
+        {
+          "atSec": 172800,
+          "score": 150
+        },
+        {
+          "atSec": 345600,
+          "score": 380
+        },
+        {
+          "atSec": 432000,
+          "score": 500
+        }
+      ],
+      "trophyGems": 18
     }
   ]
 }
