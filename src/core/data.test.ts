@@ -721,6 +721,7 @@ describe('parseGameData: chapters and the Shop (T7.1)', () => {
           name: 'Bake-Off',
           minChapter: 'chapter1',
           durationSec: 100,
+          gapAfterSec: 10,
           generatorItemId: 'nope',
           pointsPerOrder: 5,
           milestones: [

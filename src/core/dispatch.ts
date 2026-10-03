@@ -8,7 +8,7 @@ import { deliverOrder } from './deliver';
 import { dismissDiscovery } from './discovery';
 import { applyDrop } from './drop';
 import { collectBonus, rushCooldown, tapGenerator } from './generators';
-import { claimMilestone, dismissEventResult } from './events';
+import { claimMilestone, dismissEventResult, tickEvents } from './events';
 import { loadRecipe } from './kitchen';
 import { refillOrders } from './orders';
 import { mergeOvens } from './ovens';
@@ -163,6 +163,11 @@ export const dispatch: Dispatch = createDispatch({
     dismissDiscovery(data, state, action.itemId),
   setTutorialStep: (data, state, action) =>
     setTutorialStep(data, state, action.step),
-  tick: (data, state, action, rng) =>
-    refillOrders(data, state, rng, action.now),
+  tick: (data, state, action, rng) => {
+    const orders = refillOrders(data, state, rng, action.now);
+    if (!orders.ok) return orders;
+    const events = tickEvents(data, orders.state, rng, action.now);
+    if (!events.ok) return events;
+    return { ...events, events: [...orders.events, ...events.events] };
+  },
 });

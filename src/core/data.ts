@@ -177,6 +177,7 @@ const eventDefSchema: z.ZodType<EventDef> = z.strictObject({
   name: z.string(),
   minChapter: z.string(),
   durationSec: z.number(),
+  gapAfterSec: z.number(),
   generatorItemId: z.string(),
   pointsPerOrder: z.number(),
   milestones: z.array(
@@ -514,9 +515,13 @@ function validateCrossReferences(parsed: ParsedSections): string[] {
         `${where}: minChapter "${event.minChapter}" names an unknown chapter`,
       );
     }
-    if (event.durationSec <= 0 || event.pointsPerOrder <= 0) {
+    if (
+      event.durationSec <= 0 ||
+      event.pointsPerOrder <= 0 ||
+      event.gapAfterSec < 0
+    ) {
       problems.push(
-        `${where}: durationSec and pointsPerOrder must be positive`,
+        `${where}: durationSec and pointsPerOrder must be positive, gapAfterSec not negative`,
       );
     }
     const ascending = (xs: readonly number[]): boolean =>

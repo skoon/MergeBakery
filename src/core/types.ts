@@ -210,13 +210,15 @@ export interface EventDef {
   /** Not offered before the player reaches this chapter. */
   readonly minChapter: ChapterId;
   readonly durationSec: number;
+  /** Seconds from this event's end to the next one's start (about two weeks). */
+  readonly gapAfterSec: number;
   /** The event generator placed on the board when the event starts. */
   readonly generatorItemId: ItemId;
   /** Hometown Pride per event order delivered. */
   readonly pointsPerOrder: number;
   /** In ascending order of points. */
   readonly milestones: readonly EventMilestone[];
-  /** In ascending order of atSec; the player wins by reaching the last score first. */
+  /** In ascending order of atSec; the player wins by ending with at least the last score. */
   readonly megabunCurve: readonly MegabunCurvePoint[];
   /** Gems paid for winning; the win is also recorded in GameState.trophies. */
   readonly trophyGems: number;
