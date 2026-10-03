@@ -9,6 +9,7 @@ import sample from '../data/dialogue/sample.json';
 import chapter1Scenes from '../data/dialogue/chapter1.json';
 import chapter2Scenes from '../data/dialogue/chapter2.json';
 import chapter3Scenes from '../data/dialogue/chapter3.json';
+import chapter4Scenes from '../data/dialogue/chapter4.json';
 import eventScenes from '../data/dialogue/events.json';
 import {
   missingSceneIds,
@@ -29,6 +30,7 @@ function dataReferring(
   const chapters = new Map(data.chapters);
   chapters.delete('chapter2');
   chapters.delete('chapter3');
+  chapters.delete('chapter4');
   chapters.set('chapter1', {
     ...chapter,
     introSceneId,
@@ -122,6 +124,16 @@ describe('speakerView', () => {
     ).toEqual({ name: 'Gus the Fisherman', portraitKey: 'portrait-gus-happy' });
   });
 
+  it('lets staff speak, with their own name and portrait', () => {
+    const scenes = parseScenes(data, {
+      scenes: [{ id: 's', lines: [{ speaker: 'trevor', text: 'Hi' }] }],
+    });
+    expect(scenes.has('s')).toBe(true);
+    expect(
+      speakerView(data, { speaker: 'trevor', expression: 'happy', text: 'Hi' }),
+    ).toEqual({ name: 'Trevor', portraitKey: 'portrait-trevor-happy' });
+  });
+
   it('shows Grandma', () => {
     expect(
       speakerView(data, {
@@ -173,12 +185,13 @@ describe('Event scenes (T8.7)', () => {
   });
 });
 
-describe('Chapter 1, 2 and 3 scenes (T5.5, T7.6, T9.6)', () => {
+describe('Chapters 1 to 4 scenes (T5.5, T7.6, T9.6, T10.8)', () => {
   const scenes = parseScenes(data, {
     scenes: [
       ...chapter1Scenes.scenes,
       ...chapter2Scenes.scenes,
       ...chapter3Scenes.scenes,
+      ...chapter4Scenes.scenes,
     ],
   });
 

@@ -10,7 +10,7 @@ import { z } from 'zod';
 import type { CustomerId, GameData, SceneId } from '../core/types';
 
 export type Expression = 'neutral' | 'happy' | 'impatient';
-/** A customer id, or one of the speakers who aren't customers. */
+/** A customer or staff id, or one of the speakers who aren't either. */
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 export type Speaker = CustomerId | 'grandma' | 'narrator';
 
@@ -78,7 +78,8 @@ export function parseScenes(
       }
       if (
         !SPECIAL_SPEAKERS.has(line.speaker) &&
-        !data.customers.has(line.speaker)
+        !data.customers.has(line.speaker) &&
+        !data.staff.has(line.speaker)
       ) {
         problems.push(
           `scene "${scene.id}" line ${i.toString()}: unknown speaker "${line.speaker}"`,
@@ -112,7 +113,7 @@ export function missingSceneIds(
 }
 
 /**
- * What the box shows for a line. Customers: their name and
+ * What the box shows for a line. Customers and staff: their name and
  * `${portraitKey}-${expression}`. 'grandma': "Grandma" and
  * `portrait-grandma-${expression}`. 'narrator': no name, no portrait.
  */
@@ -127,7 +128,9 @@ export function speakerView(
   if (line.speaker === 'grandma') {
     return { name: 'Grandma', portraitKey: `portrait-grandma-${expression}` };
   }
-  const customer = data.customers.get(line.speaker);
+  // Staff (T10.8) speak like customers: their own name and portrait.
+  const customer =
+    data.customers.get(line.speaker) ?? data.staff.get(line.speaker);
   if (!customer) {
     throw new Error(`speakerView: unknown speaker "${line.speaker}"`);
   }

@@ -66,6 +66,18 @@
       "coinMultiplier": 3,
       "xpPerTier": 2
     },
+    "wholesale": {
+      "minChapter": "chapter4",
+      "chancePercent": 8,
+      "minItems": 5,
+      "maxItems": 10,
+      "minTier": 1,
+      "maxTier": 2,
+      "coinMultiplier": 2,
+      "reputationPerItem": 1,
+      "xpPerTier": 1,
+      "windowSec": 172800
+    },
     "catering": {
       "minChapter": "chapter3",
       "chancePercent": 6,

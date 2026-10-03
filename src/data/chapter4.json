@@ -1,0 +1,358 @@
+{
+  "id": "chapter4",
+  "name": "The Wholesale Kitchen",
+  "sceneKey": "wholesale-kitchen",
+  "introSceneId": "ch4-intro",
+  "tasks": [
+    {
+      "id": "wholesale-clear-unit",
+      "name": "Clear out the unit",
+      "starCost": 12,
+      "spot": {
+        "x": 0.17,
+        "y": 0.2
+      },
+      "prerequisites": [],
+      "unlocks": [],
+      "featuredItems": ["cookie", "scone"],
+      "beforeSpriteKey": "wholesale-kitchen-clear-unit-before",
+      "afterSpriteKey": "wholesale-kitchen-clear-unit-after",
+      "sceneId": null
+    },
+    {
+      "id": "wholesale-loading-door",
+      "name": "Fix the loading door",
+      "starCost": 12,
+      "spot": {
+        "x": 0.35,
+        "y": 0.16
+      },
+      "prerequisites": ["wholesale-clear-unit"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "dairy-fridge-1"
+        }
+      ],
+      "featuredItems": ["cookie", "fruit-tart"],
+      "beforeSpriteKey": "wholesale-kitchen-loading-door-before",
+      "afterSpriteKey": "wholesale-kitchen-loading-door-after",
+      "sceneId": null
+    },
+    {
+      "id": "wholesale-scrub-floors",
+      "name": "Scrub the floors",
+      "starCost": 14,
+      "spot": {
+        "x": 0.64,
+        "y": 0.19
+      },
+      "prerequisites": ["wholesale-clear-unit"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "harlow"
+        }
+      ],
+      "featuredItems": ["scone", "cookie-stack"],
+      "beforeSpriteKey": "wholesale-kitchen-scrub-floors-before",
+      "afterSpriteKey": "wholesale-kitchen-scrub-floors-after",
+      "sceneId": "ch4-harlow"
+    },
+    {
+      "id": "wholesale-steel-counters",
+      "name": "Fit steel counters",
+      "starCost": 14,
+      "spot": {
+        "x": 0.87,
+        "y": 0.17
+      },
+      "prerequisites": ["wholesale-loading-door"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "flour-mill-1"
+        }
+      ],
+      "featuredItems": ["croissant", "scone"],
+      "beforeSpriteKey": "wholesale-kitchen-steel-counters-before",
+      "afterSpriteKey": "wholesale-kitchen-steel-counters-after",
+      "sceneId": null
+    },
+    {
+      "id": "wholesale-big-sinks",
+      "name": "Install the big sinks",
+      "starCost": 14,
+      "spot": {
+        "x": 0.15,
+        "y": 0.34
+      },
+      "prerequisites": ["wholesale-scrub-floors"],
+      "unlocks": [],
+      "featuredItems": ["cookie-stack", "fruit-tart"],
+      "beforeSpriteKey": "wholesale-kitchen-big-sinks-before",
+      "afterSpriteKey": "wholesale-kitchen-big-sinks-after",
+      "sceneId": null
+    },
+    {
+      "id": "wholesale-walk-in-fridge",
+      "name": "Install a walk-in fridge",
+      "starCost": 16,
+      "spot": {
+        "x": 0.38,
+        "y": 0.33
+      },
+      "prerequisites": ["wholesale-steel-counters"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "dairy-fridge-1"
+        }
+      ],
+      "featuredItems": ["croissant", "tart-tray"],
+      "beforeSpriteKey": "wholesale-kitchen-walk-in-fridge-before",
+      "afterSpriteKey": "wholesale-kitchen-walk-in-fridge-after",
+      "sceneId": null
+    },
+    {
+      "id": "wholesale-delivery-bay",
+      "name": "Open the delivery bay",
+      "starCost": 16,
+      "spot": {
+        "x": 0.62,
+        "y": 0.34
+      },
+      "prerequisites": ["wholesale-big-sinks"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "lou"
+        }
+      ],
+      "featuredItems": ["scone-basket", "cookie-stack"],
+      "beforeSpriteKey": "wholesale-kitchen-delivery-bay-before",
+      "afterSpriteKey": "wholesale-kitchen-delivery-bay-after",
+      "sceneId": "ch4-lou"
+    },
+    {
+      "id": "wholesale-deck-oven",
+      "name": "Install the Deck Oven",
+      "starCost": 18,
+      "spot": {
+        "x": 0.87,
+        "y": 0.36
+      },
+      "prerequisites": ["wholesale-walk-in-fridge"],
+      "unlocks": [
+        {
+          "kind": "oven",
+          "ovenId": "deck-oven"
+        }
+      ],
+      "featuredItems": ["pastry-platter", "scone-basket"],
+      "beforeSpriteKey": "wholesale-kitchen-deck-oven-before",
+      "afterSpriteKey": "wholesale-kitchen-deck-oven-after",
+      "sceneId": null
+    },
+    {
+      "id": "wholesale-order-board",
+      "name": "Hang the order board",
+      "starCost": 18,
+      "spot": {
+        "x": 0.17,
+        "y": 0.5
+      },
+      "prerequisites": ["wholesale-delivery-bay"],
+      "unlocks": [],
+      "featuredItems": ["cookie-tin", "tart-tray"],
+      "beforeSpriteKey": "wholesale-kitchen-order-board-before",
+      "afterSpriteKey": "wholesale-kitchen-order-board-after",
+      "sceneId": null
+    },
+    {
+      "id": "wholesale-hygiene-rating",
+      "name": "Earn a hygiene rating",
+      "starCost": 18,
+      "spot": {
+        "x": 0.38,
+        "y": 0.49
+      },
+      "prerequisites": ["wholesale-deck-oven", "wholesale-order-board"],
+      "unlocks": [
+        {
+          "kind": "customer",
+          "customerId": "okafor"
+        }
+      ],
+      "featuredItems": ["cream-tea", "fruit-gateau"],
+      "beforeSpriteKey": "wholesale-kitchen-hygiene-rating-before",
+      "afterSpriteKey": "wholesale-kitchen-hygiene-rating-after",
+      "sceneId": "ch4-okafor"
+    },
+    {
+      "id": "wholesale-staff-room",
+      "name": "Open a staff room",
+      "starCost": 20,
+      "spot": {
+        "x": 0.59,
+        "y": 0.48
+      },
+      "prerequisites": ["wholesale-hygiene-rating"],
+      "unlocks": [],
+      "featuredItems": ["cookie-tin", "cream-tea"],
+      "beforeSpriteKey": "wholesale-kitchen-staff-room-before",
+      "afterSpriteKey": "wholesale-kitchen-staff-room-after",
+      "sceneId": "ch4-staff"
+    },
+    {
+      "id": "wholesale-uniforms",
+      "name": "Order uniforms",
+      "starCost": 20,
+      "spot": {
+        "x": 0.86,
+        "y": 0.49
+      },
+      "prerequisites": ["wholesale-staff-room"],
+      "unlocks": [],
+      "featuredItems": ["pastry-platter", "fruit-gateau"],
+      "beforeSpriteKey": "wholesale-kitchen-uniforms-before",
+      "afterSpriteKey": "wholesale-kitchen-uniforms-after",
+      "sceneId": null
+    },
+    {
+      "id": "wholesale-label-printer",
+      "name": "Set up the label printer",
+      "starCost": 20,
+      "spot": {
+        "x": 0.13,
+        "y": 0.68
+      },
+      "prerequisites": ["wholesale-staff-room"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "hen-coop-1"
+        }
+      ],
+      "featuredItems": ["cookie-tin", "harvest-showcase"],
+      "beforeSpriteKey": "wholesale-kitchen-label-printer-before",
+      "afterSpriteKey": "wholesale-kitchen-label-printer-after",
+      "sceneId": null
+    },
+    {
+      "id": "wholesale-cold-store",
+      "name": "Build a cold store",
+      "starCost": 22,
+      "spot": {
+        "x": 0.38,
+        "y": 0.66
+      },
+      "prerequisites": ["wholesale-uniforms", "wholesale-label-printer"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "fruit-crate-1"
+        }
+      ],
+      "featuredItems": ["gift-hamper", "fruit-gateau"],
+      "beforeSpriteKey": "wholesale-kitchen-cold-store-before",
+      "afterSpriteKey": "wholesale-kitchen-cold-store-after",
+      "sceneId": null
+    },
+    {
+      "id": "wholesale-packing-line",
+      "name": "Run a packing line",
+      "starCost": 22,
+      "spot": {
+        "x": 0.6,
+        "y": 0.64
+      },
+      "prerequisites": ["wholesale-cold-store"],
+      "unlocks": [],
+      "featuredItems": ["gift-hamper", "cream-tea"],
+      "beforeSpriteKey": "wholesale-kitchen-packing-line-before",
+      "afterSpriteKey": "wholesale-kitchen-packing-line-after",
+      "sceneId": null
+    },
+    {
+      "id": "wholesale-delivery-van",
+      "name": "Buy a delivery van",
+      "starCost": 22,
+      "spot": {
+        "x": 0.85,
+        "y": 0.65
+      },
+      "prerequisites": ["wholesale-packing-line"],
+      "unlocks": [
+        {
+          "kind": "generator",
+          "itemId": "sugar-tin-1"
+        }
+      ],
+      "featuredItems": ["harvest-showcase", "pastry-platter"],
+      "beforeSpriteKey": "wholesale-kitchen-delivery-van-before",
+      "afterSpriteKey": "wholesale-kitchen-delivery-van-after",
+      "sceneId": "ch4-neighbors"
+    },
+    {
+      "id": "wholesale-tasting-day",
+      "name": "Hold a tasting day",
+      "starCost": 24,
+      "spot": {
+        "x": 0.14,
+        "y": 0.84
+      },
+      "prerequisites": ["wholesale-delivery-van"],
+      "unlocks": [],
+      "featuredItems": ["wedding-cake", "gift-hamper"],
+      "beforeSpriteKey": "wholesale-kitchen-tasting-day-before",
+      "afterSpriteKey": "wholesale-kitchen-tasting-day-after",
+      "sceneId": null
+    },
+    {
+      "id": "wholesale-fourth-recipe-page",
+      "name": "Find the fourth recipe page",
+      "starCost": 24,
+      "spot": {
+        "x": 0.39,
+        "y": 0.81
+      },
+      "prerequisites": ["wholesale-tasting-day"],
+      "unlocks": [],
+      "featuredItems": ["wedding-cake", "harvest-showcase"],
+      "beforeSpriteKey": "wholesale-kitchen-fourth-recipe-page-before",
+      "afterSpriteKey": "wholesale-kitchen-fourth-recipe-page-after",
+      "sceneId": "ch4-recipe-page"
+    },
+    {
+      "id": "wholesale-chain-inspection",
+      "name": "Pass the chain inspection",
+      "starCost": 26,
+      "spot": {
+        "x": 0.64,
+        "y": 0.83
+      },
+      "prerequisites": ["wholesale-fourth-recipe-page"],
+      "unlocks": [],
+      "featuredItems": ["wedding-cake", "pastry-platter"],
+      "beforeSpriteKey": "wholesale-kitchen-chain-inspection-before",
+      "afterSpriteKey": "wholesale-kitchen-chain-inspection-after",
+      "sceneId": null
+    },
+    {
+      "id": "wholesale-first-big-order",
+      "name": "Fill the first big order",
+      "starCost": 28,
+      "spot": {
+        "x": 0.87,
+        "y": 0.84
+      },
+      "prerequisites": ["wholesale-chain-inspection"],
+      "unlocks": [],
+      "featuredItems": ["wedding-cake", "harvest-showcase"],
+      "beforeSpriteKey": "wholesale-kitchen-first-big-order-before",
+      "afterSpriteKey": "wholesale-kitchen-first-big-order-after",
+      "sceneId": "ch4-deal"
+    }
+  ]
+}

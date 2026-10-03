@@ -9,7 +9,7 @@
       "intervalSec": 300,
       "maxCatchUp": 12,
       "portraitKey": "portrait-sam",
-      "minChapter": "chapter3"
+      "minChapter": "chapter4"
     },
     {
       "id": "trevor",
@@ -19,7 +19,7 @@
       "minReputation": 25,
       "bakeTimeMultiplier": 0.8,
       "portraitKey": "portrait-trevor",
-      "minChapter": "chapter3"
+      "minChapter": "chapter4"
     },
     {
       "id": "rosa",
@@ -30,7 +30,7 @@
       "intervalSec": 240,
       "maxCatchUp": 16,
       "portraitKey": "portrait-rosa",
-      "minChapter": "chapter3"
+      "minChapter": "chapter4"
     }
   ]
 }

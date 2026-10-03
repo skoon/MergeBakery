@@ -1,0 +1,231 @@
+{
+  "scenes": [
+    {
+      "id": "ch4-intro",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "In a long low unit that smells of cardboard and ambition, a hand-painted sign over the door reads WHOLESALE KITCHEN. Optimistically."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Your grandfather and I never went wholesale. Too nervous. 'What if they want a thousand scones?' he said. 'Then we make a thousand,' I said."
+        },
+        {
+          "speaker": "grandma",
+          "text": "Bigger ovens, bigger orders, and people to help carry them. Nobody should bake alone forever, dear. That's how you end up exhausted."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Flat-packed shelving, a huge mixer under a tarp, and a note: 'FreshCo Groceries wants to talk. Friday. Wear shoes.'"
+        }
+      ]
+    },
+    {
+      "id": "ch4-harlow",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "A woman in a tidy navy blazer arrives with a tablet and the posture of someone who has been lied to by a lot of bakeries."
+        },
+        {
+          "speaker": "harlow",
+          "text": "Ms. Harlow. Head buyer for FreshCo, forty-one stores. I am not here to be charmed. I am here to count units."
+        },
+        {
+          "speaker": "harlow",
+          "text": "I need five to ten of an item at a time, on time, the same every time. 'Handmade' is nice. 'Consistent' is the word I get paid for."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Consistent is just handmade with a good memory, dear. Say yes, and then do it eight hundred times."
+        },
+        {
+          "speaker": "harlow",
+          "expression": "impatient",
+          "text": "I'll start small. One batch. If the cookies match the sample, we talk. If one is burnt, I will say so. In writing."
+        }
+      ]
+    },
+    {
+      "id": "ch4-lou",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "A van reverses into the delivery bay with the confidence of a man who has never checked a mirror. It stops an inch short. Everyone breathes."
+        },
+        {
+          "speaker": "lou",
+          "text": "Big Lou. Deliveries. I've hauled bread across this county for twenty years. Mostly for people who wouldn't know a good loaf if it hit 'em."
+        },
+        {
+          "speaker": "lou",
+          "expression": "happy",
+          "text": "Your gran gave me a bag of scones once. In a snowstorm. I never forgot it."
+        },
+        {
+          "speaker": "lou",
+          "text": "So here's the deal. You bake, I drive, and nobody tells Ms. Harlow how fast I really go around the roundabout."
+        },
+        {
+          "speaker": "grandma",
+          "text": "He drives like a fire engine and loads like a ballerina. Keep him, dear."
+        }
+      ]
+    },
+    {
+      "id": "ch4-okafor",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "A person in a white coat and a hairnet walks very slowly through the kitchen, writing on a clipboard. Nobody dares to speak."
+        },
+        {
+          "speaker": "okafor",
+          "text": "Dr. Okafor. Food safety. I'll be looking at your hands, your surfaces, your fridge temperatures, and your attitude."
+        },
+        {
+          "speaker": "okafor",
+          "text": "I'm not here to catch you out. I'm here so that five thousand strangers can eat your cookies and be fine. That's a lot of trust."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Clean is a kind of kindness, dear. She's right. Wash your hands twice and thank her."
+        },
+        {
+          "speaker": "okafor",
+          "expression": "happy",
+          "text": "Three out of five. Come back in a week with the sink fixed and I might be persuaded to say four."
+        }
+      ]
+    },
+    {
+      "id": "ch4-staff",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The staff room has a kettle, a corkboard and one mismatched chair. It is the most hopeful room in the building."
+        },
+        {
+          "speaker": "grandma",
+          "text": "You can't do it all, dear, and you shouldn't try. Hire someone. Pay them well. Treat them like family. That's the whole of management."
+        },
+        {
+          "speaker": "sam",
+          "expression": "happy",
+          "text": "Hi! I'm Sam. I stack things. I'm very good at stacking. Is there a thing that needs stacking?"
+        },
+        {
+          "speaker": "narrator",
+          "text": "At the back door, a man in a crumpled orange polo shirt is holding a cardboard box and looking at the floor."
+        },
+        {
+          "speaker": "trevor",
+          "text": "I used to work at MegaBun. Quality assurance. I once had to taste-test the Artisanal Bread Product. I have not been the same."
+        },
+        {
+          "speaker": "trevor",
+          "expression": "happy",
+          "text": "I quit this morning. Six years of writing 'up to 40% bread' on bread. I'd like to bake something that is, you know, bread."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Pour the man a tea. He's family now. Welcome, Trevor."
+        }
+      ]
+    },
+    {
+      "id": "ch4-neighbors",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "The delivery van is parked outside, freshly painted, with RISE & SHINE in careful lettering. Half the street comes out to look at it."
+        },
+        {
+          "speaker": "narrator",
+          "text": "The fruit seller from the harbor claps. The net-mender salutes. Gerald the seagull attempts to move in."
+        },
+        {
+          "speaker": "lou",
+          "text": "She's a beauty. She'll do eighty. Don't tell Ms. Harlow I said eighty."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "A van is just a very large basket, dear. Fill it with something good and send it somewhere that needs it."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Down the road, an orange van with a smiling bun on the side pulls up, hesitates, and quietly reverses away."
+        }
+      ]
+    },
+    {
+      "id": "ch4-recipe-page",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Under the mixer's tarp, taped to the underside of a steel shelf, a fourth page of Grandma's recipe book. The handwriting is rushed."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Bread for a crowd. The trick is to start the dough the night before and then go to bed. The dough does the work and you take the credit."
+        },
+        {
+          "speaker": "grandma",
+          "text": "There's a line at the bottom: 'Scale up the love, not the sugar.' I wrote that after a very bad batch of toffee in 1987."
+        },
+        {
+          "speaker": "trevor",
+          "text": "That is the best thing I've read about baking. I'd like it on a poster. Possibly a tattoo."
+        },
+        {
+          "speaker": "narrator",
+          "text": "With four pages found, the recipe book has begun to feel less like a mystery and more like a conversation."
+        }
+      ]
+    },
+    {
+      "id": "ch4-deal",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Ms. Harlow arrives at nine sharp. The batch is already boxed, labelled and stacked on a trolley. She opens one box and counts."
+        },
+        {
+          "speaker": "harlow",
+          "text": "Forty cookies. Forty cookies, all the same size. All the same colour. I've never been so unsettled by a baked good."
+        },
+        {
+          "speaker": "harlow",
+          "expression": "happy",
+          "text": "FreshCo will take five hundred a week to start. We'll call the line 'Rise & Shine at FreshCo'. You may not use the word artisanal."
+        },
+        {
+          "speaker": "lou",
+          "expression": "happy",
+          "text": "I'll drive. I'll drive very carefully. Slightly faster than very carefully."
+        },
+        {
+          "speaker": "okafor",
+          "expression": "happy",
+          "text": "The kitchen is a solid four. I may be convinced to say four and a half at the next visit."
+        },
+        {
+          "speaker": "grandma",
+          "expression": "happy",
+          "text": "Look at that, dear. From one little shop to a hundred shelves. And every cookie still made by someone who cares."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Next morning, a MegaBun press release: 'MegaBun is delighted to announce it has noticed the bakery.' It has also noticed the shelves."
+        }
+      ]
+    }
+  ]
+}
