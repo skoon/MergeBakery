@@ -28,6 +28,7 @@ import { mountLocationView } from './ui/locationView';
 import { mountShop } from './ui/shopScreen';
 import { mountDiscoveryCard } from './ui/discoveryCard';
 import { mountRushBubble } from './ui/rushBubble';
+import { mountEventSheet } from './ui/eventSheet';
 import { parseScenes } from './ui/dialogue';
 import { mountDialoguePlayer } from './ui/dialoguePlayer';
 import { mountChapterTransition } from './ui/chapterTransition';
@@ -110,6 +111,7 @@ mountHelpDialog(tray, overlayRoot, store);
 mountKitchen(tray, overlayRoot, store, () => Date.now());
 mountDiscoveryCard(overlayRoot, store, settings);
 mountRushBubble(overlayRoot, store, boardView, () => Date.now());
+mountEventSheet(overlayRoot, store, () => Date.now());
 
 // Story scenes (T5.5): the chapter intro on a new game, and a scene when a
 // renovation task that has one completes. The player queues them.
