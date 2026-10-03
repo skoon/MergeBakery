@@ -109,6 +109,20 @@ export function rewindState(state: GameState, ms: number): GameState {
         }
       : null,
     nextEventAt: state.nextEventAt === null ? null : state.nextEventAt - ms,
+    // Catering and wholesale orders expire, and staff act on a clock (T9.2, T10.3).
+    orders: state.orders.map((order) => ({
+      ...order,
+      ...(order.catering && {
+        catering: {
+          ...order.catering,
+          expiresAt: order.catering.expiresAt - ms,
+        },
+      }),
+      ...(order.wholesale && {
+        wholesale: { expiresAt: order.wholesale.expiresAt - ms },
+      }),
+    })),
+    staff: state.staff.map((s) => ({ ...s, lastActedAt: s.lastActedAt - ms })),
   };
 }
 

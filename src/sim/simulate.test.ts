@@ -16,7 +16,7 @@ import { testData } from '../core/testing';
 const SEEDS = [1, 2, 3, 4, 5];
 const OPTIONS = { ...DEFAULT_OPTIONS, maxSessionMin: 20 };
 // Long enough for the bot to get through Chapter 2 as well.
-const REPORT_DAYS = 16;
+const REPORT_DAYS = 24;
 
 function mean(values: number[]): number {
   return values.length === 0
@@ -72,7 +72,7 @@ function printReport(reports: SimReport[]): void {
       .map(([id, at]) => `${id} d${at.day.toString()}s${at.session.toString()}`)
       .join(', ');
     lines.push(
-      `  seed ${r.seed.toString()}: chapters done: ${done || 'none'} (${r.tasksDone.toString()} tasks); first croissant after ${r.firstCroissantAtMin === null ? 'never' : `${fmt(r.firstCroissantAtMin)} min played`}; catering ${r.catering.arrived.toString()} seen / ${r.catering.delivered.toString()} delivered / ${r.catering.expired.toString()} expired / ${r.catering.upgrades.toString()} upgrades; level ${r.finalLevel.toString()}, ${r.finalStars.toString()} stars left, ${r.finalCoins.toString()} coins`,
+      `  seed ${r.seed.toString()}: chapters done: ${done || 'none'} (${r.tasksDone.toString()} tasks); first croissant after ${r.firstCroissantAtMin === null ? 'never' : `${fmt(r.firstCroissantAtMin)} min played`}; catering ${r.catering.arrived.toString()} seen / ${r.catering.delivered.toString()} delivered / ${r.catering.expired.toString()} expired / ${r.catering.upgrades.toString()} upgrades; wholesale ${r.wholesale.arrived.toString()} seen / ${r.wholesale.delivered.toString()} delivered / ${r.wholesale.expired.toString()} expired, reputation ${r.finalState.reputation.toString()}, hired ${r.wholesale.hires.map((h) => `${h.staffId} d${h.day.toString()}`).join(', ') || 'no one'}; level ${r.finalLevel.toString()}, ${r.finalStars.toString()} stars left, ${r.finalCoins.toString()} coins`,
     );
   }
   console.log(lines.join('\n'));

@@ -1,3 +1,19 @@
+# Phase 10 — Chapter 4, The Wholesale Kitchen
+
+Source: Implementation Plan, Phase 10. Chapter 3 was merged to `main` on Oct 3 (Scott: "chapter 3 looks good"). Branches t10.1 … t10.10, stacked.
+
+- [x] T10.1 Contract, approved Oct 3: `GameState.reputation` and `staff`, `StaffDef`/`StaffFile`/`StaffState`, `GameData.staff`, `Order.wholesale`, `OrderReward.reputation`, `WholesaleRules`, `hireStaff`, `assignStaff`, `notEnoughReputation`, `staffHired`, `staffActed`, `wholesaleExpired`. Save version 3 (migration 2 → 3). `staff.json` (Sam, Trevor, Rosa). Differences from the proposal: `Order.wholesale` holds only `expiresAt` (reputation is on the reward); `StaffDef` also has `maxCatchUp`, `portraitKey`, `minChapter`
+- [x] T10.2 Wholesale orders: 8% of new orders from Chapter 4, 5–10 of one tier 1–2 item, coins ×2, 1 reputation per item, 48 h; a batch can be topped up from the Pantry
+- [x] T10.3 Staff: tappers tap their chain every `intervalSec` free of energy (capped catch-up offline), bakers shorten bakes (×0.8). `assignStaff` restarts the clock so idle time isn't banked
+- [x] T10.4 Wholesale card (one icon, have/need count, countdown); Staff panel on the Bakery screen (hire, point a tapper at a chain)
+- [x] T10.5 The Deck Oven: Chapter 4's task 8 unlocks it (no Shop change)
+- [x] T10.6 Ms. Harlow, Big Lou, Dr. Okafor and the staff Sam, Trevor, Rosa: data and 18 portraits (`portraits6.py`). **Awaiting Scott's approval of the portraits**
+- [x] T10.7 `chapter4.json`: 20 `wholesale-` tasks (380 stars). Wholesale rules in `economy.json`
+- [x] T10.8 `src/data/dialogue/chapter4.json`, 8 scenes; staff can be dialogue speakers (Trevor leaves MegaBun). **Awaiting Scott's approval of the script**
+- [x] T10.9 Wholesale Kitchen art (`scripts/art/wholesale.py`). **Awaiting Scott's approval**
+- [x] T10.10 Balance pass. The bot now bakes only what an open order wants (before, it baked everything and clogged its board; four seeds stalled for days) and saves for staff before buying energy. With that every chapter takes the bot about a day (Chapter 4 done on day 5; all three staff hired by day 3–7). That is much faster than before, and Chapters 1–3 sped up too, so older numbers don't compare. How much longer people take is Scott's call from the playtest
+- [ ] T10.11 Phase-end review done Oct 3 (save v3 load, staff offline catch-up and the dev `away` helper, chapter transition into Chapter 4). Remaining: Scott's Chapter 4 playtest, including a browser check of the Staff panel and wholesale card
+
 # Phase 9 — Chapter 3, Harbor Market Stall
 
 Source: Implementation Plan, Phase 9. Branches t9.1 … t9.9, stacked on the Phase 8 ones.

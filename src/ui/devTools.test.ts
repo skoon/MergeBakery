@@ -52,6 +52,36 @@ describe('giveItems', () => {
   });
 });
 
+describe('rewindState with timed orders and staff', () => {
+  it('moves catering and wholesale expiries and each staff clock into the past', () => {
+    const base = stateWith({});
+    const state = {
+      ...base,
+      orders: [
+        {
+          id: 1,
+          customerId: 'gus',
+          wants: ['apple'],
+          reward: { coins: 1, stars: 1, xp: 0 },
+          catering: { expiresAt: 10_000, upgradeChancePercent: 10 },
+        },
+        {
+          id: 2,
+          customerId: 'gus',
+          wants: ['apple'],
+          reward: { coins: 1, stars: 0, xp: 0 },
+          wholesale: { expiresAt: 20_000 },
+        },
+      ],
+      staff: [{ staffId: 'sam', assignedChain: null, lastActedAt: 5000 }],
+    };
+    const next = rewindState(state, 1000);
+    expect(next.orders[0]?.catering?.expiresAt).toBe(9000);
+    expect(next.orders[1]?.wholesale?.expiresAt).toBe(19_000);
+    expect(next.staff[0]?.lastActedAt).toBe(4000);
+  });
+});
+
 describe('rewindState', () => {
   const T0 = 10_000_000;
 

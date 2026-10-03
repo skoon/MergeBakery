@@ -271,6 +271,8 @@ The Fruit Crate arrives (folds in T6.7), a recipe finally uses fruit, and cateri
 
 ## Phase 10: Chapter 4, The Wholesale Kitchen
 
+**Status (Oct 3):** T10.1–T10.10 built on branches `t10.*`; portraits, script and art await Scott's approval, and T10.11's playtest is his. Differences from the plan: `Order.wholesale` carries only an expiry (reputation sits on the reward); `StaffDef` gained `maxCatchUp`, `portraitKey` and `minChapter`; the Deck Oven comes from a renovation task, not the Shop. See `docs/HANDOFF.md`.
+
 The business becomes a company: wholesale orders, the Deck Oven, and staff. This is the first chapter that adds a persistent system to `GameState`.
 
 **Contract change (T-O1), to approve before T10.1.** In `types.ts`: a `wholesale` order kind (a batch of 5–10 identical items, paying coins and company reputation), `reputation` in `GameState`, and `Staff { id, role, assignedTo, lastActedAt }` with actions `hireStaff` and `assignStaff`. A `GameState` change, so another save migration.

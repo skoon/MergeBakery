@@ -1,15 +1,29 @@
 # Handoff — Oct 3, 2026
 
-Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md` (top section is Phase 9) and `docs/briefs/working-rules.md` first.
+Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md` (top section is Phase 10) and `docs/briefs/working-rules.md` first.
 
 ## State
 
-- **Branches** are stacked, one per task, from `t8.1-events-contract` through `t8.11-open-items` to `t9.1-fruit` … `t9.8-balance`. Phase 7 is on `t1.1-types`. Nothing is merged to `main`; there is no remote yet (T0.4).
-- **Phases 8 and 9 are built** (MegaBun events; Chapter 3, catering, Fruit Crate). 769 tests pass; typecheck and ESLint are clean; `npm run build` last passed after Phase 8.
-- **Not checked in a browser** (the Playwright tool has no Chrome here): the event pill, sheet and result card, the catering card, the Harbor Market scene. Dev helpers: `bakery.event()` starts an event, `bakery.away(4400)` expires it, `bakery.stars(300)` for tasks.
-- **Waiting on Scott:** Chapter 3's portraits, script and art (T9.4, T9.6, T9.7); the event art (`batch7_events.py`) and Wren's portraits; the Chapter 3 playtest.
+- **`main`** has Phases 7–9 (merged Oct 3, fast-forward, not pushed; `origin` is configured). **Phase 10 (Chapter 4)** is built on stacked branches `t10.1-contract` … `t10.10-balance`; nothing there is merged.
+- 800-odd tests pass; typecheck and ESLint are clean; `npm run build` not re-run since Phase 9.
+- **Not checked in a browser** (no Chrome for the Playwright tool): the Staff panel, the wholesale card, the Chapter 4 scene.
+- **Waiting on Scott:** Chapter 4's portraits (18), script (8 scenes) and art; the Chapter 4 playtest.
 
-## Phase 9 as built
+## Phase 10 as built
+
+- **Contract (approved Oct 3), save v3:** see `task.md`. Staff and wholesale live in `src/core/staff.ts`, `orders.ts` (`generateWholesaleOrder`), `deliver.ts` (Pantry top-up, reputation).
+- **Staff** (`staff.json`): Sam (tapper, 5 min, 1500 coins, 10 reputation), Trevor (baker, ×0.8 bakes, 2500, 25), Rosa (tapper, 4 min, 3500, 50). Tappers are free of energy but use the generator's charges and need a free cell. The Staff panel is on the Bakery screen.
+- **Wholesale** from Chapter 4 (`economy.json`): 8% of new orders, 5–10 of one tier 1–2 item, 48 h, no penalty.
+- **Chapter 4** `chapter4.json` (ids `wholesale-`, scene `wholesale-kitchen`), dialogue `dialogue/chapter4.json`, art `scripts/art/wholesale.py`.
+
+## Open
+
+1. **Balance is uncalibrated.** After the bot fix every chapter takes it about a day. Real pacing needs your playtest; if chapters are too quick, raise task costs (Chapter 4 is 380 stars).
+2. Staff prices look cheap against the bot's wholesale income. Check in play.
+3. Phase 11 (Chapter 5, the finale) needs automation helpers; Phase 12 is the whole-game pass.
+4. All art is scripted pixel art.
+
+## Phase 9 as built (earlier)
 
 - **Contract changes**, all in the `types.ts` header: catering (`Order.catering`, `OrderRules.catering`, two events; approved Oct 3) and `OrderRules.lowTierBias` (approved Oct 3).
 - **Fruit Crate** (3 tiers) is in `items.json`, `generators.json` and the Shop (800 coins from Chapter 3). New baked chains `tart` (4 tiers) and `scone` (3), recipes `bake-fruit-tart`, `bake-scone`.
@@ -17,7 +31,7 @@ Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md
 - **Chapter 3** data `chapter3.json` (ids `harbor-`, scene `harbor-market`), dialogue `dialogue/chapter3.json`, art `scripts/art/harbor.py`.
 - **Order bias.** `lowTierBias: 2` divides an item's weight by tier². It was needed because order cost grew with every discovered chain while stars stayed flat.
 
-## Open
+## Open (earlier)
 
 1. Chapter 4 (Phase 10): wholesale orders, reputation, staff, Deck Oven in the Shop. Needs a contract change and a save migration (v3).
 2. A sim seed still stalls near the end of Chapter 3 or in Chapter 2 now and then. It looks like a bot limit (four open orders the bot never fills, nothing refreshes them), but a player could meet the same thing: orders can't be skipped. Worth a look.

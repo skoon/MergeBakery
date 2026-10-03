@@ -106,6 +106,13 @@ export interface SimReport {
   chapterDoneAt: Record<string, { day: number; session: number }>;
   /** Simulated minutes of play before the first croissant went into the oven, or null. */
   firstCroissantAtMin: number | null;
+  /** Wholesale orders seen, delivered and expired, the reputation they earned, and who was hired and when. */
+  wholesale: {
+    arrived: number;
+    delivered: number;
+    expired: number;
+    hires: { staffId: string; day: number }[];
+  };
   /** The state when the last session ended, for diagnosing where a run got stuck. */
   finalState: GameState;
   finalLevel: number;
@@ -123,6 +130,14 @@ class Bot {
   readonly bought = new Set<string>();
   purchases: string[] = [];
   /** Catering orders seen (every action, so none slip by between steps), and how they ended. */
+  readonly wholesale = {
+    arrived: 0,
+    delivered: 0,
+    expired: 0,
+    hires: [] as { staffId: string; day: number }[],
+  };
+  private readonly wholesaleIds = new Set<number>();
+  day = 1;
   readonly catering = { arrived: 0, delivered: 0, expired: 0, upgrades: 0 };
   private readonly cateringIds = new Set<number>();
   firstCroissantAtMin: number | null = null;
@@ -145,12 +160,20 @@ class Bot {
     this.state = result.state;
     this.events.push(...result.events);
     for (const o of result.state.orders) {
+      if (o.wholesale && !this.wholesaleIds.has(o.id)) {
+        this.wholesaleIds.add(o.id);
+        this.wholesale.arrived++;
+      }
       if (o.catering && !this.cateringIds.has(o.id)) {
         this.cateringIds.add(o.id);
         this.catering.arrived++;
       }
     }
     for (const e of result.events) {
+      if (e.type === 'wholesaleExpired') this.wholesale.expired++;
+      if (e.type === 'orderDelivered' && this.wholesaleIds.has(e.orderId)) {
+        this.wholesale.delivered++;
+      }
       if (e.type === 'cateringExpired') this.catering.expired++;
       if (e.type === 'generatorUpgraded') this.catering.upgrades++;
       if (e.type === 'orderDelivered' && this.cateringIds.has(e.orderId)) {
@@ -233,6 +256,18 @@ class Bot {
     );
   }
 
+  /** True when an open order still needs an item from the chain `itemId` is in. */
+  private orderWantsChainOf(itemId: string): boolean {
+    const chain = this.data.items.get(itemId)?.chainId;
+    return this.state.orders.some((order) => {
+      const matches = matchOrderItems(this.state, order.wants);
+      return order.wants.some(
+        (w, i) =>
+          matches[i] === null && this.data.items.get(w)?.chainId === chain,
+      );
+    });
+  }
+
   private kitchen(): boolean {
     const ovens = this.state.kitchen.ovens;
     for (let oven = 0; oven < ovens.length; oven++) {
@@ -248,6 +283,9 @@ class Bot {
         }
         if (status.kind !== 'empty') continue;
         for (const recipe of this.data.recipes.values()) {
+          // Bake what an open order is waiting for, not whatever the inputs allow:
+          // the rest only clogs the board.
+          if (!this.orderWantsChainOf(recipe.output)) continue;
           const cells = matchOrderItems(this.state, recipe.inputs);
           if (cells.some((c) => c === null)) continue;
           if (
@@ -290,12 +328,75 @@ class Bot {
       }
     }
     if (this.energy() >= this.data.economy.energy.perTap) return false;
+    // Saving for someone to hire beats a refill: staff pay for themselves.
+    if (this.savingForStaff()) return false;
     const packs = rows
       .filter((r) => r.kind === 'energy' && r.price <= this.state.coins)
       .sort((a, b) => b.price - a.price);
     for (const row of packs) {
       if (this.act('buy', { type: 'buyShopItem', shopItemId: row.id })) {
         this.purchases.push(row.id);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /** True while there is someone to hire whose reputation bar is met but whose price isn't yet. */
+  private savingForStaff(): boolean {
+    return [...this.data.staff.values()].some(
+      (s) =>
+        !this.state.staff.some((h) => h.staffId === s.id) &&
+        this.state.reputation >= s.minReputation &&
+        this.state.coins < s.hireCost,
+    );
+  }
+
+  /**
+   * Hires whoever it can afford, cheapest first, and points each tapper at a
+   * generator chain nobody else is working (the bot never uses a baker's
+   * assignment: bakers have none).
+   */
+  private staff(): boolean {
+    const hireable = [...this.data.staff.values()]
+      .filter(
+        (s) =>
+          !this.state.staff.some((h) => h.staffId === s.id) &&
+          this.state.reputation >= s.minReputation &&
+          this.state.coins >= s.hireCost,
+      )
+      .sort((a, b) => a.hireCost - b.hireCost);
+    for (const person of hireable) {
+      if (this.act('buy', { type: 'hireStaff', staffId: person.id })) {
+        this.wholesale.hires.push({ staffId: person.id, day: this.day });
+        return true;
+      }
+    }
+    const taken = new Set(this.state.staff.map((s) => s.assignedChain));
+    const onBoard = new Set<ChainId>();
+    for (const cell of this.state.board.cells) {
+      if (cell.kind !== 'item' || !cell.item.generator) continue;
+      const chain = this.data.items.get(cell.item.itemId)?.chainId;
+      if (chain) onBoard.add(chain);
+    }
+    for (const hired of this.state.staff) {
+      if (this.data.staff.get(hired.staffId)?.role !== 'tapper') continue;
+      if (hired.assignedChain !== null) continue;
+      const chainId = [
+        'flour-mill',
+        'dairy-fridge',
+        'hen-coop',
+        'sugar-tin',
+        'fruit-crate',
+      ].find((c) => onBoard.has(c) && !taken.has(c));
+      if (
+        chainId &&
+        this.act(null, {
+          type: 'assignStaff',
+          staffId: hired.staffId,
+          chainId,
+        })
+      ) {
         return true;
       }
     }
@@ -495,6 +596,7 @@ class Bot {
       this.renovate() ||
       this.kitchen() ||
       this.shop() ||
+      this.staff() ||
       this.collectBonus() ||
       this.useWhisk() ||
       this.merge() ||
@@ -546,6 +648,7 @@ export function simulate(
       };
       const starsBefore = bot.state.stars;
       let starsSpent = 0;
+      bot.day = day;
       bot.takeEvents();
       bot.purchases = [];
       sessionCount++;
@@ -625,6 +728,7 @@ export function simulate(
     seed: options.seed,
     events: eventRuns,
     catering: bot.catering,
+    wholesale: bot.wholesale,
     sessions,
     tasksDone: bot.state.completedTasks.length,
     chapterDoneAt,
