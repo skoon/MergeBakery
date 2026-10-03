@@ -81,7 +81,7 @@ describe('dismissEventResult', () => {
   it('clears the result', () => {
     const state = stateWith(
       {},
-      { eventResult: { eventId: 'bakeOff', won: true, points: 60 } },
+      { eventResult: { eventId: 'bakeOff', won: true, points: 60, coins: 0 } },
     );
     const r = dismissEventResult(state);
     if (!r.ok) throw new Error('expected ok');
@@ -155,7 +155,7 @@ describe('tickEvents', () => {
       claimedMilestones: [],
     });
     expect(r.state.nextEventAt).toBeNull();
-    expect(r.events).toEqual([{ type: 'eventStarted', eventId: 'bakeOff' }]);
+    expect(r.events[0]).toEqual({ type: 'eventStarted', eventId: 'bakeOff' });
   });
 
   it('never starts a second event while one runs', () => {
@@ -179,6 +179,7 @@ describe('tickEvents', () => {
       eventId: 'bakeOff',
       won: false,
       points: 99,
+      coins: 0,
     });
     expect(r.state.gems).toBe(state.gems);
     expect(r.state.trophies).toEqual([]);
@@ -204,5 +205,116 @@ describe('tickEvents', () => {
     if (!r.ok) throw new Error('expected ok');
     expect(r.state.eventResult?.won).toBe(false);
     expect(r.state.event?.startedAt).toBe(far);
+  });
+});
+
+describe('event items', () => {
+  const evChain = {
+    id: 'party',
+    name: 'Party',
+    kind: 'event' as const,
+    color: '#fff',
+    completionGems: 0,
+  };
+  const genChain = {
+    id: 'party-gen',
+    name: 'Party Maker',
+    kind: 'generator' as const,
+    color: '#fff',
+    completionGems: 0,
+  };
+  const mk = (
+    id: string,
+    chainId: string,
+    tier: number,
+    sellValue: number,
+  ) => ({
+    id,
+    name: id,
+    chainId,
+    tier,
+    spriteKey: id,
+    sellValue,
+    note: null,
+    collectReward: null,
+  });
+  const evData: GameData = {
+    ...testData,
+    chains: new Map([
+      ...testData.chains,
+      [evChain.id, evChain],
+      [genChain.id, genChain],
+    ]),
+    items: new Map([
+      ...testData.items,
+      ['party-1', mk('party-1', 'party', 1, 3)],
+      ['party-2', mk('party-2', 'party', 2, 6)],
+      ['party-gen-1', mk('party-gen-1', 'party-gen', 1, 0)],
+    ]),
+    generators: new Map([
+      ...testData.generators,
+      [
+        'party-gen-1',
+        {
+          itemId: 'party-gen-1',
+          spawnTable: [{ itemId: 'party-1', weight: 100 }],
+          charges: 3,
+          cooldownSec: 60,
+        },
+      ],
+    ]),
+    events: new Map([
+      [def.id, { ...def, generatorItemId: 'party-gen-1', trophyGems: 0 }],
+    ]),
+  };
+  const end = def.durationSec * 1000;
+
+  it('places the event generator when the event starts', () => {
+    const state = stateWith({}, { nextEventAt: 0 });
+    const r = tickEvents(evData, state, rng(), 0);
+    if (!r.ok) throw new Error('expected ok');
+    const placed = r.state.board.cells.filter(
+      (c) => c.kind === 'item' && c.item.itemId === 'party-gen-1',
+    );
+    expect(placed).toHaveLength(1);
+    expect(r.state.event).not.toBeNull();
+  });
+
+  it('waits for room instead of starting without its generator', () => {
+    const full = stateWith(
+      {},
+      { nextEventAt: 0, pantry: { capacity: 0, items: [] } },
+    );
+    const cells = full.board.cells.map(() => ({
+      kind: 'locked' as const,
+      lock: 'crate' as const,
+    }));
+    const state = { ...full, board: { ...full.board, cells } };
+    const r = tickEvents(evData, state, rng(), 0);
+    expect(r.ok && r.state).toBe(state);
+  });
+
+  it('sells event items and removes the generator when the event ends', () => {
+    const base = running(0);
+    const state = stateWith(
+      { 0: 'party-gen-1', 1: 'party-1', 2: 'party-2', 3: 'flour-1' },
+      {
+        event: base.event,
+        coins: 10,
+        pantry: {
+          capacity: 4,
+          items: [{ itemId: 'party-1', cobwebbed: false, generator: null }],
+        },
+      },
+    );
+    const r = tickEvents(evData, state, rng(), end);
+    if (!r.ok) throw new Error('expected ok');
+    const kinds = r.state.board.cells.map((c) =>
+      c.kind === 'item' ? c.item.itemId : c.kind,
+    );
+    expect(kinds.slice(0, 4)).toEqual(['empty', 'empty', 'empty', 'flour-1']);
+    expect(r.state.pantry.items).toEqual([]);
+    expect(r.state.coins).toBe(10 + 3 + 6 + 3);
+    expect(r.state.eventResult?.coins).toBe(12);
   });
 });

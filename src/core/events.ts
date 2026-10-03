@@ -3,8 +3,10 @@
  * actions (T8.1, T8.2). The event generator comes in T8.3, event orders in T8.4.
  */
 
+import { placeGenerator } from './placement';
 import type {
   ActionResult,
+  BoardItem,
   EventDef,
   GameData,
   GameEvent,
@@ -29,6 +31,45 @@ export function megabunScore(def: EventDef, elapsedSec: number): number {
 }
 
 /**
+ * Sells every event item on the board and in the Pantry, and removes the
+ * event generators, when an event ends. Event items pay their sellValue; the
+ * generators pay nothing. Returns the new state and the coins paid.
+ */
+function clearEventItems(
+  data: GameData,
+  state: GameState,
+): { state: GameState; coins: number } {
+  const eventGenerators = new Set(
+    [...data.events.values()].map((e) => e.generatorItemId),
+  );
+  let coins = 0;
+  // True when the item is to be removed; adds an event item's value to coins.
+  const sweep = (item: BoardItem): boolean => {
+    const itemDef = data.items.get(item.itemId);
+    if (!itemDef) return false;
+    if (eventGenerators.has(item.itemId)) return true;
+    if (data.chains.get(itemDef.chainId)?.kind !== 'event') return false;
+    coins += itemDef.sellValue;
+    return true;
+  };
+  const cells = state.board.cells.map((cell) =>
+    cell.kind === 'item' && sweep(cell.item)
+      ? { kind: 'empty' as const }
+      : cell,
+  );
+  const items = state.pantry.items.filter((item) => !sweep(item));
+  return {
+    state: {
+      ...state,
+      board: { ...state.board, cells },
+      pantry: { ...state.pantry, items },
+      coins: state.coins + coins,
+    },
+    coins,
+  };
+}
+
+/**
  * The tick half of events. Ends the running event once its time is up (win if
  * the points reach MegaBun's final score; a win pays trophyGems and is recorded
  * in `trophies`), schedules the next one `gapAfterSec` after the end, and starts
@@ -49,10 +90,16 @@ export function tickEvents(
     const def = data.events.get(active.eventId);
     if (!def) throw new Error(`tickEvents: unknown event "${active.eventId}"`);
     const won = active.points >= megabunScore(def, def.durationSec);
+    const cleared = clearEventItems(data, next);
     next = {
-      ...next,
+      ...cleared.state,
       event: null,
-      eventResult: { eventId: def.id, won, points: active.points },
+      eventResult: {
+        eventId: def.id,
+        won,
+        points: active.points,
+        coins: cleared.coins,
+      },
       gems: next.gems + (won ? def.trophyGems : 0),
       trophies: won ? [...next.trophies, def.id] : next.trophies,
       nextEventAt: active.endsAt + def.gapAfterSec * 1000,
@@ -76,18 +123,25 @@ export function tickEvents(
       } else if (now >= next.nextEventAt) {
         const def = eligible[Math.floor(rng.next() * eligible.length)];
         if (def) {
-          next = {
-            ...next,
-            nextEventAt: null,
-            event: {
-              eventId: def.id,
-              startedAt: now,
-              endsAt: now + def.durationSec * 1000,
-              points: 0,
-              claimedMilestones: [],
-            },
-          };
-          events.push({ type: 'eventStarted', eventId: def.id });
+          // The event waits (and retries next tick) until its generator has room.
+          const placed = placeGenerator(data, next, def.generatorItemId);
+          if (placed) {
+            next = {
+              ...placed.state,
+              nextEventAt: null,
+              event: {
+                eventId: def.id,
+                startedAt: now,
+                endsAt: now + def.durationSec * 1000,
+                points: 0,
+                claimedMilestones: [],
+              },
+            };
+            events.push(
+              { type: 'eventStarted', eventId: def.id },
+              ...placed.events,
+            );
+          }
         }
       }
     }

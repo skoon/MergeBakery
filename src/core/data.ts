@@ -67,6 +67,7 @@ const chainKindSchema: z.ZodType<ChainKind> = z.enum([
   'generator',
   'bonus',
   'wildcard',
+  'event',
 ]);
 
 const chainSchema: z.ZodType<Chain> = z.strictObject({
@@ -510,6 +511,24 @@ function validateCrossReferences(parsed: ParsedSections): string[] {
   for (const event of events.events) {
     const where = `event "${event.id}"`;
     requireItem(event.generatorItemId, `${where} generatorItemId`);
+    const generator = generators.generators.find(
+      (g) => g.itemId === event.generatorItemId,
+    );
+    if (generator === undefined) {
+      problems.push(`${where}: generatorItemId is not a generator`);
+    } else {
+      for (const entry of generator.spawnTable) {
+        const spawned = itemById.get(entry.itemId);
+        if (
+          spawned !== undefined &&
+          chainById.get(spawned.chainId)?.kind !== 'event'
+        ) {
+          problems.push(
+            `${where}: spawns "${entry.itemId}", which is not in an event chain`,
+          );
+        }
+      }
+    }
     if (!chapters.some((c) => c.id === event.minChapter)) {
       problems.push(
         `${where}: minChapter "${event.minChapter}" names an unknown chapter`,

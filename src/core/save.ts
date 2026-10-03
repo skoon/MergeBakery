@@ -120,6 +120,7 @@ const eventResultSchema: z.ZodType<EventResult> = z.strictObject({
   eventId: z.string(),
   won: z.boolean(),
   points: z.number(),
+  coins: z.number(),
 });
 
 const tutorialStepSchema: z.ZodType<TutorialStep> = z.enum([

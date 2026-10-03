@@ -11,7 +11,8 @@
  * `EventDef`, `EventsFile`, `ActiveEvent`, `EventResult`, `GameData.events`,
  * four `GameState` fields (`event`, `nextEventAt`, `eventResult`, `trophies`),
  * `Order.eventPoints`, `claimMilestone`, `dismissEventResult`, three events and
- * two reject reasons (T8.1, Scott, Oct 3). Save version 2.
+ * two reject reasons (T8.1, Scott, Oct 3). Save version 2. Later additions
+ * (T8.2, T8.3): `EventDef.gapAfterSec`, `ChainKind` 'event', `EventResult.coins`.
  *
  * Conventions every core function follows:
  * - Core functions are pure: they never mutate their inputs and return new
@@ -57,13 +58,15 @@ export interface Rng {
 /**
  * How a chain's items behave.
  * - ingredient, baked: merge up the chain; customers order them.
+ * - event: an event generator's products (T8.3). They merge up the chain, no
+ *   customer or recipe asks for them, and they are sold for coins when the event ends.
  * - generator: merge up the chain; tapping spawns items (see GeneratorDef).
  * - bonus: tapping collects `Item.collectReward` and removes the item.
  * - wildcard: the Golden Whisk; merging it into an ingredient or baked item
  *   up to `Economy.goldenWhiskMaxTier` turns the whisk into a copy of that item.
  */
 export type ChainKind =
-  'ingredient' | 'baked' | 'generator' | 'bonus' | 'wildcard';
+  'ingredient' | 'baked' | 'generator' | 'bonus' | 'wildcard' | 'event';
 
 export interface Chain {
   readonly id: ChainId;
@@ -491,6 +494,8 @@ export interface EventResult {
   readonly eventId: EventId;
   readonly won: boolean;
   readonly points: number;
+  /** Coins paid for the event items left on the board and in the Pantry. */
+  readonly coins: number;
 }
 
 export type TutorialStep =
