@@ -12,7 +12,7 @@ Source: Implementation Plan, Phase 10. Chapter 3 was merged to `main` on Oct 3 (
 - [x] T10.8 `src/data/dialogue/chapter4.json`, 8 scenes; staff can be dialogue speakers (Trevor leaves MegaBun). **Awaiting Scott's approval of the script**
 - [x] T10.9 Wholesale Kitchen art (`scripts/art/wholesale.py`). **Awaiting Scott's approval**
 - [x] T10.10 Balance pass. The bot now bakes only what an open order wants (before, it baked everything and clogged its board; four seeds stalled for days) and saves for staff before buying energy. With that every chapter takes the bot about a day (Chapter 4 done on day 5; all three staff hired by day 3–7). That is much faster than before, and Chapters 1–3 sped up too, so older numbers don't compare. How much longer people take is Scott's call from the playtest
-- [ ] T10.11 Phase-end review done Oct 3 (save v3 load, staff offline catch-up and the dev `away` helper, chapter transition into Chapter 4). Remaining: Scott's Chapter 4 playtest, including a browser check of the Staff panel and wholesale card
+- [x] T10.11 Scott played Chapter 4 on Oct 3: the pacing is fine, not too quick; merged to `main`. Phase-end review done Oct 3 (save v3 load, staff offline catch-up and the dev `away` helper, chapter transition into Chapter 4). Remaining: Scott's Chapter 4 playtest, including a browser check of the Staff panel and wholesale card
 
 # Phase 9 — Chapter 3, Harbor Market Stall
 
