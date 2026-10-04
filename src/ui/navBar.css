@@ -6,7 +6,7 @@
   padding: 0 2px;
   /* Scales with the text size up to 125%, then stops: five tabs must fit a 320 px screen. */
   font: inherit;
-  font-size: min(var(--font-size-xs), 0.9375rem);
+  font-size: min(var(--font-size-xs), 0.875rem);
   font-weight: 700;
   white-space: nowrap;
   overflow: hidden;

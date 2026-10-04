@@ -24,7 +24,7 @@
 }
 
 .event-pill__badge {
-  min-width: 20px;
+  min-width: calc(20px * var(--ui-scale));
   padding: 0 4px;
   box-sizing: border-box;
   line-height: 20px;
@@ -92,7 +92,7 @@
 }
 
 .event-bar__track {
-  height: 12px;
+  height: calc(12px * var(--ui-scale));
   background: rgba(0, 0, 0, 0.1);
   border-radius: 6px;
   overflow: hidden;
@@ -134,7 +134,7 @@
 
 .event-milestone__points {
   font-weight: 700;
-  min-width: 56px;
+  min-width: calc(56px * var(--ui-scale));
 }
 
 .event-milestone__reward {

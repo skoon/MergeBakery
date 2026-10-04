@@ -5,7 +5,7 @@
   align-items: stretch;
   justify-content: center;
   gap: var(--space-1);
-  min-height: 104px;
+  min-height: calc(104px * var(--ui-scale));
   width: 100%;
   padding: var(--space-1) var(--space-2);
   box-sizing: border-box;
@@ -40,8 +40,8 @@
 
 .counter-card-portrait {
   grid-area: portrait;
-  width: 22px;
-  height: 22px;
+  width: calc(22px * var(--ui-scale));
+  height: calc(22px * var(--ui-scale));
   border-radius: 50%;
   object-fit: cover;
   background: var(--color-cream);
@@ -70,8 +70,8 @@
 
 .counter-card-want {
   position: relative;
-  width: 18px;
-  height: 18px;
+  width: calc(18px * var(--ui-scale));
+  height: calc(18px * var(--ui-scale));
 }
 
 .counter-card-want-art {
@@ -93,8 +93,8 @@
   color: var(--color-cream);
   background: var(--color-mint);
   border-radius: 50%;
-  width: 10px;
-  height: 10px;
+  width: calc(10px * var(--ui-scale));
+  height: calc(10px * var(--ui-scale));
   display: flex;
   align-items: center;
   justify-content: center;

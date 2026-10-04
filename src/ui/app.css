@@ -21,7 +21,7 @@ body {
 
   position: relative;
   width: 100%;
-  max-width: 480px;
+  max-width: 720px;
   height: 100dvh;
   margin-inline: auto;
   background: var(--color-cream);
@@ -76,7 +76,7 @@ img {
 
 #hud {
   flex: 0 0 auto;
-  min-height: 56px;
+  min-height: calc(56px * var(--ui-scale));
 }
 
 #counter {
@@ -88,7 +88,7 @@ img {
 
 #tray {
   flex: 1 1 auto;
-  min-height: 80px;
+  min-height: calc(80px * var(--ui-scale));
   display: flex;
   align-items: stretch;
   justify-content: space-around;
@@ -115,7 +115,7 @@ img {
 
 #nav {
   flex: 0 0 auto;
-  min-height: 56px;
+  min-height: calc(56px * var(--ui-scale));
   display: flex;
   background: var(--color-butter);
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);

@@ -35,8 +35,8 @@
 
 .dialogue__portrait {
   flex: 0 0 auto;
-  width: 64px;
-  height: 64px;
+  width: calc(64px * var(--ui-scale));
+  height: calc(64px * var(--ui-scale));
   border-radius: var(--space-2);
   background: var(--color-butter);
 }

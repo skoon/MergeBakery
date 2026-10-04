@@ -70,8 +70,8 @@
 }
 
 .discovery__art {
-  width: 96px;
-  height: 96px;
+  width: calc(96px * var(--ui-scale));
+  height: calc(96px * var(--ui-scale));
 }
 
 .discovery__name {

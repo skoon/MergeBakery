@@ -45,8 +45,8 @@
 }
 
 .book-tile__art {
-  width: 48px;
-  height: 48px;
+  width: calc(48px * var(--ui-scale));
+  height: calc(48px * var(--ui-scale));
 }
 
 .book-tile[data-discovered='false'] .book-tile__art {

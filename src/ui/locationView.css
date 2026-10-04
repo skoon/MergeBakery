@@ -2,6 +2,7 @@
 
 .location-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-2);
@@ -133,7 +134,7 @@
 .location-popover {
   position: absolute;
   z-index: 2;
-  width: 160px;
+  width: calc(160px * var(--ui-scale));
   max-width: 60%;
   padding: var(--space-3);
   transform: translate(-50%, calc(-100% - 36px));

@@ -38,8 +38,8 @@
 }
 
 .staff-card__portrait {
-  width: 40px;
-  height: 40px;
+  width: calc(40px * var(--ui-scale));
+  height: calc(40px * var(--ui-scale));
   flex: none;
   image-rendering: pixelated;
   background: var(--color-cream);
@@ -90,7 +90,7 @@
 }
 
 .staff-card__select {
-  max-width: 120px;
+  max-width: calc(120px * var(--ui-scale));
   font: inherit;
   font-size: var(--font-size-sm);
 }

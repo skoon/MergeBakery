@@ -6,7 +6,7 @@
   align-items: stretch;
   justify-content: space-between;
   /* Grows, and wraps to a second row, as the text size rises. */
-  min-height: 56px;
+  min-height: calc(56px * var(--ui-scale));
   width: 100%;
   box-sizing: border-box;
   padding: 0 var(--space-2);

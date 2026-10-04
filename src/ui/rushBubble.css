@@ -48,8 +48,8 @@
 }
 
 .rush-bubble__close {
-  width: 24px;
-  height: 24px;
+  width: calc(24px * var(--ui-scale));
+  height: calc(24px * var(--ui-scale));
   padding: 0;
   font: inherit;
   font-size: var(--font-size-md);

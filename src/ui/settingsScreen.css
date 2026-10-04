@@ -21,13 +21,13 @@
 
 .settings-slider {
   flex: 1 1 140px;
-  max-width: 220px;
+  max-width: calc(220px * var(--ui-scale));
   accent-color: var(--color-crust);
 }
 
 .settings-switch {
-  width: 24px;
-  height: 24px;
+  width: calc(24px * var(--ui-scale));
+  height: calc(24px * var(--ui-scale));
   accent-color: var(--color-crust);
 }
 
