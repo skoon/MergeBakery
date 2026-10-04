@@ -46,6 +46,7 @@
 }
 
 .dialogue__content {
+  margin-top: 15px;
   flex: 1 1 auto;
   min-width: 0;
 }
