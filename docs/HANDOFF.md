@@ -1,15 +1,28 @@
 # Handoff — Oct 3, 2026
 
-Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md` (top section is Phase 11) and `docs/briefs/working-rules.md` first.
+Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md` (top section is Phase 12) and `docs/briefs/working-rules.md` first.
 
 ## State
 
-- **`main`** has Phases 7–10 (Chapter 4 merged Oct 3, fast-forward, not pushed; `origin` is configured). **Phase 11 (Chapter 5, the finale)** is built on stacked branches `t11.1-chocolate` … `t11.7-balance`; nothing there is merged.
-- All five chapters, the MegaBun events, catering, wholesale, staff and automation are in. The game can be played start to finish.
-- **Not checked in a browser** (no Chrome for the Playwright tool): the Staff panel recipe picker, the End card, the Factory scene.
-- **Waiting on Scott:** Chapter 5's portraits (21), script (9 scenes) and art; playing to the ending.
+- **`main`** has Phases 7–11: all five chapters, the MegaBun events, catering, wholesale, staff and automation (Chapter 5 merged Oct 3, fast-forward, not pushed; `origin` is configured). The game can be played start to finish.
+- **Phase 12 (whole-game pass)** is on stacked branches `t12.1-sim-regression` … `t12.4-size`; nothing there is merged.
+- 838 tests pass; typecheck and ESLint are clean; `npm run build` passes.
+- **Never run in a browser by me** (no Chrome for the Playwright tool). Scott has played Chapters 1–4.
 
-## Phase 11 as built
+## Phase 12 as built
+
+- **Regression:** the balance test fails if any of 5 seeds can't finish all five chapters in order by day 14.
+- **Save audit:** `src/core/saveVersions.test.ts`; no gaps.
+- **Music:** `src/audio/music.ts`, `src/data/music.json`; event stings in `sfx.json`.
+- **Size:** in the README. Frame rate and first-merge time are unmeasured.
+
+## What's left
+
+1. **Scott:** play from a fresh save to the ending (T12.5); approve Chapter 5's portraits, script and art; listen to the music; measure fps and first merge on a phone.
+2. Merge the Phase 12 branches once you are happy with them.
+3. After launch (not planned): Bakery Alliances, optional monetization behind one config, cloud save.
+
+## Phase 11 as built (earlier)
 
 - **Decisions (Scott, Oct 3):** automation is an Auto-Oven staff role; one ending (refuse the buyout).
 - **Contract:** `StaffRole` 'oven', `StaffState.assignedRecipe`, `assignStaff.recipeId` (header of `types.ts`).
@@ -17,7 +30,7 @@ Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md
 - **Chapter 5:** `chapter5.json` (ids `factory-`, scene `factory`), `dialogue/chapter5.json` (offer and finale scenes), `scripts/art/factory.py`, `portraits7.py`. The finale ends the story with `gameFinished` (no state) and `endCard.ts`.
 - **Balance:** `lowTierBias` is 3. The bot finishes the whole game in 8–10 days; people will take longer.
 
-## Open
+## Open (earlier)
 
 1. Phase 12, the whole-game pass: a simulator regression with thresholds, a save-migration audit (v1 → v3 fixtures), a music track, a performance and size check, and a full playthrough.
 2. A few small things: the credits are one card, not a roll; no "play again" or new-game-plus.

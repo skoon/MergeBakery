@@ -1,3 +1,13 @@
+# Phase 12 — Whole-game pass
+
+Source: Implementation Plan, Phase 12. Chapter 5 was merged to `main` on Oct 3 (Scott: "go ahead and merge"). Branches t12.1 … t12.4, stacked on `main`.
+
+- [x] T12.1 Simulator regression: the balance test now fails unless every one of 5 seeds finishes all five chapters, in order, by day 14 (the bot finishes by day 10), and exercises wholesale and staff. Checked by lowering the bar to day 5, which fails
+- [x] T12.2 Save audit (`saveVersions.test.ts`): v1 and v2 fixtures load into v3 and equal the original state; a state using every later addition round-trips; a save from a newer version is refused; a running event removed from the data loads and is dropped on the next tick. No gaps found
+- [x] T12.3 Music: a generative loop on the music channel, one theme per chapter (`music.json`, `src/audio/music.ts`), starting at the next bar after the first tap and changing at a bar line when the chapter changes. Event stings (start, win, lose, milestone) in `sfx.json`. **Not heard by anyone yet: Scott to listen and approve the themes**
+- [x] T12.4 Size measured and recorded in the README: whole `dist/` about 1.27 MB, JS and CSS 280 kB gzipped, precache 1.14 MiB, against a 5 MB target. **Frame rate and first-merge time need a real phone and aren't measured**
+- [ ] T12.5 Full playthrough from a fresh save to the ending (Scott), with every fix collected into one list
+
 # Phase 11 — Chapter 5, Rise & Shine Factory (the finale)
 
 Source: Implementation Plan, Phase 11. Chapter 4 was merged to `main` on Oct 3 (Scott: pacing fine). Branches t11.1 … t11.7, stacked. Decisions (Scott, Oct 3): one ending (the player refuses MegaBun's buyout), and an Auto-Oven staff role for automation.

@@ -310,6 +310,8 @@ The finale. Automation helpers extend Phase 10's staff, the chocolate line compl
 
 ## Phase 12: Whole-game pass
 
+**Status (Oct 3):** T12.1–T12.4 built on branches `t12.*`; the playthrough (T12.5) is Scott's. The music is synthesized (a theme per chapter), so it has no files to size; frame rate and first-merge time need a real device. See `docs/HANDOFF.md`.
+
 Nothing new is added here. This phase makes the five chapters feel like one game.
 
 | ID | Task | Model | Depends on | Done when |

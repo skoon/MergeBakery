@@ -55,7 +55,7 @@ The size target holds with a wide margin: the whole game, art included, is a qua
 
 Not measured here, because it needs a real browser on a real phone, which this environment doesn't have:
 
-- **Frame rate.** Open the game on a mid-range Android phone, play on a full board, and watch a frame-time graph (Chrome DevTools, Performance, or `?fps` once added). The board redraws only on a state change, and the one-second `tick` returns the same state object when nothing happened, so an idle board does no work.
+- **Frame rate.** Open the game on a mid-range Android phone, play on a full board, and watch a frame-time graph (Chrome DevTools, Performance). The board redraws only on a state change, and the one-second `tick` returns the same state object when nothing happened, so an idle board does no work.
 - **First merge.** Time from load to the first merge on a throttled connection (DevTools, Slow 4G). The first-time flow (T5.12) points at the first tap and merge.
 
 Record both numbers here once measured.
