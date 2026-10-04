@@ -16,7 +16,13 @@ import { testData } from '../core/testing';
 const SEEDS = [1, 2, 3, 4, 5];
 const OPTIONS = { ...DEFAULT_OPTIONS, maxSessionMin: 20 };
 // Long enough for the bot to get through Chapter 2 as well.
-const REPORT_DAYS = 28;
+const REPORT_DAYS = 16;
+/**
+ * The regression bar (T12.1): every seed must finish all five chapters, in order,
+ * by this day. The bot finishes by day 10; the margin keeps the bar from tripping
+ * on a data tweak, but not on a chapter that stops being finishable.
+ */
+const FINISH_BY_DAY = 14;
 
 function mean(values: number[]): number {
   return values.length === 0
@@ -127,12 +133,33 @@ describe('simulate', () => {
     expect(report.sessions[0]?.merges).toBeGreaterThan(0);
   });
 
-  it('prints the balance report', { timeout: 300_000 }, () => {
+  it('prints the balance report and holds the regression bar', { timeout: 300_000 }, () => {
     const reports = SEEDS.map((seed) =>
       simulate(testData, { ...OPTIONS, days: REPORT_DAYS, seed }),
     );
     printReport(reports);
     expect(reports).toHaveLength(SEEDS.length);
+
+    const chapterIds = [...testData.chapters.keys()];
+    for (const report of reports) {
+      const done = chapterIds.map((id) => report.chapterDoneAt[id]);
+      expect(
+        done.every((d) => d !== undefined),
+        `seed ${report.seed.toString()} did not finish every chapter: ${JSON.stringify(report.chapterDoneAt)}`,
+      ).toBe(true);
+      const days = done.map((d) => d?.day ?? Infinity);
+      expect(
+        days,
+        `seed ${report.seed.toString()} finished chapters out of order`,
+      ).toEqual([...days].sort((a, b) => a - b));
+      expect(
+        days.at(-1),
+        `seed ${report.seed.toString()} finished the game too late`,
+      ).toBeLessThanOrEqual(FINISH_BY_DAY);
+      // The systems the later chapters add must be exercised, not just present.
+      expect(report.wholesale.delivered).toBeGreaterThan(0);
+      expect(report.wholesale.hires.length).toBeGreaterThan(0);
+    }
   });
 
   it('prints the event balance report', { timeout: 600_000 }, () => {
