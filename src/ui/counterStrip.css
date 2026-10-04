@@ -105,7 +105,8 @@
   font-size: var(--font-size-xs);
   line-height: 1.2;
   color: var(--color-ink);
-  white-space: nowrap;
+  /* Event cards add a pride reward, which wraps instead of overflowing the card. */
+  text-align: center;
 }
 
 .counter-card-deliver {
