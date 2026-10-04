@@ -94,14 +94,3 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
-
-.pantry-drag-preview {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 48px;
-  height: 48px;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-}

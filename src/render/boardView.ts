@@ -20,6 +20,7 @@ import { dropZoneAt, setDragActive } from '../ui/dropZones';
 import type { GameStore } from '../ui/store';
 import type { SettingsStore } from '../ui/settings';
 import { loadTexture } from './assets';
+import { createDragPreview, type DragPreview } from './dragPreview';
 import { chargesToShow } from './charges';
 
 // Colors from the palette in src/ui/tokens.css.
@@ -66,7 +67,8 @@ interface PointerTracking {
   readonly startX: number;
   readonly startY: number;
   dragging: boolean;
-  preview: Sprite | null;
+  /** The dragged item, drawn above all the HTML (see dragPreview.ts). */
+  preview: DragPreview | null;
 }
 
 export async function createBoardView(
@@ -421,20 +423,21 @@ export async function createBoardView(
       original.visible = false;
     }
 
-    const preview = new Sprite(textureFor(state.itemId));
-    preview.anchor.set(0.5);
-    const size = layout.cellSize * ITEM_SCALE * DRAG_SCALE;
-    preview.width = size;
-    preview.height = size;
-    preview.position.set(e.global.x, e.global.y);
-    dragLayer.addChild(preview);
-    state.preview = preview;
+    const spriteKey = store.data.items.get(state.itemId)?.spriteKey;
+    if (spriteKey) {
+      state.preview = createDragPreview(
+        spriteKey,
+        layout.cellSize * ITEM_SCALE * DRAG_SCALE,
+        { x: e.client.x, y: e.client.y },
+      );
+    }
 
     showMergeHighlights(state.itemId);
     setDragActive(true);
   }
 
   function endDrag(state: PointerTracking, e: FederatedPointerEvent): void {
+    state.preview?.remove();
     setDragActive(false);
     highlightLayer.removeChildren();
 
@@ -506,7 +509,7 @@ export async function createBoardView(
       return;
     }
 
-    tracking.preview?.position.set(e.global.x, e.global.y);
+    tracking.preview?.move(e.client.x, e.client.y);
   }
 
   function onPointerUp(e: FederatedPointerEvent): void {

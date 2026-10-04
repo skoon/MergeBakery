@@ -11,6 +11,7 @@ import './pantryDrawer.css';
 import type { CellIndex } from '../core/types';
 import type { BoardView } from '../render/boardView';
 import { setImageArt } from '../render/assets';
+import { createDragPreview, type DragPreview } from '../render/dragPreview';
 import { registerDropZone } from './dropZones';
 import { pantryModel } from './pantryModel';
 import type { GameStore } from './store';
@@ -25,7 +26,9 @@ interface TileDragState {
   readonly startX: number;
   readonly startY: number;
   dragging: boolean;
-  preview: HTMLImageElement | null;
+  preview: DragPreview | null;
+  /** Where the press began, so the picture starts under the pointer. */
+  start: { x: number; y: number };
 }
 
 export function mountPantryDrawer(
@@ -74,18 +77,11 @@ export function mountPantryDrawer(
 
   function beginTileDrag(state: TileDragState): void {
     state.dragging = true;
-    const preview = document.createElement('img');
-    preview.className = 'pantry-drag-preview';
-    setImageArt(preview, state.spriteKey);
-    document.body.appendChild(preview);
-    state.preview = preview;
+    state.preview = createDragPreview(state.spriteKey, 48, state.start);
   }
 
   function moveTileDrag(state: TileDragState, x: number, y: number): void {
-    if (state.preview) {
-      state.preview.style.left = `${x}px`;
-      state.preview.style.top = `${y}px`;
-    }
+    state.preview?.move(x, y);
   }
 
   function endTileDrag(state: TileDragState, x: number, y: number): void {
@@ -125,6 +121,7 @@ export function mountPantryDrawer(
         startY: e.clientY,
         dragging: false,
         preview: null,
+        start: { x: e.clientX, y: e.clientY },
       };
       dragState = state;
 
