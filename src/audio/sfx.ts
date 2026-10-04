@@ -17,7 +17,11 @@ export type SoundId =
   | 'sell'
   | 'collect' // tapping a bonus item
   | 'discover'
-  | 'levelUp';
+  | 'levelUp'
+  | 'eventStart' // a MegaBun event begins: a bright fanfare
+  | 'eventWin' // the event is won: a rising flourish
+  | 'eventLose' // the event is lost: a gentle, comic descent
+  | 'milestone'; // a milestone is claimed
 
 export type SfxMap = Readonly<Record<string, readonly ToneSpec[]>>;
 
@@ -30,6 +34,10 @@ const SOUND_IDS: readonly SoundId[] = [
   'collect',
   'discover',
   'levelUp',
+  'eventStart',
+  'eventWin',
+  'eventLose',
+  'milestone',
 ];
 
 const toneSchema = z.strictObject({
@@ -116,6 +124,12 @@ export function soundForEvent(
       return sfx['discover'] ?? null;
     case 'levelUp':
       return sfx['levelUp'] ?? null;
+    case 'eventStarted':
+      return sfx['eventStart'] ?? null;
+    case 'eventEnded':
+      return (event.won ? sfx['eventWin'] : sfx['eventLose']) ?? null;
+    case 'milestoneClaimed':
+      return sfx['milestone'] ?? null;
     default:
       return null;
   }

@@ -1,0 +1,69 @@
+{
+  "themes": {
+    "chapter1": {
+      "bpm": 84,
+      "rootHz": 261.63,
+      "wave": "triangle",
+      "gain": 0.06,
+      "pattern": [0, 1, 2, 1, 0, 2, 1, 2],
+      "progression": [
+        [0, 4, 7],
+        [9, 12, 16],
+        [5, 9, 12],
+        [7, 11, 14]
+      ]
+    },
+    "chapter2": {
+      "bpm": 96,
+      "rootHz": 196,
+      "wave": "triangle",
+      "gain": 0.06,
+      "pattern": [0, 2, 1, 2, 0, 2, 1, 0],
+      "progression": [
+        [0, 4, 7],
+        [5, 9, 12],
+        [0, 4, 7],
+        [7, 11, 14]
+      ]
+    },
+    "chapter3": {
+      "bpm": 76,
+      "rootHz": 146.83,
+      "wave": "sine",
+      "gain": 0.08,
+      "pattern": [0, 1, 2, 2, 1, 0, 1, 2],
+      "progression": [
+        [0, 4, 7],
+        [10, 14, 17],
+        [5, 9, 12],
+        [0, 4, 7]
+      ]
+    },
+    "chapter4": {
+      "bpm": 108,
+      "rootHz": 220,
+      "wave": "triangle",
+      "gain": 0.06,
+      "pattern": [0, 1, 2, 1, 2, 1, 0, 1],
+      "progression": [
+        [0, 3, 7],
+        [8, 12, 15],
+        [5, 8, 12],
+        [7, 10, 14]
+      ]
+    },
+    "chapter5": {
+      "bpm": 120,
+      "rootHz": 164.81,
+      "wave": "triangle",
+      "gain": 0.06,
+      "pattern": [0, 2, 1, 2, 0, 2, 1, 2],
+      "progression": [
+        [0, 4, 7],
+        [7, 11, 14],
+        [9, 12, 16],
+        [5, 9, 12]
+      ]
+    }
+  }
+}

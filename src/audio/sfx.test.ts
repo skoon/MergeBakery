@@ -29,6 +29,10 @@ describe('parseSfx', () => {
       'collect',
       'discover',
       'levelUp',
+      'eventStart',
+      'eventWin',
+      'eventLose',
+      'milestone',
       'tap.flour',
       'tap.dairy',
       'tap.egg',
@@ -125,6 +129,27 @@ describe('soundForEvent', () => {
     expect(play({ type: 'cooldownRushed', cell: 0, gems: 3 })).toEqual([600]);
     expect(play({ type: 'discovered', itemId: 'egg' })).toEqual([700]);
     expect(play({ type: 'levelUp', level: 2, gems: 5 })).toEqual([800]);
+  });
+
+  it('gives each part of an event its sting, and a loss a different one from a win', () => {
+    const at = (event: GameEvent) => soundForEvent(testData, sfx, event);
+    expect(at({ type: 'eventStarted', eventId: 'bake-off' })).toBe(
+      sfx['eventStart'],
+    );
+    expect(at({ type: 'eventEnded', eventId: 'bake-off', won: true })).toBe(
+      sfx['eventWin'],
+    );
+    expect(at({ type: 'eventEnded', eventId: 'bake-off', won: false })).toBe(
+      sfx['eventLose'],
+    );
+    expect(
+      at({
+        type: 'milestoneClaimed',
+        eventId: 'bake-off',
+        index: 0,
+        reward: { coins: 1, gems: 0 },
+      }),
+    ).toBe(sfx['milestone']);
   });
 
   it('gives merges and other events no sound here', () => {

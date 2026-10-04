@@ -164,6 +164,88 @@
         "durationMs": 240,
         "gain": 0.3
       }
+    ],
+    "eventStart": [
+      { "freq": 523, "type": "triangle", "durationMs": 140, "gain": 0.25 },
+      {
+        "freq": 659,
+        "type": "triangle",
+        "delayMs": 140,
+        "durationMs": 140,
+        "gain": 0.25
+      },
+      {
+        "freq": 784,
+        "type": "triangle",
+        "delayMs": 280,
+        "durationMs": 140,
+        "gain": 0.25
+      },
+      {
+        "freq": 1047,
+        "type": "sine",
+        "delayMs": 420,
+        "durationMs": 320,
+        "gain": 0.22
+      }
+    ],
+    "eventWin": [
+      { "freq": 523, "type": "triangle", "durationMs": 120, "gain": 0.25 },
+      {
+        "freq": 659,
+        "type": "triangle",
+        "delayMs": 110,
+        "durationMs": 120,
+        "gain": 0.25
+      },
+      {
+        "freq": 784,
+        "type": "triangle",
+        "delayMs": 220,
+        "durationMs": 120,
+        "gain": 0.25
+      },
+      {
+        "freq": 1047,
+        "type": "triangle",
+        "delayMs": 330,
+        "durationMs": 120,
+        "gain": 0.25
+      },
+      {
+        "freq": 1319,
+        "type": "sine",
+        "delayMs": 440,
+        "durationMs": 420,
+        "gain": 0.22
+      }
+    ],
+    "eventLose": [
+      { "freq": 392, "type": "triangle", "durationMs": 220, "gain": 0.22 },
+      {
+        "freq": 330,
+        "type": "triangle",
+        "delayMs": 220,
+        "durationMs": 220,
+        "gain": 0.22
+      },
+      {
+        "freq": 262,
+        "type": "sine",
+        "delayMs": 440,
+        "durationMs": 480,
+        "gain": 0.2
+      }
+    ],
+    "milestone": [
+      { "freq": 880, "type": "sine", "durationMs": 90, "gain": 0.2 },
+      {
+        "freq": 1175,
+        "type": "sine",
+        "delayMs": 90,
+        "durationMs": 200,
+        "gain": 0.2
+      }
     ]
   }
 }

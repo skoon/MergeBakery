@@ -60,7 +60,13 @@ function fakeContext() {
       return osc;
     },
     createGain: () => {
-      const node = { gain: fakeParam(), connect: () => undefined };
+      const node = {
+        gain: fakeParam(),
+        targets: [] as unknown[],
+        connect(target: unknown) {
+          node.targets.push(target);
+        },
+      };
       gains.push(node);
       return node;
     },
@@ -80,6 +86,26 @@ const TONE = {
   durationMs: 200,
   gain: 0.3,
 } as const;
+
+describe('the music channel', () => {
+  it('routes music tones to the music bus and the rest to the effects bus', () => {
+    const fake = fakeContext();
+    const audio = createAudioManager(() => fake.context);
+    audio.unlock();
+    // The first two gains are the music and effects buses, in that order.
+    const [musicBus, effectsBus] = fake.gains;
+    const before = fake.gains.length;
+    audio.play([TONE], 'music');
+    audio.play([TONE]);
+    const [musicEnvelope, effectsEnvelope] = fake.gains.slice(
+      before,
+    ) as unknown as {
+      targets: unknown[];
+    }[];
+    expect(musicEnvelope?.targets).toEqual([musicBus]);
+    expect(effectsEnvelope?.targets).toEqual([effectsBus]);
+  });
+});
 
 describe('createAudioManager', () => {
   it('drops sounds before unlock', () => {

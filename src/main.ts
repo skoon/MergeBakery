@@ -46,7 +46,9 @@ import { mountSettings } from './ui/settingsScreen';
 import { createAudioManager } from './audio/audioManager';
 import { startMergeChime } from './audio/mergeChime';
 import { parseSfx, startSfx } from './audio/sfx';
+import { parseMusic, startMusic } from './audio/music';
 import sfxData from './data/sfx.json';
+import musicData from './data/music.json';
 
 function requireElement<T extends HTMLElement = HTMLElement>(
   selector: string,
@@ -239,6 +241,7 @@ settings.subscribe(applyVolumes);
 applyVolumes();
 startMergeChime(store, audio);
 startSfx(store, audio, () => Date.now(), parseSfx(sfxData));
+startMusic(store, audio, parseMusic(musicData, [...data.chapters.keys()]));
 
 // Console helpers for testing; a dynamic import keeps them out of production builds.
 if (import.meta.env.DEV) {

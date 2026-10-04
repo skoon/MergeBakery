@@ -40,10 +40,10 @@ export interface AudioManager {
   /** Each clamped to 0–1. Before unlock, remembered and applied on unlock. */
   setVolumes(music: number, effects: number): void;
   /**
-   * Plays tones on the effects channel. Before unlock, does nothing (sounds
-   * are dropped, not queued).
+   * Plays tones on the effects channel, or the music channel when asked.
+   * Before unlock, does nothing (sounds are dropped, not queued).
    */
-  play(tones: readonly ToneSpec[]): void;
+  play(tones: readonly ToneSpec[], channel?: 'effects' | 'music'): void;
 }
 
 /** Attack time, so a note never starts with a click. */
@@ -91,8 +91,9 @@ export function createAudioManager(
       applyVolumes();
     },
 
-    play(tones) {
-      if (!context || !effectsBus) return;
+    play(tones, channel = 'effects') {
+      const bus = channel === 'music' ? musicBus : effectsBus;
+      if (!context || !bus) return;
 
       for (const tone of tones) {
         const start = context.currentTime + (tone.delayMs ?? 0) / 1000;
@@ -108,7 +109,7 @@ export function createAudioManager(
         envelope.gain.exponentialRampToValueAtTime(SILENT, end);
 
         oscillator.connect(envelope);
-        envelope.connect(effectsBus);
+        envelope.connect(bus);
         oscillator.start(start);
         oscillator.stop(end);
       }
