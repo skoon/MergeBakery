@@ -6,6 +6,10 @@ body {
   background: var(--color-crust);
   color: var(--color-ink);
   font-family: var(--font-body);
+}
+
+/* Not on html: the font-size tokens are in rem, so scaling the root would apply the text scale twice. */
+body {
   font-size: var(--font-size-md);
 }
 

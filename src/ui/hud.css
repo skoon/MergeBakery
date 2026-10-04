@@ -2,10 +2,13 @@
 
 .hud-container {
   display: flex;
+  flex-wrap: wrap;
   align-items: stretch;
   justify-content: space-between;
-  height: 100%;
+  /* Grows, and wraps to a second row, as the text size rises. */
+  min-height: 56px;
   width: 100%;
+  box-sizing: border-box;
   padding: 0 var(--space-2);
   gap: var(--space-1);
   background: linear-gradient(
@@ -21,37 +24,25 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 auto;
+  padding: var(--space-1) 0;
 }
 
 .hud-label {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--color-ink);
   white-space: nowrap;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.02em;
 }
 
 .hud-value {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   font-weight: 700;
   color: var(--color-crust);
   text-align: center;
   min-height: 1em;
-}
-
-.hud-energy {
-  min-width: 50px;
-}
-
-.hud-currency {
-  min-width: 40px;
-}
-
-.hud-level {
-  min-width: 45px;
 }
 
 /* Energy countdown timer */
@@ -78,24 +69,4 @@
   border-radius: 1px;
   transition: width 0.3s ease-out;
   width: 0%;
-}
-
-/* Mobile optimization: smaller text for narrow screens */
-@media (max-width: 380px) {
-  .hud-label {
-    font-size: calc(0.75rem * var(--text-scale));
-  }
-
-  .hud-value {
-    font-size: var(--font-size-md);
-  }
-
-  .hud-container {
-    padding: 0 var(--space-1);
-    gap: 0;
-  }
-
-  .hud-section {
-    gap: 2px;
-  }
 }

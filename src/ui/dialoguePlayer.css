@@ -74,7 +74,7 @@
 
 .dialogue__hint {
   margin: var(--space-2) 0 0;
-  font-size: calc(0.75rem * var(--text-scale));
+  font-size: var(--font-size-xs);
   opacity: 0.6;
 }
 
@@ -84,7 +84,7 @@
   right: var(--space-2);
   padding: var(--space-1) var(--space-2);
   font: inherit;
-  font-size: calc(0.75rem * var(--text-scale));
+  font-size: var(--font-size-xs);
   color: var(--color-crust);
   background: transparent;
   border: 1px solid var(--color-crust);

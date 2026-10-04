@@ -93,7 +93,7 @@
   right: -6px;
   bottom: -6px;
   padding: 0 var(--space-1);
-  font-size: calc(0.75rem * var(--text-scale));
+  font-size: var(--font-size-xs);
   font-weight: 700;
   color: var(--color-ink);
   background: var(--color-butter);

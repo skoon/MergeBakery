@@ -51,7 +51,7 @@
 .counter-card-name {
   grid-area: name;
   justify-self: start;
-  font-size: calc(0.75rem * var(--text-scale));
+  font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--color-ink);
   white-space: nowrap;
@@ -102,7 +102,7 @@
 
 .counter-card-reward {
   grid-area: reward;
-  font-size: calc(0.75rem * var(--text-scale));
+  font-size: var(--font-size-xs);
   line-height: 1.2;
   color: var(--color-ink);
   white-space: nowrap;
@@ -115,7 +115,7 @@
   border-radius: 4px;
   padding: 1px var(--space-1);
   font-family: var(--font-body);
-  font-size: calc(0.75rem * var(--text-scale));
+  font-size: var(--font-size-xs);
   line-height: 1.4;
   background: var(--color-mint);
   color: var(--color-ink);

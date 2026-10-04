@@ -67,7 +67,7 @@
   height: 20px;
   padding: 0 4px;
   box-sizing: border-box;
-  font-size: calc(0.75rem * var(--text-scale));
+  font-size: var(--font-size-xs);
   line-height: 20px;
   color: var(--color-cream);
   background: var(--color-strawberry);

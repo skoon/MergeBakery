@@ -21,6 +21,7 @@
 
   /* Settings (T5.9) raises this to 1.5; every font size scales from it. */
   --text-scale: 1;
+  --font-size-xs: calc(0.75rem * var(--text-scale));
   --font-size-sm: calc(0.875rem * var(--text-scale));
   --font-size-md: calc(1rem * var(--text-scale));
   --font-size-lg: calc(1.25rem * var(--text-scale));
