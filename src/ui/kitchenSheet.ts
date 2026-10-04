@@ -16,12 +16,9 @@ import './kitchenSheet.css';
 import { setImageArt } from '../render/assets';
 import type { Timestamp } from '../core/types';
 import { registerDropZone } from './dropZones';
+import { styleTrayButton } from './trayButton';
 import { kitchenModel, recipeForDrop, type KitchenModel } from './kitchenModel';
 import type { GameStore } from './store';
-
-const SVG_NS = 'http://www.w3.org/2000/svg';
-const RING_RADIUS = 16;
-const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
 /** Changes here need a rebuild; everything else is a timer update. */
 function structureKey(model: KitchenModel): string {
@@ -60,30 +57,17 @@ export function mountKitchen(
   clock: () => Timestamp,
 ): void {
   // ─── Oven button ────────────────────────────────────────────────
-  const button = el('button', 'kitchen-toggle');
+  const button = el('button', 'kitchen-toggle tray-btn--oven');
   button.type = 'button';
   button.setAttribute('aria-expanded', 'false');
 
-  const ring = document.createElementNS(SVG_NS, 'svg');
-  ring.setAttribute('class', 'kitchen-toggle__ring');
-  ring.setAttribute('viewBox', '0 0 36 36');
-  ring.setAttribute('aria-hidden', 'true');
-  const track = document.createElementNS(SVG_NS, 'circle');
-  const fill = document.createElementNS(SVG_NS, 'circle');
-  for (const circle of [track, fill]) {
-    circle.setAttribute('cx', '18');
-    circle.setAttribute('cy', '18');
-    circle.setAttribute('r', RING_RADIUS.toString());
-  }
-  track.setAttribute('class', 'kitchen-toggle__track');
-  fill.setAttribute('class', 'kitchen-toggle__fill');
-  fill.setAttribute('stroke-dasharray', RING_CIRCUMFERENCE.toString());
-  ring.append(track, fill);
-
-  const label = el('span', 'kitchen-toggle__label', 'Oven');
+  styleTrayButton(button, 'brick-oven', 'Oven');
+  const bar = el('span', 'kitchen-toggle__bar');
+  const fill = el('span', 'kitchen-toggle__fill');
+  bar.appendChild(fill);
   const badge = el('span', 'kitchen-toggle__badge');
   badge.hidden = true;
-  button.append(ring, label, badge);
+  button.append(bar, badge);
   tray.appendChild(button);
 
   // ─── Sheet ──────────────────────────────────────────────────────
@@ -118,10 +102,7 @@ export function mountKitchen(
   function updateButton(model: KitchenModel): void {
     const progress = model.ringProgress;
     fill.style.opacity = progress === null ? '0' : '1';
-    fill.setAttribute(
-      'stroke-dashoffset',
-      (RING_CIRCUMFERENCE * (1 - (progress ?? 0))).toString(),
-    );
+    fill.style.width = `${((progress ?? 0) * 100).toString()}%`;
     badge.hidden = model.doneCount === 0;
     badge.textContent = model.doneCount.toString();
     button.setAttribute(

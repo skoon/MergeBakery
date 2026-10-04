@@ -19,6 +19,9 @@
   --font-body:
     ui-rounded, 'SF Pro Rounded', 'Nunito', 'Segoe UI', system-ui, sans-serif;
 
+  /* Scales graphics with the viewport (T-R3). */
+  --ui-scale: 1;
+
   /* Settings (T5.9) raises this to 1.5; every font size scales from it. */
   --text-scale: 1;
   --font-size-xs: calc(0.75rem * var(--text-scale));

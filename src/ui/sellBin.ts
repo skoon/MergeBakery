@@ -4,13 +4,14 @@
 
 import './sellBin.css';
 import type { GameStore } from './store';
+import { styleTrayButton } from './trayButton';
 import { registerDropZone } from './dropZones';
 
 export function mountSellBin(tray: HTMLElement, store: GameStore): void {
   // Create the main sell button
   const button = document.createElement('button');
-  button.className = 'sell-bin';
-  button.textContent = 'Sell';
+  button.className = 'sell-bin tray-btn--sell';
+  styleTrayButton(button, 'coin-pouch', 'Sell');
 
   // Create container for undo button (initially hidden)
   const undoContainer = document.createElement('div');

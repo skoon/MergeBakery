@@ -3,10 +3,10 @@
 .nav-tab {
   flex: 1 1 0;
   min-width: 0;
-  padding: 0 var(--space-1);
-  /* Fixed size, unlike the rest of the UI: five tabs must fit a 320 px screen at any text scale. */
+  padding: 0 2px;
+  /* Scales with the text size up to 125%, then stops: five tabs must fit a 320 px screen. */
   font: inherit;
-  font-size: 0.75rem;
+  font-size: min(var(--font-size-xs), 0.9375rem);
   font-weight: 700;
   white-space: nowrap;
   overflow: hidden;

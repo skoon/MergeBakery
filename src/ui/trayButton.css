@@ -1,0 +1,72 @@
+/* Tray buttons: Pantry, Oven, Sell (T-R4, T-R5). The plate is a nine-slice, so it stretches with the text. */
+
+.tray-btn {
+  --plate: url('/art/button-plate.png');
+  position: relative;
+  flex: 1 1 0;
+  /* Never break a word: the button grows instead. */
+  min-width: min-content;
+  max-width: calc(96px * var(--ui-scale));
+  /* 44 px is the smallest comfortable touch target. */
+  min-height: 56px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font: inherit;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  color: var(--color-ink);
+  background: none;
+  border: 8px solid transparent;
+  border-image: var(--plate) 4 fill / 8px / 0 stretch;
+  image-rendering: pixelated;
+  cursor: pointer;
+}
+
+.tray-btn[data-dragging],
+.tray-btn[aria-expanded='true'] {
+  --plate: url('/art/button-plate-butter.png');
+}
+
+.tray-btn:active {
+  transform: translateY(1px);
+}
+
+.tray-btn--sell {
+  --plate: url('/art/button-plate-red.png');
+  color: var(--color-cream);
+}
+
+.tray-btn--sell[data-dragging] {
+  --plate: url('/art/button-plate-butter.png');
+  color: var(--color-ink);
+}
+
+.tray-btn__icon {
+  flex: 0 0 auto;
+  width: calc(28px * var(--ui-scale));
+  height: calc(28px * var(--ui-scale));
+}
+
+.tray-btn__label {
+  max-width: 100%;
+}
+
+/* Short screens: smaller icons, so the tray and nav bar don't crowd out the board. */
+@media (max-height: 640px) {
+  .tray-btn {
+    min-height: 44px;
+  }
+
+  .tray-btn__icon {
+    width: calc(20px * var(--ui-scale));
+    height: calc(20px * var(--ui-scale));
+  }
+}

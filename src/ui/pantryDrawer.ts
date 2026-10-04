@@ -7,6 +7,7 @@
  * the board.
  */
 
+import { styleTrayButton } from './trayButton';
 import './pantryDrawer.css';
 import type { CellIndex } from '../core/types';
 import type { BoardView } from '../render/boardView';
@@ -42,7 +43,12 @@ export function mountPantryDrawer(
 
   const pantryButton = document.createElement('button');
   pantryButton.type = 'button';
-  pantryButton.className = 'pantry-toggle';
+  pantryButton.className = 'pantry-toggle tray-btn--pantry';
+  const { label: pantryLabel } = styleTrayButton(
+    pantryButton,
+    'btn-pantry',
+    'Pantry',
+  );
   tray.prepend(pantryButton);
 
   const drawer = document.createElement('div');
@@ -159,7 +165,11 @@ export function mountPantryDrawer(
   function render(): void {
     const model = pantryModel(store.data, store.getState());
 
-    pantryButton.textContent = `Pantry ${model.used}/${model.capacity}`;
+    pantryLabel.replaceChildren(
+      'Pantry',
+      document.createElement('br'),
+      `${model.used}/${model.capacity}`,
+    );
 
     tiles.innerHTML = '';
     model.slots.forEach((slot, index) => {
