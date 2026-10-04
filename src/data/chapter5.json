@@ -214,7 +214,7 @@
           "itemId": "sugar-tin-1"
         }
       ],
-      "featuredItems": ["chocolate-tower", "bonbon-box"],
+      "featuredItems": ["chocolate-cake", "bonbon-box"],
       "beforeSpriteKey": "factory-cooling-tunnel-before",
       "afterSpriteKey": "factory-cooling-tunnel-after",
       "sceneId": null
@@ -249,7 +249,7 @@
           "itemId": "fruit-crate-1"
         }
       ],
-      "featuredItems": ["chocolate-tower", "bonbon-tin"],
+      "featuredItems": ["chocolate-cake", "bonbon-tin"],
       "beforeSpriteKey": "factory-sample-lab-before",
       "afterSpriteKey": "factory-sample-lab-after",
       "sceneId": null
@@ -264,7 +264,7 @@
       },
       "prerequisites": ["factory-sample-lab"],
       "unlocks": [],
-      "featuredItems": ["chocolate-tower", "truffle-box"],
+      "featuredItems": ["chocolate-cake", "bonbon-tin"],
       "beforeSpriteKey": "factory-chocolate-fountain-before",
       "afterSpriteKey": "factory-chocolate-fountain-after",
       "sceneId": null
@@ -279,7 +279,7 @@
       },
       "prerequisites": ["factory-chocolate-fountain"],
       "unlocks": [],
-      "featuredItems": ["truffle-box", "chocolate-cake"],
+      "featuredItems": ["bonbon-tin", "chocolate-cake"],
       "beforeSpriteKey": "factory-visitor-gallery-before",
       "afterSpriteKey": "factory-visitor-gallery-after",
       "sceneId": "ch5-neighbors"
@@ -294,7 +294,7 @@
       },
       "prerequisites": ["factory-visitor-gallery"],
       "unlocks": [],
-      "featuredItems": ["chocolate-tower", "bonbon-tin"],
+      "featuredItems": ["chocolate-cake", "bonbon-tin"],
       "beforeSpriteKey": "factory-fifth-recipe-page-before",
       "afterSpriteKey": "factory-fifth-recipe-page-after",
       "sceneId": "ch5-recipe-page"
@@ -309,7 +309,7 @@
       },
       "prerequisites": ["factory-fifth-recipe-page"],
       "unlocks": [],
-      "featuredItems": ["truffle-box", "chocolate-tower"],
+      "featuredItems": ["bonbon-tin", "chocolate-cake"],
       "beforeSpriteKey": "factory-grand-tour-before",
       "afterSpriteKey": "factory-grand-tour-after",
       "sceneId": null
@@ -324,7 +324,7 @@
       },
       "prerequisites": ["factory-grand-tour"],
       "unlocks": [],
-      "featuredItems": ["truffle-box", "chocolate-tower"],
+      "featuredItems": ["bonbon-tin", "chocolate-cake"],
       "beforeSpriteKey": "factory-buyout-offer-before",
       "afterSpriteKey": "factory-buyout-offer-after",
       "sceneId": "ch5-offer"
@@ -339,7 +339,7 @@
       },
       "prerequisites": ["factory-buyout-offer"],
       "unlocks": [],
-      "featuredItems": ["truffle-box", "chocolate-tower"],
+      "featuredItems": ["bonbon-tin", "chocolate-cake"],
       "beforeSpriteKey": "factory-final-answer-before",
       "afterSpriteKey": "factory-final-answer-after",
       "sceneId": "ch5-finale"

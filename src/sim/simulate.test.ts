@@ -16,7 +16,7 @@ import { testData } from '../core/testing';
 const SEEDS = [1, 2, 3, 4, 5];
 const OPTIONS = { ...DEFAULT_OPTIONS, maxSessionMin: 20 };
 // Long enough for the bot to get through Chapter 2 as well.
-const REPORT_DAYS = 24;
+const REPORT_DAYS = 28;
 
 function mean(values: number[]): number {
   return values.length === 0

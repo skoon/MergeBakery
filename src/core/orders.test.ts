@@ -296,7 +296,15 @@ describe('generateOrder', () => {
   });
 
   it('favors items the next renovation task features', () => {
-    const dataFeatured = dataWithTasks([featuredTask]);
+    const flat = dataWithTasks([featuredTask]);
+    // No low-tier bias: this test is about the featured weight alone.
+    const dataFeatured: GameData = {
+      ...flat,
+      economy: {
+        ...flat.economy,
+        orders: { ...flat.economy.orders, lowTierBias: 0 },
+      },
+    };
     const counts: Record<string, number> = {};
 
     for (let seed = 1; seed <= 500; seed++) {

@@ -1,22 +1,36 @@
 # Handoff — Oct 3, 2026
 
-Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md` (top section is Phase 10) and `docs/briefs/working-rules.md` first.
+Where Rise & Shine Bakery stands and what comes next. Read `CLAUDE.md`, `task.md` (top section is Phase 11) and `docs/briefs/working-rules.md` first.
 
 ## State
 
-- **`main`** has Phases 7–9 (merged Oct 3, fast-forward, not pushed; `origin` is configured). **Phase 10 (Chapter 4)** is built on stacked branches `t10.1-contract` … `t10.10-balance`; nothing there is merged.
-- 800-odd tests pass; typecheck and ESLint are clean; `npm run build` not re-run since Phase 9.
-- **Not checked in a browser** (no Chrome for the Playwright tool): the Staff panel, the wholesale card, the Chapter 4 scene.
-- **Waiting on Scott:** Chapter 4's portraits (18), script (8 scenes) and art; the Chapter 4 playtest.
+- **`main`** has Phases 7–10 (Chapter 4 merged Oct 3, fast-forward, not pushed; `origin` is configured). **Phase 11 (Chapter 5, the finale)** is built on stacked branches `t11.1-chocolate` … `t11.7-balance`; nothing there is merged.
+- All five chapters, the MegaBun events, catering, wholesale, staff and automation are in. The game can be played start to finish.
+- **Not checked in a browser** (no Chrome for the Playwright tool): the Staff panel recipe picker, the End card, the Factory scene.
+- **Waiting on Scott:** Chapter 5's portraits (21), script (9 scenes) and art; playing to the ending.
 
-## Phase 10 as built
+## Phase 11 as built
+
+- **Decisions (Scott, Oct 3):** automation is an Auto-Oven staff role; one ending (refuse the buyout).
+- **Contract:** `StaffRole` 'oven', `StaffState.assignedRecipe`, `assignStaff.recipeId` (header of `types.ts`).
+- **Chocolate line:** chains `brownie` and `bonbon`, recipes in `recipes.json`.
+- **Chapter 5:** `chapter5.json` (ids `factory-`, scene `factory`), `dialogue/chapter5.json` (offer and finale scenes), `scripts/art/factory.py`, `portraits7.py`. The finale ends the story with `gameFinished` (no state) and `endCard.ts`.
+- **Balance:** `lowTierBias` is 3. The bot finishes the whole game in 8–10 days; people will take longer.
+
+## Open
+
+1. Phase 12, the whole-game pass: a simulator regression with thresholds, a save-migration audit (v1 → v3 fixtures), a music track, a performance and size check, and a full playthrough.
+2. A few small things: the credits are one card, not a roll; no "play again" or new-game-plus.
+3. All art is scripted pixel art.
+
+## Phase 10 as built (earlier)
 
 - **Contract (approved Oct 3), save v3:** see `task.md`. Staff and wholesale live in `src/core/staff.ts`, `orders.ts` (`generateWholesaleOrder`), `deliver.ts` (Pantry top-up, reputation).
 - **Staff** (`staff.json`): Sam (tapper, 5 min, 1500 coins, 10 reputation), Trevor (baker, ×0.8 bakes, 2500, 25), Rosa (tapper, 4 min, 3500, 50). Tappers are free of energy but use the generator's charges and need a free cell. The Staff panel is on the Bakery screen.
 - **Wholesale** from Chapter 4 (`economy.json`): 8% of new orders, 5–10 of one tier 1–2 item, 48 h, no penalty.
 - **Chapter 4** `chapter4.json` (ids `wholesale-`, scene `wholesale-kitchen`), dialogue `dialogue/chapter4.json`, art `scripts/art/wholesale.py`.
 
-## Open
+## Open (earlier)
 
 1. **Balance is uncalibrated.** After the bot fix every chapter takes it about a day. Real pacing needs your playtest; if chapters are too quick, raise task costs (Chapter 4 is 380 stars).
 2. Staff prices look cheap against the bot's wholesale income. Check in play.

@@ -293,6 +293,8 @@ The business becomes a company: wholesale orders, the Deck Oven, and staff. This
 
 ## Phase 11: Chapter 5, Rise & Shine Factory
 
+**Status (Oct 3):** T11.1–T11.7 built on branches `t11.*`; the Chapter 5 portraits, script and art await Scott's approval, and T11.8's playthrough is his. Decisions: automation is an Auto-Oven staff role (no new save shape), and the game has one ending. Differences from the plan: the finale is a refusal scene on the last task plus a "The End" card; the MegaBun cast speak through a table in `dialogue.ts`. See `docs/HANDOFF.md`.
+
 The finale. Automation helpers extend Phase 10's staff, the chocolate line completes the sugar chain's top tiers (cocoa bean to truffle box already exist as items), and the story ends with MegaBun's buyout offer.
 
 | ID | Task | Model | Depends on | Done when |

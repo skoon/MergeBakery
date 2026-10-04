@@ -49,7 +49,7 @@
     "refillDelaySec": 90,
     "regularChancePercent": 40,
     "featuredWeight": 3,
-    "lowTierBias": 2,
+    "lowTierBias": 3,
     "walkIn": {
       "minItems": 2,
       "maxItems": 3,

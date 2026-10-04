@@ -379,6 +379,30 @@ class Bot {
       const chain = this.data.items.get(cell.item.itemId)?.chainId;
       if (chain) onBoard.add(chain);
     }
+    // Auto-Ovens loop whichever recipe an open order is waiting for.
+    for (const hired of this.state.staff) {
+      if (this.data.staff.get(hired.staffId)?.role !== 'oven') continue;
+      const current = hired.assignedRecipe ?? null;
+      const currentRecipe = current
+        ? this.data.recipes.get(current)
+        : undefined;
+      if (currentRecipe && this.orderWantsChainOf(currentRecipe.output))
+        continue;
+      const wanted = [...this.data.recipes.values()].find(
+        (r) => r.id !== current && this.orderWantsChainOf(r.output),
+      );
+      if (
+        wanted &&
+        this.act(null, {
+          type: 'assignStaff',
+          staffId: hired.staffId,
+          chainId: null,
+          recipeId: wanted.id,
+        })
+      ) {
+        return true;
+      }
+    }
     for (const hired of this.state.staff) {
       if (this.data.staff.get(hired.staffId)?.role !== 'tapper') continue;
       if (hired.assignedChain !== null) continue;

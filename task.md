@@ -1,3 +1,16 @@
+# Phase 11 — Chapter 5, Rise & Shine Factory (the finale)
+
+Source: Implementation Plan, Phase 11. Chapter 4 was merged to `main` on Oct 3 (Scott: pacing fine). Branches t11.1 … t11.7, stacked. Decisions (Scott, Oct 3): one ending (the player refuses MegaBun's buyout), and an Auto-Oven staff role for automation.
+
+- [x] T11.1 Chocolate line: brownie (4 tiers) and bonbon (3) chains, recipes `bake-brownie` and `bake-bonbon` (cocoa bean from the Sugar Tin), 7 sprites (`batch9_chocolate.py`)
+- [x] T11.2 Auto-Oven. Contract approved Oct 3: `StaffRole` 'oven', `StaffState.assignedRecipe` (optional, no migration), `assignStaff.recipeId`. Every 2 min it collects finished bakes and reloads its recipe from items on the board; a full board and Pantry pauses it; offline catch-up capped. Two in `staff.json` (6000 and 9000 coins, reputation 100 and 250), from Chapter 5. Recipe picker in the Staff panel
+- [x] T11.3 Bex, Foreman Dill, Moss (regulars), the MegaBun cast (Chad, Buns-A-Lot, Mrs. Crustworth) and the Auto-Oven: 21 portraits (`portraits7.py`). The MegaBun cast speak through a table in `dialogue.ts`, not as customers. **Awaiting Scott's approval of the portraits**
+- [x] T11.4 `chapter5.json`: 20 `factory-` tasks (420 stars); the last chapter stays put, so the finale is a scene on the last task
+- [x] T11.5 The finale: 9 scenes (`dialogue/chapter5.json`), ending with the buyout refusal; `gameFinished` (the last chapter's tasks all done, so no state to migrate); a "The End" card (`endCard.ts`) once the final scene closes, with "Keep baking". **Awaiting Scott's approval of the script**
+- [x] T11.6 Factory art (`scripts/art/factory.py`). **Awaiting Scott's approval**
+- [x] T11.7 Balance pass, Chapters 1–5 end to end. `lowTierBias` raised from 2 to 3 (still the approved field). With it all five seeds finish the whole game in 8–10 bot-days with no stalls: Chapter 1 d1–2, Chapter 2 d2–3, Chapter 3 d3–4, Chapter 4 d5–6, Chapter 5 d8–10; all five staff hired by day 11–22. The bot also now loops the Auto-Oven on a recipe an open order wants
+- [ ] T11.8 Phase-end review done Oct 3 (`gameFinished` on a fresh save, the End card, Auto-Oven offline and the dev `away` helper). Remaining: Scott plays to the ending, including a browser check of the Staff panel's recipe picker and the End card
+
 # Phase 10 — Chapter 4, The Wholesale Kitchen
 
 Source: Implementation Plan, Phase 10. Chapter 3 was merged to `main` on Oct 3 (Scott: "chapter 3 looks good"). Branches t10.1 … t10.10, stacked.
