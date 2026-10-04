@@ -5,6 +5,7 @@ import { dispatch } from './core/dispatch';
 import { loadGameData } from './core/data';
 import { createNewGame } from './core/newGame';
 import { createPixiApp } from './render/app';
+import { mountChromeMetrics } from './ui/chromeMetrics';
 import { createBoardView } from './render/boardView';
 import { createEffects } from './render/effects';
 import { createStore } from './ui/store';
@@ -104,7 +105,24 @@ const stopAutosave = startAutosave(
 );
 
 const app = await createPixiApp(stage);
-const boardView = await createBoardView(app, store, settings);
+let relayout = (): void => {};
+const chrome = mountChromeMetrics(
+  requireElement('#app'),
+  {
+    stage,
+    hud,
+    counter,
+    tray,
+    nav,
+    top: requireElement('#top'),
+    bottom: requireElement('#bottom'),
+  },
+  () => relayout(),
+);
+const boardView = await createBoardView(app, store, settings, () =>
+  chrome.getInsets(),
+);
+relayout = () => boardView.relayout();
 
 setInterval(() => {
   store.dispatch({ type: 'tick' });

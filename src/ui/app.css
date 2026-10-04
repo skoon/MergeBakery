@@ -47,39 +47,50 @@ img {
   pointer-events: auto;
 }
 
-#hud {
+/* The chrome sizes to its content, so it grows with the text size. chromeMetrics.ts measures
+   it and overwrites the four heights above for the sheets anchored to it. The caps leave
+   the board at least 40% of the height; past them, text in the bars is truncated. */
+#top,
+#bottom {
   position: absolute;
-  top: 0;
   left: 0;
   right: 0;
-  height: var(--hud-height);
+  display: flex;
+  flex-direction: column;
+}
+
+#top {
+  top: 0;
+  max-height: 38%;
+  overflow: hidden;
+}
+
+#bottom {
+  bottom: 0;
+  max-height: 22%;
+}
+
+#hud {
+  flex: 0 0 auto;
+  min-height: 56px;
 }
 
 #counter {
-  position: absolute;
-  top: var(--hud-height);
-  left: 0;
-  right: 0;
-  height: var(--counter-height);
+  flex: 0 1 auto;
+  min-height: 104px;
 }
 
 #tray {
-  position: absolute;
-  bottom: var(--nav-height);
-  left: 0;
-  right: 0;
-  height: var(--tray-height);
+  flex: 1 1 auto;
+  min-height: 80px;
   display: flex;
   align-items: center;
   padding: 0 var(--space-4);
 }
 
 #nav {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: var(--nav-height);
+  flex: 0 0 auto;
+  min-height: 56px;
   display: flex;
   background: var(--color-butter);
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);

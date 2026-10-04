@@ -15,7 +15,11 @@ import {
 import type { CellIndex, ItemId, LockKind } from '../core/types';
 import { getCell } from '../core/board';
 import { canMerge } from '../core/merge';
-import { computeBoardLayout, type BoardLayout } from '../ui/layout';
+import {
+  computeBoardLayout,
+  type BoardLayout,
+  type Insets,
+} from '../ui/layout';
 import { dropZoneAt, setDragActive } from '../ui/dropZones';
 import type { GameStore } from '../ui/store';
 import type { SettingsStore } from '../ui/settings';
@@ -54,6 +58,8 @@ export interface BoardView {
   /** The item sprite drawn in a cell, or null. Redraws replace sprites, so don't hold on to one. */
   spriteAt(cell: CellIndex): Sprite | null;
   cellSize(): number;
+  /** Redraws after the space around the board changed (the chrome grew or shrank). */
+  relayout(): void;
   /** A container drawn above the items, for effects (T2.9). */
   readonly effectsLayer: Container;
   /** Called when the player taps a generator that is cooling down (T6.5). */
@@ -76,6 +82,7 @@ export async function createBoardView(
   app: Application,
   store: GameStore,
   settings: SettingsStore,
+  getInsets: () => Insets,
 ): Promise<BoardView> {
   const textures = new Map<ItemId, Texture>();
   await Promise.all(
@@ -110,9 +117,9 @@ export async function createBoardView(
 
   let layout: BoardLayout = computeBoardLayout(
     app.screen.width,
-    app.screen.height,
     store.getState().board.cols,
     store.getState().board.rows,
+    getInsets(),
   );
   let sprites = new Map<CellIndex, Sprite>();
   let tracking: PointerTracking | null = null;
@@ -335,9 +342,9 @@ export async function createBoardView(
     const { board } = store.getState();
     layout = computeBoardLayout(
       app.screen.width,
-      app.screen.height,
       board.cols,
       board.rows,
+      getInsets(),
     );
 
     boardLayer.removeChildren();
@@ -533,6 +540,7 @@ export async function createBoardView(
   redraw();
 
   return {
+    relayout: redraw,
     cellAt(clientX: number, clientY: number): CellIndex | null {
       const rect = app.canvas.getBoundingClientRect();
       const { board } = store.getState();

@@ -14,11 +14,15 @@
     <div id="app">
       <div id="stage"></div>
       <div id="overlay-root">
-        <header id="hud"></header>
-        <section id="counter"></section>
-        <footer id="tray"></footer>
+        <div id="top">
+          <header id="hud"></header>
+          <section id="counter"></section>
+        </div>
         <div id="screens" hidden></div>
-        <nav id="nav" aria-label="Screens"></nav>
+        <div id="bottom">
+          <footer id="tray"></footer>
+          <nav id="nav" aria-label="Screens"></nav>
+        </div>
       </div>
     </div>
     <script type="module" src="/src/main.ts"></script>
