@@ -24,6 +24,7 @@ import { createDragPreview, type DragPreview } from './dragPreview';
 import { chargesToShow } from './charges';
 
 // Colors from the palette in src/ui/tokens.css.
+const OVERLAY_KEYS = ['cobweb', 'lock-crate', 'lock-sack'];
 const COLOR_CREAM = 0xfff6e6;
 const COLOR_CRUST = 0x9c5b2e;
 const COLOR_INK = 0x4a2c17;
@@ -80,6 +81,13 @@ export async function createBoardView(
   await Promise.all(
     Array.from(store.data.items.values(), async (item) => {
       textures.set(item.id, await loadTexture(item.spriteKey));
+    }),
+  );
+
+  const overlayTextures = new Map<string, Texture>();
+  await Promise.all(
+    OVERLAY_KEYS.map(async (key) => {
+      overlayTextures.set(key, await loadTexture(key));
     }),
   );
 
@@ -149,51 +157,37 @@ export async function createBoardView(
       .stroke({ width: 1, color: COLOR_CRUST });
   }
 
+  /** A pixel-art overlay filling a tile with `inset` (fraction of the tile) around it. */
+  function drawOverlay(
+    key: string,
+    x: number,
+    y: number,
+    size: number,
+    inset: number,
+  ): Sprite {
+    const sprite = new Sprite(overlayTextures.get(key));
+    sprite.position.set(x + size * inset, y + size * inset);
+    sprite.width = sprite.height = size * (1 - inset * 2);
+    return sprite;
+  }
+
   function drawLock(
     kind: LockKind,
     x: number,
     y: number,
     size: number,
-  ): Graphics {
-    const inset = size * 0.12;
-    if (kind === 'crate') {
-      return new Graphics()
-        .rect(x + inset, y + inset, size - inset * 2, size - inset * 2)
-        .fill(COLOR_CRUST)
-        .moveTo(x + inset, y + inset)
-        .lineTo(x + size - inset, y + size - inset)
-        .moveTo(x + size - inset, y + inset)
-        .lineTo(x + inset, y + size - inset)
-        .stroke({ width: Math.max(2, size * 0.04), color: COLOR_INK });
-    }
-    // flourSack: a beige rounded sack tied at the neck, so it can't be mistaken for an empty tile.
-    const sackInset = size * 0.14;
-    const tieY = y + size * 0.34;
-    return new Graphics()
-      .roundRect(
-        x + sackInset,
-        y + sackInset,
-        size - sackInset * 2,
-        size - sackInset * 2,
-        size * 0.22,
-      )
-      .fill({ color: COLOR_BUTTER, alpha: 0.6 })
-      .stroke({ width: 2, color: COLOR_CRUST })
-      .moveTo(x + sackInset * 1.6, tieY)
-      .lineTo(x + size - sackInset * 1.6, tieY)
-      .stroke({ width: Math.max(2, size * 0.04), color: COLOR_CRUST });
+  ): Sprite {
+    return drawOverlay(
+      kind === 'crate' ? 'lock-crate' : 'lock-sack',
+      x,
+      y,
+      size,
+      0.06,
+    );
   }
 
-  function drawWebOverlay(x: number, y: number, size: number): Graphics {
-    const pad = size * 0.15;
-    return new Graphics()
-      .moveTo(x + pad, y + pad)
-      .lineTo(x + size - pad, y + size - pad)
-      .moveTo(x + size - pad, y + pad)
-      .lineTo(x + pad, y + size - pad)
-      .moveTo(x + size / 2, y + pad)
-      .lineTo(x + size / 2, y + size - pad)
-      .stroke({ width: 1.5, color: 0xffffff, alpha: 0.85 });
+  function drawWebOverlay(x: number, y: number, size: number): Sprite {
+    return drawOverlay('cobweb', x, y, size, 0);
   }
 
   function drawItemSprite(
