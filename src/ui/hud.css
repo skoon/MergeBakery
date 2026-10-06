@@ -2,15 +2,16 @@
 
 .hud-container {
   display: flex;
-  flex-wrap: wrap;
   align-items: stretch;
   justify-content: space-between;
-  /* Grows, and wraps to a second row, as the text size rises. */
+  /* One row at every size: it grows taller with the text, and the text stops growing
+     (the cqw limits below) where five sections would no longer fit the width. */
+  container-type: inline-size;
   min-height: calc(56px * var(--ui-scale));
   width: 100%;
   box-sizing: border-box;
   padding: 0 var(--space-2);
-  gap: var(--space-1);
+  gap: var(--space-2);
   background: linear-gradient(
     to bottom,
     var(--color-butter),
@@ -25,11 +26,12 @@
   align-items: center;
   justify-content: center;
   flex: 1 1 auto;
+  min-width: 0;
   padding: var(--space-1) 0;
 }
 
 .hud-label {
-  font-size: var(--font-size-xs);
+  font-size: min(var(--font-size-xs), 4.2cqw);
   font-weight: 600;
   color: var(--color-ink);
   white-space: nowrap;
@@ -38,18 +40,21 @@
 }
 
 .hud-value {
-  font-size: var(--font-size-md);
+  font-size: min(var(--font-size-md), 5.6cqw);
   font-weight: 700;
   color: var(--color-crust);
   text-align: center;
+  white-space: nowrap;
   min-height: 1em;
 }
 
 /* Energy countdown timer */
 .hud-countdown {
-  font-size: var(--font-size-sm);
+  font-size: min(var(--font-size-sm), 4.9cqw);
+  line-height: 1.2;
   color: var(--color-crust);
-  height: 1em;
+  /* Keeps its line when there is no countdown, so the bar doesn't jump. */
+  min-height: 1.2em;
   white-space: nowrap;
 }
 

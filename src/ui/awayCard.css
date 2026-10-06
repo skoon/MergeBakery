@@ -11,7 +11,7 @@
 }
 
 .away-card {
-  width: min(320px, 100%);
+  width: min(20em, 100%);
   box-sizing: border-box;
   padding: var(--space-5);
   color: var(--color-ink);

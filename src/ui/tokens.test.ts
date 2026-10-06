@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import tokensCss from './tokens.css?raw';
 
+const stylesheets = import.meta.glob<string>('./*.css', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+
 function readCustomProperties(css: string): Map<string, string> {
   const properties = new Map<string, string>();
   for (const match of css.matchAll(/--([\w-]+):\s*([^;]+);/g)) {
@@ -52,6 +58,29 @@ describe('tokens.css', () => {
     'scales --font-size-%s by --text-scale',
     (size) => {
       expect(token(`font-size-${size}`)).toContain('var(--text-scale)');
+    },
+  );
+
+  it('resolves the font sizes again in the bars, which have a --ui-scale of their own', () => {
+    expect(tokensCss).toMatch(
+      /:root,\s*#top,\s*#bottom\s*\{\s*--font-size-xs:/,
+    );
+  });
+});
+
+describe('font sizes (T-R2)', () => {
+  // Text takes a token, so the text size setting reaches it. A glyph used as an icon
+  // (a check mark, the tutorial's pointing hand) scales with the graphics instead.
+  it.each(Object.entries(stylesheets))(
+    '%s sizes every font from a token or --ui-scale',
+    (_file, css) => {
+      const sizes = [...css.matchAll(/^\s*font-size:\s*([^;]+);/gm)].map(
+        (m) => m[1] ?? '',
+      );
+      const fixed = sizes.filter(
+        (value) => !/var\(--(font-size-\w+|ui-scale)\)/.test(value),
+      );
+      expect(fixed).toEqual([]);
     },
   );
 });

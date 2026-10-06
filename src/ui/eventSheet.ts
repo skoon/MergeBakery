@@ -42,6 +42,7 @@ function bar(label: string, value: number, progress: number, mod: string) {
 }
 
 export function mountEventSheet(
+  topChrome: HTMLElement,
   overlayRoot: HTMLElement,
   store: GameStore,
   clock: () => Timestamp,
@@ -57,7 +58,8 @@ export function mountEventSheet(
 
   const sheet = el('div', 'event-sheet');
   sheet.hidden = true;
-  overlayRoot.append(pill, sheet);
+  topChrome.appendChild(pill);
+  overlayRoot.appendChild(sheet);
 
   let open = false;
   function setOpen(next: boolean): void {

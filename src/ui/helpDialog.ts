@@ -39,7 +39,7 @@ function helpSections(store: GameStore): readonly HelpSection[] {
     {
       heading: 'Clear the board',
       paragraphs: [
-        'Drag an item onto Sell to turn it into coins. You get a moment to undo it if you change your mind.',
+        'Drag an item onto Sell to turn it into coins. For a few seconds afterwards the same button reads Undo: tap it if you change your mind.',
         'Drag an item onto the Pantry to set it aside. Pantry items keep their place until you drag them back out, which is handy when the board fills up.',
       ],
     },

@@ -21,21 +21,6 @@
     opacity 0.2s;
 }
 
-.kitchen-toggle__badge {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  min-width: calc(20px * var(--ui-scale));
-  height: calc(20px * var(--ui-scale));
-  padding: 0 4px;
-  box-sizing: border-box;
-  font-size: var(--font-size-xs);
-  line-height: 20px;
-  color: var(--color-cream);
-  background: var(--color-strawberry);
-  border-radius: 10px;
-}
-
 .kitchen-sheet {
   position: absolute;
   left: 0;
@@ -219,8 +204,8 @@
   bottom: -3px;
   width: calc(14px * var(--ui-scale));
   height: calc(14px * var(--ui-scale));
-  font-size: 10px;
-  line-height: 14px;
+  font-size: calc(10px * var(--ui-scale));
+  line-height: calc(14px * var(--ui-scale));
   text-align: center;
   color: var(--color-cream);
   background: var(--color-mint);

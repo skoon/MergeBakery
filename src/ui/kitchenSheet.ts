@@ -65,7 +65,7 @@ export function mountKitchen(
   const bar = el('span', 'kitchen-toggle__bar');
   const fill = el('span', 'kitchen-toggle__fill');
   bar.appendChild(fill);
-  const badge = el('span', 'kitchen-toggle__badge');
+  const badge = el('span', 'tray-btn__badge');
   badge.hidden = true;
   button.append(bar, badge);
   tray.appendChild(button);

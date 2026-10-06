@@ -7,16 +7,20 @@
  *   bakery.away(90)                            pretend 90 minutes passed
  *   bakery.stars(200)                          set the star count
  *   bakery.event()                             start an event on the next tick
+ *   bakery.load({ coins: 9999 })               overwrite any part of the state
+ *   bakery.ui({ textScale: 1.5, width: 320 })  jump to a text size and a window size
+ *   bakery.store                               the live store, to dispatch an action
  *   bakery.reset()                             delete the save, start over
  *
- * Each one writes a save and reloads, so it goes through the real load path:
- * readSave, migrate, resolveOffline and the away card all run as they would
- * for a player.
+ * All but `ui` and `store` write a save and reload, so they go through the real
+ * load path: readSave, migrate, resolveOffline and the away card all run as they
+ * would for a player.
  */
 
 import { nearestEmpty, setCell } from '../core/board';
 import type { BoardItem, GameData, GameState, ItemId } from '../core/types';
 import { SAVE_KEY, writeSave } from './saveStorage';
+import type { SettingsStore, TextScale } from './settings';
 import type { GameStore } from './store';
 
 /**
@@ -129,6 +133,7 @@ export function rewindState(state: GameState, ms: number): GameState {
 export function installDevTools(
   store: GameStore,
   stopAutosave: () => void,
+  settings: SettingsStore,
 ): void {
   /** Autosave would flush the old state over ours on pagehide, so stop it first. */
   function saveAndReload(state: GameState, savedAt: number): void {
@@ -163,6 +168,25 @@ export function installDevTools(
       const ms = minutes * 60_000;
       saveAndReload(rewindState(store.getState(), ms), Date.now() - ms);
     },
+    load(patch: Partial<GameState>): void {
+      saveAndReload({ ...store.getState(), ...patch }, Date.now());
+    },
+    /**
+     * Sizes the game column without resizing the browser; no argument puts it back.
+     * The one `@media` rule (order cards under 380 px) still follows the real window.
+     */
+    ui(
+      size: { textScale?: TextScale; width?: number; height?: number } = {},
+    ): void {
+      if (size.textScale) settings.update({ textScale: size.textScale });
+      const app = document.querySelector<HTMLElement>('#app');
+      if (!app) return;
+      app.style.maxWidth = size.width ? `${size.width}px` : '';
+      app.style.height = size.height ? `${size.height}px` : '';
+      // The canvas only follows the window.
+      window.dispatchEvent(new Event('resize'));
+    },
+    store,
     reset(): void {
       stopAutosave();
       localStorage.removeItem(SAVE_KEY);
@@ -172,6 +196,6 @@ export function installDevTools(
 
   Object.assign(window, { bakery: tools });
   console.info(
-    "Dev tools: bakery.give('dough-ball', 'butter-block'), bakery.stars(200), bakery.away(90), bakery.event(), bakery.reset()",
+    "Dev tools: bakery.give('dough-ball', 'butter-block'), bakery.stars(200), bakery.away(90), bakery.event(), bakery.load({ coins: 9999 }), bakery.ui({ textScale: 1.5, width: 320 }), bakery.reset()",
   );
 }

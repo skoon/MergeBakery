@@ -16,6 +16,7 @@ Rise & Shine Bakery: a browser merge game. TypeScript (strict), Vite, PixiJS, Vi
 | `npm run lint`                          | ESLint + Prettier check                        |
 | `npm run build`                         | Typecheck then Vite build                      |
 | `npm run art:placeholders`              | Regenerate `public/art/*.svg` from items.json  |
+| `npm run ui-check`                      | Layout check, all screens (dev server running) |
 
 CI (on PRs) runs lint, typecheck, and test as separate jobs.
 

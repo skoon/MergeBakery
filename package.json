@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "balance": "vitest run src/sim --silent=false",
-    "art:placeholders": "node scripts/gen-placeholder-art.js"
+    "art:placeholders": "node scripts/gen-placeholder-art.js",
+    "ui-check": "npx -y -p playwright node scripts/ui-check.js"
   },
   "dependencies": {
     "pixi.js": "^8.21.0",

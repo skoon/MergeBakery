@@ -3,7 +3,6 @@
 .counter-strip {
   display: flex;
   align-items: stretch;
-  justify-content: center;
   gap: var(--space-1);
   min-height: calc(104px * var(--ui-scale));
   width: 100%;
@@ -16,10 +15,21 @@
   border-bottom: 1px solid var(--color-crust);
 }
 
+/* Centred while they fit. Auto margins, unlike justify-content, keep the first card
+   in reach of the scroll when they don't. */
+.counter-card:first-child {
+  margin-left: auto;
+}
+
+.counter-card:last-child {
+  margin-right: auto;
+}
+
 .counter-card {
-  flex: 1 0 calc(25% - var(--space-1));
-  min-width: 0;
-  max-width: 25%;
+  flex: 0 0 auto;
+  /* Four to a row at the normal text size; wider, and scrolling sideways, as the text grows. */
+  min-width: max(calc(25% - var(--space-1)), 6.5em);
+  font-size: var(--font-size-xs);
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   grid-template-areas:
@@ -50,14 +60,14 @@
 
 .counter-card-name {
   grid-area: name;
-  justify-self: start;
-  font-size: var(--font-size-xs);
+  /* Fills the card but never widens it: a long name is cut short instead. */
+  width: 0;
+  min-width: 100%;
   font-weight: 600;
   color: var(--color-ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
 }
 
 .counter-card-wants {
@@ -70,12 +80,14 @@
 
 .counter-card-want {
   position: relative;
-  width: calc(18px * var(--ui-scale));
+  display: flex;
+  align-items: center;
+  gap: 2px;
   height: calc(18px * var(--ui-scale));
 }
 
 .counter-card-want-art {
-  width: 100%;
+  width: calc(18px * var(--ui-scale));
   height: 100%;
   object-fit: contain;
 }
@@ -88,7 +100,7 @@
   position: absolute;
   right: -3px;
   bottom: -3px;
-  font-size: 9px;
+  font-size: calc(9px * var(--ui-scale));
   line-height: 1;
   color: var(--color-cream);
   background: var(--color-mint);
@@ -102,11 +114,10 @@
 
 .counter-card-reward {
   grid-area: reward;
-  font-size: var(--font-size-xs);
   line-height: 1.2;
   color: var(--color-ink);
-  /* Event cards add a pride reward, which wraps instead of overflowing the card. */
-  text-align: center;
+  /* One line: a long reward (event cards add pride) widens the card instead of wrapping. */
+  white-space: nowrap;
 }
 
 .counter-card-deliver {
@@ -115,8 +126,7 @@
   border: none;
   border-radius: 4px;
   padding: 1px var(--space-1);
-  font-family: var(--font-body);
-  font-size: var(--font-size-xs);
+  font: inherit;
   line-height: 1.4;
   background: var(--color-mint);
   color: var(--color-ink);
@@ -153,11 +163,8 @@
 }
 
 .counter-card-want-count {
-  position: absolute;
-  right: 0;
-  bottom: 0;
   padding: 0 2px;
-  font-size: calc(0.65rem * var(--text-scale));
+  line-height: 1.2;
   font-weight: 700;
   color: var(--color-cream);
   background: var(--color-crust);

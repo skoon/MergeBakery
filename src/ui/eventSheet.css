@@ -1,10 +1,11 @@
 /* MegaBun event pill, sheet and result card (T8.5). */
 
+/* The pill is the last thing in the top chrome, so the board starts below it. */
 .event-pill {
-  position: absolute;
-  right: var(--space-2);
-  top: calc(var(--hud-height) + var(--counter-height));
-  z-index: 12;
+  align-self: flex-end;
+  max-width: calc(100% - 2 * var(--space-2));
+  box-sizing: border-box;
+  margin: var(--space-1) var(--space-2) 0;
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -23,15 +24,28 @@
   display: none;
 }
 
+.event-pill__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-pill__time {
+  flex: none;
+  white-space: nowrap;
+}
+
 .event-pill__badge {
-  min-width: calc(20px * var(--ui-scale));
-  padding: 0 4px;
+  flex: none;
+  min-width: 1.5em;
+  padding: 0 0.3em;
   box-sizing: border-box;
-  line-height: 20px;
+  line-height: 1.5;
   text-align: center;
   color: var(--color-cream);
   background: var(--color-strawberry);
-  border-radius: 10px;
+  border-radius: 0.75em;
 }
 
 .event-pill__badge[hidden] {
@@ -42,7 +56,13 @@
   position: absolute;
   left: var(--space-2);
   right: var(--space-2);
-  top: calc(var(--hud-height) + var(--counter-height) + 40px);
+  top: calc(var(--hud-height) + var(--counter-height));
+  /* Down to the nav bar at most; a long list of milestones scrolls. */
+  max-height: calc(
+    100% - var(--hud-height) - var(--counter-height) - var(--nav-height) -
+      var(--space-2)
+  );
+  overflow-y: auto;
   z-index: 13;
   box-sizing: border-box;
   padding: var(--space-4);
@@ -59,19 +79,26 @@
 
 .event-sheet__head {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   gap: var(--space-3);
   margin-bottom: var(--space-3);
 }
 
+.event-sheet__time {
+  white-space: nowrap;
+}
+
+/* The name takes the first row; the time left and Close share the second. */
 .event-sheet__title {
-  flex: 1;
+  flex: 1 1 100%;
   margin: 0;
   font-size: var(--font-size-lg);
   color: var(--color-crust);
 }
 
 .event-sheet__close {
+  margin-left: auto;
   font: inherit;
   font-size: var(--font-size-sm);
   background: none;
@@ -177,7 +204,7 @@
 }
 
 .event-result__card {
-  width: min(320px, 100%);
+  width: min(20em, 100%);
   box-sizing: border-box;
   padding: var(--space-5);
   text-align: center;

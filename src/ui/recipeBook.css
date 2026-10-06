@@ -28,7 +28,8 @@
 
 .book-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  /* In em, so a tile stays wide enough for its text at every size. */
+  grid-template-columns: repeat(auto-fill, minmax(6em, 1fr));
   gap: var(--space-2);
 }
 
@@ -38,7 +39,9 @@
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-2);
+  min-width: 0;
   text-align: center;
+  overflow-wrap: anywhere;
   background: rgba(255, 255, 255, 0.6);
   border: 1px solid var(--color-crust);
   border-radius: var(--space-2);

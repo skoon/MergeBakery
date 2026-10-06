@@ -44,11 +44,11 @@ export function mountPantryDrawer(
   const pantryButton = document.createElement('button');
   pantryButton.type = 'button';
   pantryButton.className = 'pantry-toggle tray-btn--pantry';
-  const { label: pantryLabel } = styleTrayButton(
-    pantryButton,
-    'btn-pantry',
-    'Pantry',
-  );
+  styleTrayButton(pantryButton, 'btn-pantry', 'Pantry');
+  // Used and capacity, as a badge like the Oven's, so the label stays one line (T-R4).
+  const pantryCount = document.createElement('span');
+  pantryCount.className = 'tray-btn__badge';
+  pantryButton.appendChild(pantryCount);
   tray.prepend(pantryButton);
 
   const drawer = document.createElement('div');
@@ -165,10 +165,10 @@ export function mountPantryDrawer(
   function render(): void {
     const model = pantryModel(store.data, store.getState());
 
-    pantryLabel.replaceChildren(
-      'Pantry',
-      document.createElement('br'),
-      `${model.used}/${model.capacity}`,
+    pantryCount.textContent = `${model.used}/${model.capacity}`;
+    pantryButton.setAttribute(
+      'aria-label',
+      `Pantry, ${model.used} of ${model.capacity} used`,
     );
 
     tiles.innerHTML = '';

@@ -21,7 +21,8 @@ body {
 
   position: relative;
   width: 100%;
-  max-width: 720px;
+  /* Always a portrait column, in a wide window too (T-R3): the board is taller than wide. */
+  max-width: min(720px, max(320px, 70dvh));
   height: 100dvh;
   margin-inline: auto;
   background: var(--color-cream);
@@ -52,8 +53,8 @@ img {
 }
 
 /* The chrome sizes to its content, so it grows with the text size. chromeMetrics.ts measures
-   it and overwrites the four heights above for the sheets anchored to it. The caps leave
-   the board at least 40% of the height; past them, text in the bars is truncated. */
+   it, overwrites the four heights above for the sheets anchored to it, and gives the bars a
+   smaller --ui-scale of their own when they would take more than half the height. */
 #top,
 #bottom {
   position: absolute;
@@ -65,13 +66,10 @@ img {
 
 #top {
   top: 0;
-  max-height: 38%;
-  overflow: hidden;
 }
 
 #bottom {
   bottom: 0;
-  max-height: 30%;
 }
 
 #hud {
@@ -80,14 +78,12 @@ img {
 }
 
 #counter {
-  flex: 0 1 auto;
-  min-height: 0;
-  /* Scrolls when the chrome cap is reached, so no order card is ever out of reach. */
-  overflow-y: auto;
+  flex: 0 0 auto;
 }
 
 #tray {
   flex: 1 1 auto;
+  box-sizing: border-box;
   min-height: calc(80px * var(--ui-scale));
   display: flex;
   align-items: stretch;
@@ -106,9 +102,6 @@ img {
 .tray-btn--sell {
   order: 3;
 }
-.sell-bin-undo-container {
-  order: 4;
-}
 .help-toggle {
   order: 5;
 }
@@ -117,6 +110,8 @@ img {
   flex: 0 0 auto;
   min-height: calc(56px * var(--ui-scale));
   display: flex;
+  /* The tabs size their text against the bar's width (navBar.css). */
+  container-type: inline-size;
   background: var(--color-butter);
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 }

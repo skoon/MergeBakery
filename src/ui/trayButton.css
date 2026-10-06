@@ -8,7 +8,7 @@
   min-width: min-content;
   max-width: calc(96px * var(--ui-scale));
   /* 44 px is the smallest comfortable touch target. */
-  min-height: 56px;
+  min-height: 44px;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -59,14 +59,33 @@
   max-width: 100%;
 }
 
-/* Short screens: smaller icons, so the tray and nav bar don't crowd out the board. */
-@media (max-height: 640px) {
-  .tray-btn {
-    min-height: 44px;
-  }
+/* A count on the button's corner: Pantry slots used, bakes ready (Oven), seconds left to
+   undo (Sell). Sized in em, so it always fits its number. Half of it sits above the button,
+   clear of the icon, and it stays within the gap to the next button. */
+.tray-btn__badge {
+  position: absolute;
+  top: -0.8em;
+  right: calc(-8px * var(--ui-scale));
+  min-width: 1.6em;
+  padding: 0 0.3em;
+  box-sizing: border-box;
+  font-size: calc(0.9 * var(--font-size-xs));
+  line-height: 1.6;
+  color: var(--color-cream);
+  background: var(--color-strawberry);
+  border-radius: 0.8em;
+}
 
-  .tray-btn__icon {
-    width: calc(20px * var(--ui-scale));
-    height: calc(20px * var(--ui-scale));
-  }
+.tray-btn__badge[hidden] {
+  display: none;
+}
+
+/* A plain count, not a call for attention. */
+.tray-btn--pantry .tray-btn__badge {
+  background: var(--color-crust);
+}
+
+.tray-btn--sell .tray-btn__badge {
+  color: var(--color-ink);
+  background: var(--color-butter);
 }

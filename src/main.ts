@@ -68,6 +68,7 @@ const counter = requireElement('#counter');
 const tray = requireElement('#tray');
 const nav = requireElement('#nav');
 const screensRoot = requireElement('#screens');
+const topChrome = requireElement('#top');
 
 // Offline play and installing (T5.13). With autoUpdate, a new version takes over
 // on the next load; saves live in localStorage, which an update never touches.
@@ -114,7 +115,7 @@ const chrome = mountChromeMetrics(
     counter,
     tray,
     nav,
-    top: requireElement('#top'),
+    top: topChrome,
     bottom: requireElement('#bottom'),
   },
   () => relayout(),
@@ -137,7 +138,7 @@ mountHelpDialog(tray, overlayRoot, store);
 mountKitchen(tray, overlayRoot, store, () => Date.now());
 mountDiscoveryCard(overlayRoot, store, settings);
 mountRushBubble(overlayRoot, store, boardView, () => Date.now());
-mountEventSheet(overlayRoot, store, () => Date.now());
+mountEventSheet(topChrome, overlayRoot, store, () => Date.now());
 
 // Story scenes (T5.5): the chapter intro on a new game, and a scene when a
 // renovation task that has one completes. The player queues them.
@@ -264,5 +265,5 @@ startMusic(store, audio, parseMusic(musicData, [...data.chapters.keys()]));
 // Console helpers for testing; a dynamic import keeps them out of production builds.
 if (import.meta.env.DEV) {
   const { installDevTools } = await import('./ui/devTools');
-  installDevTools(store, stopAutosave);
+  installDevTools(store, stopAutosave, settings);
 }
