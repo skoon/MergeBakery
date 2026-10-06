@@ -29,6 +29,8 @@
   flex: 0 0 auto;
   /* Four to a row at the normal text size; wider, and scrolling sideways, as the text grows. */
   min-width: max(calc(25% - var(--space-1)), 6.5em);
+  /* Holds the Deliver button's stretched tap area. */
+  position: relative;
   font-size: var(--font-size-xs);
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -131,6 +133,13 @@
   background: var(--color-mint);
   color: var(--color-ink);
   cursor: pointer;
+}
+
+/* The button is too short to hit reliably, so a press anywhere on its card counts. */
+.counter-card-deliver::after {
+  content: '';
+  position: absolute;
+  inset: 0;
 }
 
 .counter-card-deliver:disabled {

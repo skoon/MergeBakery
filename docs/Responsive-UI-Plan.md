@@ -24,14 +24,13 @@ Where the build differs from the tasks below:
 - **Pantry count.** A badge on the button's corner, like the Oven's, so the label stays one line.
 - **Column width.** `min(720px, max(320px, 70dvh))`: 720 px on a tablet, a portrait column in a wide window.
 - **Spacing.** The `--space-*` tokens are still fixed px; only icons, bars, badges and text scale.
+- **Deliver.** The button is still a thin bar (about 20 px), but a press anywhere on its order card counts, so the tap area is the card (72×85 px on the smallest phone). A taller button would have taken height from the board. The check holds it to 44 px like the tray buttons.
 
 Still open:
 
 - The button art (T-R5) needs Scott's approval.
 - Nothing was checked on a real phone or outside Chromium. The layout uses container query units (`cqw`), which need Safari 16 or Firefox 110.
 - A phone held sideways (for example 740×360) is not usable: the board gets about a quarter of the height. The installed app is locked to portrait.
-- Deliver buttons on the smallest phone are under 44 px tall; only the tray buttons were held to that size.
-
 ## What is wrong today (found by reading the code)
 
 1. **Fixed-height chrome.** `#hud` 56 px, `#counter` 104 px, `#tray` 80 px and `#nav` 56 px are fixed (`app.css`). Text scales with `--text-scale` (`tokens.css`), the boxes holding it don't, so at 150% the HUD labels, counter cards and tray buttons overflow and overlap.

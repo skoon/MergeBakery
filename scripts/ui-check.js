@@ -159,10 +159,22 @@ async function audit(minBoardShare) {
     }
   }
 
-  for (const el of app.querySelectorAll('#tray button')) {
+  // A Deliver button is pressed through its ::after, which is stretched over the card.
+  const tapArea = (el) => {
+    const after = getComputedStyle(el, '::after');
+    return el.matches('.counter-card-deliver') && after.position === 'absolute'
+      ? {
+          width: Number.parseFloat(after.width),
+          height: Number.parseFloat(after.height),
+        }
+      : el.getBoundingClientRect();
+  };
+  for (const el of app.querySelectorAll(
+    '#tray button, .counter-card-deliver',
+  )) {
     if (!el.checkVisibility()) continue;
-    const r = el.getBoundingClientRect();
-    if (r.width < 44 - SLACK || r.height < 44 - SLACK) {
+    const r = tapArea(el);
+    if (!(r.width >= 44 - SLACK && r.height >= 44 - SLACK)) {
       problems.add(
         `small tap target: ${label(el)} ${Math.round(r.width)}x${Math.round(r.height)}`,
       );
