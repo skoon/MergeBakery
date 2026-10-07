@@ -3,23 +3,30 @@
 .help-toggle {
   flex: 0 0 auto;
   margin-left: var(--space-2);
-  /* 44 px is the smallest comfortable touch target. */
-  width: max(44px, calc(44px * var(--ui-scale)));
-  height: max(44px, calc(44px * var(--ui-scale)));
+  /* 44 px is the smallest comfortable touch target; 1.2em (the glyph's full height) + 16px keeps the "?" inside the plate's border. */
+  width: max(44px, calc(44px * var(--ui-scale)), calc(1.2em + 16px));
+  height: max(44px, calc(44px * var(--ui-scale)), calc(1.2em + 16px));
   padding: 0;
   font: inherit;
   font-size: var(--font-size-lg);
   font-weight: 700;
   line-height: 1;
   color: var(--color-ink);
-  background: var(--color-cream);
-  border: 1px solid var(--color-crust);
-  border-radius: 50%;
+  /* The same plate as the other tray buttons (T-R5); the "?" is its icon and label in one. */
+  background: none;
+  border: 8px solid transparent;
+  border-image: url('/art/button-plate.png') 4 fill / 8px / 0 stretch;
+  image-rendering: pixelated;
   cursor: pointer;
 }
 
 .help-toggle:hover {
-  background: var(--color-butter);
+  border-image-source: url('/art/button-plate-butter.png');
+}
+
+.help-toggle:active {
+  transform: translateY(1px);
+  filter: brightness(0.92);
 }
 
 .help-dialog {
