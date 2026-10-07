@@ -23,13 +23,12 @@ Where the build differs from the tasks below:
 - **Undo.** For the undo window the Sell button itself reads Undo, with the seconds left as a badge. A separate Undo button pushed `?` off the tray.
 - **Pantry count.** A badge on the button's corner, like the Oven's, so the label stays one line.
 - **Column width.** `min(720px, max(320px, 70dvh))`: 720 px on a tablet, a portrait column in a wide window.
-- **Button art (T-R5).** All four tray buttons sit on the pixel plate. `?` has no separate icon: the glyph on the plate is its icon and label in one. Pressed buttons drop 1 px and darken. There is no disabled look, because no tray button is ever disabled.
+- **Button art (T-R5).** All four tray buttons sit on the pixel plate. `?` has no separate icon: the glyph on the plate is its icon and label in one. Pressed buttons drop 1 px and darken. There is no disabled look, because no tray button is ever disabled. Scott approved the art on Oct 6.
 - **Spacing.** The `--space-*` tokens are still fixed px; only icons, bars, badges and text scale.
 - **Deliver.** The button is still a thin bar (about 20 px), but a press anywhere on its order card counts, so the tap area is the card (72×85 px on the smallest phone). A taller button would have taken height from the board. The check holds it to 44 px like the tray buttons.
 
 Still open:
 
-- The button art (T-R5) is built, but Scott has not signed it off. Review sheet: `scripts/art/buttons_sheet.png`.
 - Nothing was checked on a real phone or outside Chromium. The layout uses container query units (`cqw`), which need Safari 16 or Firefox 110.
 - A phone held sideways (for example 740×360) is not usable: the board gets about a quarter of the height. The installed app is locked to portrait.
 
