@@ -116,26 +116,36 @@
   transition: width 1s linear;
 }
 
+/* On a pixel plate, like the tray buttons (trayButton.css). */
 .kitchen-button {
+  --plate: url('/art/button-plate-crust.png');
   flex: 0 0 auto;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-1) var(--space-2);
   font: inherit;
   font-size: var(--font-size-sm);
   font-weight: 700;
   color: var(--color-cream);
-  background: var(--color-crust);
-  border: none;
-  border-radius: var(--space-2);
+  background: none;
+  border: 8px solid transparent;
+  border-image: var(--plate) 4 fill / 8px / 0 stretch;
+  image-rendering: pixelated;
   cursor: pointer;
 }
 
-.kitchen-button--secondary {
-  color: var(--color-ink);
-  background: var(--color-butter);
+.kitchen-button:active:enabled {
+  transform: translateY(1px);
+  filter: brightness(0.92);
 }
 
+.kitchen-button--secondary {
+  --plate: url('/art/button-plate-butter.png');
+  color: var(--color-ink);
+}
+
+/* Faded, but the text stays readable. */
 .kitchen-button:disabled {
-  opacity: 0.45;
+  opacity: 0.55;
+  filter: saturate(0.5);
   cursor: default;
 }
 

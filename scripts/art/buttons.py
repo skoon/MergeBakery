@@ -1,4 +1,4 @@
-"""Tray buttons: three 16x16 nine-slice plates (cream, butter, strawberry) and the Pantry icon."""
+"""Tray, nav and recipe buttons: 16x16 nine-slice plates and the Pantry icon."""
 import os
 from PIL import Image
 from pixart import hex_rgba, INK
@@ -6,7 +6,7 @@ from pixart import hex_rgba, INK
 def plate(fill, light, shade):
     """Rounded plate: ink outline, light top-left bevel, shade bottom-right. Corners 4px, so slice = 4."""
     img = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
-    f, l, s, o = hex_rgba(fill), hex_rgba(light), hex_rgba(shade), hex_rgba(INK)
+    f, l, s, o = (c if isinstance(c, tuple) else hex_rgba(c) for c in (fill, light, shade, INK))
     for y in range(16):
         for x in range(16):
             cx, cy = min(x, 15 - x), min(y, 15 - y)  # distance to the nearest edge
@@ -53,6 +53,10 @@ ICONS = {
     'button-plate': plate('#fff6e6', '#ffffff', '#e8d4b0'),
     'button-plate-butter': plate('#f7d774', '#fff0a8', '#d9b24c'),
     'button-plate-red': plate('#f27ba0', '#ffa8c4', '#c85a80'),
+    'button-plate-crust': plate('#9c5b2e', '#c98a4b', '#6e3e1c'),
+    'nav-plate': plate('#dcb06a', '#f0cf8a', '#a8703a'),
+    # Clear fill with a see-through bevel: the element's background colour shows through (recipe tabs).
+    'button-plate-tint': plate((0, 0, 0, 0), (255, 255, 255, 120), (0, 0, 0, 50)),
     'btn-pantry': grid(PANTRY),
 }
 if __name__ == '__main__':

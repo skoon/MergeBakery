@@ -8,22 +8,40 @@
   margin-bottom: var(--space-3);
 }
 
+/* A pixel plate in the chain's colour: the plate is clear, so the background shows through it.
+   The radius only trims the background from the plate's cut corners. */
 .book-tab {
   flex: 0 0 auto;
-  padding: var(--space-1) var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-1);
   font: inherit;
   font-size: var(--font-size-sm);
   font-weight: 700;
   white-space: nowrap;
   color: var(--color-ink);
-  background: var(--color-cream);
-  border: 2px solid var(--chain-color, var(--color-crust));
-  border-radius: 999px;
+  background: color-mix(in srgb, var(--chain-color, var(--color-butter)) 35%, var(--color-cream));
+  border: 8px solid transparent;
+  border-image: url('/art/button-plate-tint.png') 4 fill / 8px / 0 stretch;
+  border-radius: 4px;
+  image-rendering: pixelated;
   cursor: pointer;
 }
 
 .book-tab[aria-selected='true'] {
   background: var(--chain-color, var(--color-butter));
+}
+
+.book-tab__icon {
+  flex: 0 0 auto;
+  width: calc(20px * var(--ui-scale));
+  height: calc(20px * var(--ui-scale));
+}
+
+.book-tab__icon[data-discovered='false'] {
+  filter: brightness(0);
+  opacity: 0.25;
 }
 
 .book-grid {

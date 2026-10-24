@@ -40,7 +40,19 @@ export function mountRecipeBook(
         tab.setAttribute('role', 'tab');
         tab.setAttribute('aria-selected', String(p.chainId === selected));
         tab.style.setProperty('--chain-color', p.color);
-        tab.textContent = `${p.name} ${p.discoveredCount.toString()}/${p.items.length.toString()}${p.rewarded ? ' ✓' : ''}`;
+        // The chain's first item is its icon, a silhouette until discovered.
+        const first = p.items[0];
+        if (first) {
+          const icon = document.createElement('img');
+          icon.className = 'book-tab__icon';
+          icon.alt = '';
+          icon.dataset['discovered'] = String(first.discovered);
+          setImageArt(icon, first.spriteKey);
+          tab.appendChild(icon);
+        }
+        tab.append(
+          `${p.name} ${p.discoveredCount.toString()}/${p.items.length.toString()}${p.rewarded ? ' ✓' : ''}`,
+        );
         tab.addEventListener('click', () => {
           selected = p.chainId;
           render();

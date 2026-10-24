@@ -6,6 +6,7 @@
  */
 
 import './navBar.css';
+import { setImageArt } from '../render/assets';
 import type { Router, ScreenId } from './router';
 
 export interface ScreenDef {
@@ -14,6 +15,14 @@ export interface ScreenDef {
   /** Builds the screen's contents into `container`. Called once, the first time the screen opens. */
   mount(container: HTMLElement): void;
 }
+
+const TAB_ICONS: Record<ScreenId, string> = {
+  board: 'nav-board',
+  recipeBook: 'nav-recipes',
+  bakery: 'nav-bakery',
+  shop: 'nav-shop',
+  settings: 'nav-settings',
+};
 
 export function mountNavBar(
   nav: HTMLElement,
@@ -31,7 +40,14 @@ export function mountNavBar(
     button.type = 'button';
     button.className = 'nav-tab';
     button.dataset['screen'] = id;
-    button.textContent = label;
+    const icon = document.createElement('img');
+    icon.className = 'nav-tab__icon';
+    icon.alt = '';
+    setImageArt(icon, TAB_ICONS[id]);
+    const text = document.createElement('span');
+    text.className = 'nav-tab__label';
+    text.textContent = label;
+    button.append(icon, text);
     button.addEventListener('click', () => {
       router.show(id);
     });

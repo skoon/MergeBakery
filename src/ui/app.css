@@ -112,8 +112,9 @@ img {
   display: flex;
   /* The tabs size their text against the bar's width (navBar.css). */
   container-type: inline-size;
-  background: var(--color-butter);
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  /* A wooden shelf: only the plate's top edge and its fill are drawn, over the tabs' padding. */
+  border-image: url('/art/nav-plate.png') 4 fill / 8px 0 0 / 0 stretch;
+  image-rendering: pixelated;
 }
 
 /* Full-height screens cover everything between the HUD and the nav bar,
