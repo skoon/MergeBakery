@@ -38,7 +38,7 @@ body {
   display: block;
 }
 
-/* Item art is 16x16 pixel art; keep it crisp when scaled up. */
+/* Item art is 32x32 pixel art; keep it crisp when scaled. */
 img {
   image-rendering: pixelated;
 }
