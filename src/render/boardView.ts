@@ -64,6 +64,8 @@ export interface BoardView {
   readonly effectsLayer: Container;
   /** Called when the player taps a generator that is cooling down (T6.5). */
   onCoolingTap(listener: (cell: CellIndex) => void): void;
+  /** Called when a generator merge is refused for want of coins (T13). */
+  onMergeUnaffordable(listener: (from: CellIndex, to: CellIndex) => void): void;
 }
 
 /** Tracks a press that may turn into a drag, from pointerdown to pointerup. */
@@ -454,7 +456,16 @@ export async function createBoardView(
         board.rows,
       );
       if (target !== null) {
-        store.dispatch({ type: 'drop', from: state.cell, to: target });
+        const result = store.dispatch({
+          type: 'drop',
+          from: state.cell,
+          to: target,
+        });
+        if (!result.ok && result.reason === 'notEnoughCoins') {
+          for (const listener of unaffordableListeners) {
+            listener(state.cell, target);
+          }
+        }
       }
     }
 
@@ -465,6 +476,8 @@ export async function createBoardView(
   }
 
   const coolingTapListeners: ((cell: CellIndex) => void)[] = [];
+  const unaffordableListeners: ((from: CellIndex, to: CellIndex) => void)[] =
+    [];
 
   function handleTap(state: PointerTracking): void {
     if (store.data.generators.has(state.itemId)) {
@@ -570,6 +583,10 @@ export async function createBoardView(
 
     onCoolingTap(listener) {
       coolingTapListeners.push(listener);
+    },
+
+    onMergeUnaffordable(listener) {
+      unaffordableListeners.push(listener);
     },
   };
 }

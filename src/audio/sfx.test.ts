@@ -120,6 +120,9 @@ describe('soundForEvent', () => {
       [500],
     );
     expect(
+      play({ type: 'itemBought', itemId: 'croissant', coins: 768 }),
+    ).toEqual([500]);
+    expect(
       play({
         type: 'collected',
         itemId: 'coin-pouch',

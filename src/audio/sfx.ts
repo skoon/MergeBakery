@@ -116,6 +116,7 @@ export function soundForEvent(
       return sfx['renovation'] ?? null;
     case 'sold':
     case 'purchased':
+    case 'itemBought':
       return sfx['sell'] ?? null;
     case 'collected':
     case 'cooldownRushed':

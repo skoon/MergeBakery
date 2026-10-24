@@ -43,13 +43,13 @@ The color token test page is at `/dev/tokens.html` while the dev server runs.
 
 Targets from the GDD: 60 fps on a mid-range phone, under 5 MB initial download, first merge within 10 seconds of load.
 
-Measured on Oct 3, 2026 from `npm run build` (Vite 8, all five chapters, all art):
+Measured on Oct 24, 2026 from `npm run build` (Vite 8, all five chapters, all art):
 
-| What                     | Size                                                                                                                      |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| Whole `dist/` folder     | about 1.27 MB (496 art files in 212 KB)                                                                                   |
-| JavaScript, CSS and HTML | 968 kB raw, 280 kB gzipped (the game bundle is 396 kB raw, 111 kB gzipped; PixiJS's renderer chunks are most of the rest) |
-| Service worker precache  | 529 entries, 1.14 MiB                                                                                                     |
+| What                     | Size                                                                                                                       |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| Whole `dist/` folder     | about 1.26 MB (511 art files in 202 KB)                                                                                    |
+| JavaScript, CSS and HTML | 1.04 MB raw, 301 kB gzipped (the game bundle is 401 kB raw, 112 kB gzipped; PixiJS's renderer chunks are most of the rest) |
+| Service worker precache  | 544 entries, 1.13 MiB                                                                                                      |
 
 The size target holds with a wide margin: the whole game, art included, is a quarter of the budget.
 

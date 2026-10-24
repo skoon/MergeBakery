@@ -39,3 +39,17 @@ export function canMerge(data: GameData, a: ItemId, b: ItemId): boolean {
   const mergedItem = nextTier(data, a);
   return mergedItem !== null;
 }
+
+/**
+ * Coins to merge two of `itemId`: first + step × (tier − 1) for a generator,
+ * 0 for anything else. Throws on an unknown id.
+ */
+export function mergeCost(data: GameData, itemId: ItemId): number {
+  const item = data.items.get(itemId);
+  if (!item) {
+    throw new Error(`mergeCost: unknown item id "${itemId}"`);
+  }
+  if (data.chains.get(item.chainId)?.kind !== 'generator') return 0;
+  const { first, step } = data.economy.generatorMerge;
+  return first + step * (item.tier - 1);
+}

@@ -1,3 +1,12 @@
+# Phase 13 — Coin sinks
+
+Scott, Oct 24: players end up with far more coins than they can spend. Contract approved Oct 24: `Economy.generatorMerge` and `orderShop`, `buyOrderItem`, `merged.coins`, `itemBought`. No save change. Branch `t13-coin-sinks`.
+
+- [x] T13.1 Generator merges cost coins: 500 to merge two tier-1 generators, 1000 for tier 2 (`economy.json` `generatorMerge`). A five-item merge pays for both generators it makes. Refused with `notEnoughCoins`; a "Needs N coins" bubble shows over the target (`coinBubble.ts`). The catering upgrade stays free
+- [x] T13.2 "For your orders" in the Shop (`orderShop.ts`): every ingredient or baked item the open orders want more of than the player holds, at max(25, sell value × 8) (`orderShop` in `economy.json`). It lands like a Shop generator, and is never discovered, so it can't complete a Recipe Book page or pay its gems
+- [x] T13.3 Balance: the bot never merges generators, so T13.1 doesn't touch it. Out of energy, it now buys an order's last missing item before an energy pack. All 5 seeds still finish (Chapter 5 on days 8–13, was 8–10); it buys 4–17 items for 100–609 coins, and ends with 4,682–7,573 coins (was 1,255–8,416)
+- [ ] T13.4 Scott plays with the new costs: the bubble, the Shop section, and whether coins still pile up
+
 # Phase 12 — Whole-game pass
 
 Source: Implementation Plan, Phase 12. Chapter 5 was merged to `main` on Oct 3 (Scott: "go ahead and merge"). Branches t12.1 … t12.4, stacked on `main`.

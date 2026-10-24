@@ -348,6 +348,11 @@ const economySchema: z.ZodType<Economy> = z.strictObject({
   sellUndoSec: z.number(),
   goldenWhiskMaxTier: z.number(),
   orders: orderRulesSchema,
+  generatorMerge: z.strictObject({ first: z.number(), step: z.number() }),
+  orderShop: z.strictObject({
+    priceMultiplier: z.number(),
+    minPrice: z.number(),
+  }),
 });
 
 // ─── Zod schemas: new game (newGame.json) ───────────────────────────────────

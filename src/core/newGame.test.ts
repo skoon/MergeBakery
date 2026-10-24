@@ -26,6 +26,8 @@ const ECONOMY: Economy = {
   rushGemsPerMinute: 1,
   sellUndoSec: 10,
   goldenWhiskMaxTier: 5,
+  generatorMerge: { first: 500, step: 500 },
+  orderShop: { priceMultiplier: 8, minPrice: 25 },
   orders: {
     maxOpen: 4,
     refillDelaySec: 5,

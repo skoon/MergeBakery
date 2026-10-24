@@ -5,6 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import { shopModel } from './shopModel';
 import { stateWith, testData } from '../core/testing';
+import type { Order } from '../core/types';
 
 describe('shopModel', () => {
   it("lists the real Chapter 1 rows with each one's art, detail and affordability", () => {
@@ -48,5 +49,58 @@ describe('shopModel', () => {
     };
 
     expect(shopModel(testData, state).pantrySlot).toBeNull();
+  });
+});
+
+describe('shopModel: for your orders (T13)', () => {
+  const [a, b] = [...testData.customers.values()];
+  const order = (id: number, customerId: string, wants: string[]): Order => ({
+    id,
+    customerId,
+    wants,
+    reward: { coins: 10, stars: 1, xp: 1 },
+  });
+
+  it('lists what open orders still need, with who wants it and the price', () => {
+    const model = shopModel(
+      testData,
+      stateWith(
+        {},
+        {
+          coins: 800,
+          orders: [
+            order(1, a!.id, ['croissant']),
+            order(2, b!.id, ['croissant', 'berry']),
+          ],
+        },
+      ),
+    );
+
+    expect(model.forOrders).toEqual([
+      {
+        itemId: 'croissant',
+        name: 'Croissant',
+        spriteKey: 'croissant',
+        detail: `For ${a!.name} and ${b!.name}, 2 needed`,
+        price: 768,
+        affordable: true,
+      },
+      {
+        itemId: 'berry',
+        name: testData.items.get('berry')!.name,
+        spriteKey: 'berry',
+        detail: `For ${b!.name}`,
+        price: 25,
+        affordable: true,
+      },
+    ]);
+  });
+
+  it('is empty when the player already has everything the orders want', () => {
+    const model = shopModel(
+      testData,
+      stateWith({ 0: 'berry' }, { orders: [order(1, a!.id, ['berry'])] }),
+    );
+    expect(model.forOrders).toEqual([]);
   });
 });

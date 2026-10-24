@@ -22,7 +22,8 @@
  * `WholesaleRules`, `OrderRules.wholesale`, `hireStaff`, `assignStaff`,
  * `notEnoughReputation`, `staffHired`, `staffActed` and `wholesaleExpired`.
  * Automation (T11.2, Scott, Oct 3): `StaffRole` 'oven', `StaffState.assignedRecipe`
- * and `assignStaff`'s `recipeId`.
+ * and `assignStaff`'s `recipeId`. Coin sinks (T13, Scott, Oct 24): `Economy.generatorMerge`
+ * and `orderShop`, `buyOrderItem`, `merged.coins` and `itemBought`.
  *
  * Conventions every core function follows:
  * - Core functions are pure: they never mutate their inputs and return new
@@ -458,6 +459,13 @@ export interface Economy {
   readonly sellUndoSec: number;
   readonly goldenWhiskMaxTier: number;
   readonly orders: OrderRules;
+  /** Coins to merge two generators: first + step × (tier − 1), for the tier being merged. */
+  readonly generatorMerge: { readonly first: number; readonly step: number };
+  /** "For your orders" Shop rows: price = max(minPrice, sellValue × priceMultiplier). */
+  readonly orderShop: {
+    readonly priceMultiplier: number;
+    readonly minPrice: number;
+  };
 }
 
 // ─── Static data: new game (newGame.json) ───────────────────────────────────
@@ -717,6 +725,8 @@ type ActionBody =
   | { readonly type: 'completeTask'; readonly taskId: TaskId }
   /** Buy something from the Shop (T7.8). */
   | { readonly type: 'buyShopItem'; readonly shopItemId: ShopItemId }
+  /** Buy one of an item an open order still needs. Buying doesn't discover it. */
+  | { readonly type: 'buyOrderItem'; readonly itemId: ItemId }
   /** Claim a reached milestone of the running event (T8.1). */
   | { readonly type: 'claimMilestone'; readonly index: number }
   | { readonly type: 'dismissEventResult' }
@@ -776,6 +786,8 @@ export type GameEvent =
       readonly type: 'merged';
       readonly itemId: ItemId;
       readonly cells: readonly CellIndex[];
+      /** Coins paid, for a generator merge. */
+      readonly coins?: number;
     }
   | {
       readonly type: 'spawned';
@@ -834,6 +846,11 @@ export type GameEvent =
   | {
       readonly type: 'purchased';
       readonly shopItemId: ShopItemId;
+      readonly coins: number;
+    }
+  | {
+      readonly type: 'itemBought';
+      readonly itemId: ItemId;
       readonly coins: number;
     }
   | { readonly type: 'cateringExpired'; readonly orderId: OrderId }

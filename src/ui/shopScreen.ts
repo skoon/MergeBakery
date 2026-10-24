@@ -1,6 +1,6 @@
 /**
  * The Shop screen (T7.8): spend coins on extra generators, energy and Pantry
- * slots.
+ * slots, and (T13) on items open orders still need.
  */
 
 import './shopScreen.css';
@@ -12,6 +12,7 @@ import type { GameStore } from './store';
 const WHY: Partial<Record<RejectReason, string>> = {
   boardFull: 'No room on the board or in the Pantry. Clear a space first.',
   notEnoughCoins: 'Not enough coins yet.',
+  prerequisitesMissing: 'No order needs that any more.',
 };
 
 export function mountShop(container: HTMLElement, store: GameStore): void {
@@ -93,7 +94,27 @@ export function mountShop(container: HTMLElement, store: GameStore): void {
         ),
       );
     }
-    list.replaceChildren(...rows);
+    const heading = (text: string): HTMLElement => {
+      const el = document.createElement('h3');
+      el.className = 'shop-heading';
+      el.textContent = text;
+      return el;
+    };
+    const forOrders = model.forOrders.map((r) =>
+      row(r.spriteKey, r.name, r.detail, r.price, r.affordable, () => {
+        const result = store.dispatch({
+          type: 'buyOrderItem',
+          itemId: r.itemId,
+        });
+        return result.ok ? null : result.reason;
+      }),
+    );
+    list.replaceChildren(
+      ...(forOrders.length > 0
+        ? [heading('For your orders'), ...forOrders, heading('Bakery supplies')]
+        : []),
+      ...rows,
+    );
   }
 
   store.subscribe(render);

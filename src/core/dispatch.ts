@@ -15,6 +15,7 @@ import { refillOrders } from './orders';
 import { mergeOvens } from './ovens';
 import { completeTask } from './renovation';
 import { buyShopItem } from './shop';
+import { buyOrderItem } from './orderShop';
 import { setTutorialStep } from './tutorial';
 import { buyPantrySlot, storeInPantry, takeFromPantry } from './pantry';
 import { createRng } from './rng';
@@ -101,6 +102,8 @@ function routeAction(
       return handlers.completeTask(data, state, action, rng);
     case 'buyShopItem':
       return handlers.buyShopItem(data, state, action, rng);
+    case 'buyOrderItem':
+      return handlers.buyOrderItem(data, state, action, rng);
     case 'claimMilestone':
       return handlers.claimMilestone(data, state, action, rng);
     case 'dismissEventResult':
@@ -161,6 +164,8 @@ export const dispatch: Dispatch = createDispatch({
     completeTask(data, state, action.taskId),
   buyShopItem: (data, state, action) =>
     buyShopItem(data, state, action.shopItemId, action.now),
+  buyOrderItem: (data, state, action) =>
+    buyOrderItem(data, state, action.itemId),
   claimMilestone: (data, state, action) =>
     claimMilestone(data, state, action.index),
   dismissEventResult: (_data, state) => dismissEventResult(state),

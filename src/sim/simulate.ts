@@ -14,6 +14,7 @@ import { megabunScore } from '../core/events';
 import { matchOrderItems } from '../core/deliver';
 import { canMerge } from '../core/merge';
 import { createNewGame } from '../core/newGame';
+import { orderShopItems } from '../core/orderShop';
 import { shopItemsFor } from '../core/shop';
 import { nextTask } from '../core/orders';
 import type {
@@ -118,6 +119,8 @@ export interface SimReport {
   finalLevel: number;
   finalStars: number;
   finalCoins: number;
+  /** "For your orders" Shop purchases (T13): how many, and the coins they cost. */
+  orderBuys: { count: number; coins: number };
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -128,6 +131,7 @@ class Bot {
   now: Timestamp;
   playedMs = 0;
   readonly bought = new Set<string>();
+  readonly orderBuys = { count: 0, coins: 0 };
   purchases: string[] = [];
   /** Catering orders seen (every action, so none slip by between steps), and how they ended. */
   readonly wholesale = {
@@ -170,6 +174,10 @@ class Bot {
       }
     }
     for (const e of result.events) {
+      if (e.type === 'itemBought') {
+        this.orderBuys.count++;
+        this.orderBuys.coins += e.coins;
+      }
       if (e.type === 'wholesaleExpired') this.wholesale.expired++;
       if (e.type === 'orderDelivered' && this.wholesaleIds.has(e.orderId)) {
         this.wholesale.delivered++;
@@ -330,12 +338,34 @@ class Bot {
     if (this.energy() >= this.data.economy.energy.perTap) return false;
     // Saving for someone to hire beats a refill: staff pay for themselves.
     if (this.savingForStaff()) return false;
+    if (this.buyLastOrderItem()) return true;
     const packs = rows
       .filter((r) => r.kind === 'energy' && r.price <= this.state.coins)
       .sort((a, b) => b.price - a.price);
     for (const row of packs) {
       if (this.act('buy', { type: 'buyShopItem', shopItemId: row.id })) {
         this.purchases.push(row.id);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /** Out of energy: buy the one item an order still lacks, so it can be delivered (T13). */
+  private buyLastOrderItem(): boolean {
+    const forSale = orderShopItems(this.data, this.state);
+    for (const order of this.state.orders) {
+      if (order.wholesale) continue;
+      const matches = matchOrderItems(this.state, order.wants);
+      const lacking = order.wants.filter((_, i) => matches[i] === null);
+      const row = forSale.find((r) => r.itemId === lacking[0]);
+      if (
+        lacking.length === 1 &&
+        row &&
+        row.price <= this.state.coins &&
+        this.act('buy', { type: 'buyOrderItem', itemId: row.itemId })
+      ) {
+        this.purchases.push(row.itemId);
         return true;
       }
     }
@@ -761,5 +791,6 @@ export function simulate(
     finalLevel: bot.state.level,
     finalStars: bot.state.stars,
     finalCoins: bot.state.coins,
+    orderBuys: bot.orderBuys,
   };
 }

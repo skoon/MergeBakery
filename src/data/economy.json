@@ -89,5 +89,7 @@
       "xp": 20,
       "upgradeChancePercent": 15
     }
-  }
+  },
+  "generatorMerge": { "first": 500, "step": 500 },
+  "orderShop": { "priceMultiplier": 8, "minPrice": 25 }
 }

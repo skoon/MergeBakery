@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { applyDrop } from './drop';
+import { applyDrop, mergeCoins } from './drop';
 import { stateWith, testData } from './testing';
 import { getCell, setCell } from './board';
 
@@ -171,7 +171,10 @@ describe('applyDrop: merge', () => {
   });
 
   it('merges two generators into the next tier with full charges', () => {
-    const state = stateWith({ 0: 'flour-mill-1', 1: 'flour-mill-1' });
+    const state = stateWith(
+      { 0: 'flour-mill-1', 1: 'flour-mill-1' },
+      { coins: 500 },
+    );
     const result = applyDrop(testData, state, 0, 1, 1000);
 
     expect(result.ok).toBe(true);
@@ -579,5 +582,119 @@ describe('applyDrop: Golden Whisk', () => {
       item: { itemId: 'golden-whisk', cobwebbed: false, generator: null },
     });
     expect(result.events).toEqual([]);
+  });
+});
+
+describe('applyDrop: generator merge cost (T13)', () => {
+  it('charges 500 coins to merge two tier-1 generators', () => {
+    const state = stateWith(
+      { 0: 'flour-mill-1', 1: 'flour-mill-1' },
+      { coins: 600 },
+    );
+    const result = applyDrop(testData, state, 0, 1, 1000);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.state.coins).toBe(100);
+    expect(result.events[0]).toEqual({
+      type: 'merged',
+      itemId: 'flour-mill-2',
+      cells: [1],
+      coins: 500,
+    });
+  });
+
+  it('charges 1000 coins to merge two tier-2 generators', () => {
+    const state = stateWith(
+      { 0: 'dairy-fridge-2', 1: 'dairy-fridge-2' },
+      { coins: 1000 },
+    );
+    const result = applyDrop(testData, state, 0, 1, 1000);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.state.coins).toBe(0);
+    expect(getCell(result.state.board, 1)).toMatchObject({
+      item: { itemId: 'dairy-fridge-3' },
+    });
+  });
+
+  it('rejects a generator merge the player cannot afford', () => {
+    const state = stateWith(
+      { 0: 'flour-mill-1', 1: 'flour-mill-1' },
+      { coins: 499 },
+    );
+    const result = applyDrop(testData, state, 0, 1, 1000);
+    expect(result).toEqual({ ok: false, reason: 'notEnoughCoins' });
+  });
+
+  it('keeps ingredient merges free', () => {
+    const state = stateWith(
+      { 0: 'wheat-stalk', 1: 'wheat-stalk' },
+      { coins: 0 },
+    );
+    const result = applyDrop(testData, state, 0, 1, 1000);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.state.coins).toBe(0);
+    expect(result.events[0]).toEqual({
+      type: 'merged',
+      itemId: 'wheat-bundle',
+      cells: [1],
+    });
+  });
+
+  // Cells 0-3 are the top row; 8 is below cell 1 (7 columns). Five mills make two.
+  const fiveMills = {
+    0: 'flour-mill-1',
+    1: 'flour-mill-1',
+    2: 'flour-mill-1',
+    3: 'flour-mill-1',
+    8: 'flour-mill-1',
+  } as const;
+
+  it('charges a five-generator merge for both generators it makes', () => {
+    const result = applyDrop(
+      testData,
+      stateWith(fiveMills, { coins: 1000 }),
+      8,
+      1,
+      1000,
+    );
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.state.coins).toBe(0);
+    expect(result.events[0]).toMatchObject({ type: 'merged', coins: 1000 });
+  });
+
+  it('rejects a five-generator merge that costs more than the player has', () => {
+    const result = applyDrop(
+      testData,
+      stateWith(fiveMills, { coins: 999 }),
+      8,
+      1,
+      1000,
+    );
+    expect(result).toEqual({ ok: false, reason: 'notEnoughCoins' });
+  });
+});
+
+describe('mergeCoins (T13)', () => {
+  it('is what a generator merge would cost', () => {
+    const state = stateWith({ 0: 'flour-mill-2', 1: 'flour-mill-2' });
+    expect(mergeCoins(testData, state, 0, 1)).toBe(1000);
+  });
+
+  it('is 0 for anything that is not a generator merge', () => {
+    const state = stateWith({
+      0: 'wheat-stalk',
+      1: 'wheat-stalk',
+      2: 'flour-mill-1',
+    });
+    expect(mergeCoins(testData, state, 0, 1)).toBe(0);
+    expect(mergeCoins(testData, state, 0, 2)).toBe(0);
+    expect(mergeCoins(testData, state, 0, 3)).toBe(0);
   });
 });

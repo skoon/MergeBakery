@@ -20,7 +20,7 @@ import type {
   Timestamp,
 } from './types';
 import { getCell, setCell, neighbors, toPos } from './board';
-import { canMerge, nextTier } from './merge';
+import { canMerge, mergeCost, nextTier } from './merge';
 import { clearAdjacentLocks } from './locks';
 import { addXp } from './level';
 import { discover } from './discovery';
@@ -161,6 +161,29 @@ export function applyDrop(
 }
 
 /**
+ * Coins dropping `from` onto `to` costs: a generator merge costs mergeCost once
+ * for each generator it makes (two for a five-item merge), anything else 0 (T13).
+ */
+export function mergeCoins(
+  data: GameData,
+  state: GameState,
+  from: CellIndex,
+  to: CellIndex,
+): number {
+  const a = getCell(state.board, from);
+  const b = getCell(state.board, to);
+  if (
+    a.kind !== 'item' ||
+    b.kind !== 'item' ||
+    !canMerge(data, a.item.itemId, b.item.itemId)
+  ) {
+    return 0;
+  }
+  const group = findMergeGroup(state.board, to, from, a.item.itemId);
+  return mergeCost(data, a.item.itemId) * (group.length >= 4 ? 2 : 1);
+}
+
+/**
  * Applies a merge landing on `to`. Normally (a group of 3 or fewer cells):
  * empties `from`, promotes `to` to the next tier (not cobwebbed, with full
  * generator charges when applicable), then opens adjacent locks, awards XP,
@@ -193,15 +216,28 @@ function applyMerge(
 
   const group = findMergeGroup(state.board, to, from, mergedItemId);
 
+  const coins = mergeCoins(data, state, from, to);
+  if (state.coins < coins) {
+    return { ok: false, reason: 'notEnoughCoins' };
+  }
+  const paid: GameState = { ...state, coins: state.coins - coins };
+  const merged = (cells: CellIndex[]): GameEvent => ({
+    type: 'merged',
+    itemId: mergedInto.id,
+    cells,
+    ...(coins > 0 && { coins }),
+  });
+
   if (group.length >= 4) {
     return applyFiveItemMerge(
       data,
-      state,
+      paid,
       from,
       to,
       group,
       fromDef,
       mergedInto,
+      merged,
       now,
     );
   }
@@ -220,10 +256,8 @@ function applyMerge(
     item: newItem,
   });
 
-  let newState: GameState = { ...state, board };
-  const events: GameEvent[] = [
-    { type: 'merged', itemId: mergedInto.id, cells: [to] },
-  ];
+  let newState: GameState = { ...paid, board };
+  const events: GameEvent[] = [merged([to])];
 
   const lockResult = clearAdjacentLocks(newState, to);
   newState = lockResult.state;
@@ -312,6 +346,7 @@ function applyFiveItemMerge(
   group: readonly CellIndex[],
   fromDef: Item,
   mergedInto: Item,
+  merged: (cells: CellIndex[]) => GameEvent,
   now: Timestamp,
 ): ActionResult {
   const others = group
@@ -346,9 +381,7 @@ function applyFiveItemMerge(
   }
 
   let newState: GameState = { ...state, board };
-  const events: GameEvent[] = [
-    { type: 'merged', itemId: mergedInto.id, cells: [to, second] },
-  ];
+  const events: GameEvent[] = [merged([to, second])];
 
   const toLocks = clearAdjacentLocks(newState, to);
   newState = toLocks.state;

@@ -78,7 +78,7 @@ function printReport(reports: SimReport[]): void {
       .map(([id, at]) => `${id} d${at.day.toString()}s${at.session.toString()}`)
       .join(', ');
     lines.push(
-      `  seed ${r.seed.toString()}: chapters done: ${done || 'none'} (${r.tasksDone.toString()} tasks); first croissant after ${r.firstCroissantAtMin === null ? 'never' : `${fmt(r.firstCroissantAtMin)} min played`}; catering ${r.catering.arrived.toString()} seen / ${r.catering.delivered.toString()} delivered / ${r.catering.expired.toString()} expired / ${r.catering.upgrades.toString()} upgrades; wholesale ${r.wholesale.arrived.toString()} seen / ${r.wholesale.delivered.toString()} delivered / ${r.wholesale.expired.toString()} expired, reputation ${r.finalState.reputation.toString()}, hired ${r.wholesale.hires.map((h) => `${h.staffId} d${h.day.toString()}`).join(', ') || 'no one'}; level ${r.finalLevel.toString()}, ${r.finalStars.toString()} stars left, ${r.finalCoins.toString()} coins`,
+      `  seed ${r.seed.toString()}: chapters done: ${done || 'none'} (${r.tasksDone.toString()} tasks); first croissant after ${r.firstCroissantAtMin === null ? 'never' : `${fmt(r.firstCroissantAtMin)} min played`}; catering ${r.catering.arrived.toString()} seen / ${r.catering.delivered.toString()} delivered / ${r.catering.expired.toString()} expired / ${r.catering.upgrades.toString()} upgrades; wholesale ${r.wholesale.arrived.toString()} seen / ${r.wholesale.delivered.toString()} delivered / ${r.wholesale.expired.toString()} expired, reputation ${r.finalState.reputation.toString()}, hired ${r.wholesale.hires.map((h) => `${h.staffId} d${h.day.toString()}`).join(', ') || 'no one'}; level ${r.finalLevel.toString()}, ${r.finalStars.toString()} stars left, ${r.finalCoins.toString()} coins; bought ${r.orderBuys.count.toString()} order items for ${r.orderBuys.coins.toString()} coins`,
     );
   }
   console.log(lines.join('\n'));
@@ -133,34 +133,38 @@ describe('simulate', () => {
     expect(report.sessions[0]?.merges).toBeGreaterThan(0);
   });
 
-  it('prints the balance report and holds the regression bar', { timeout: 300_000 }, () => {
-    const reports = SEEDS.map((seed) =>
-      simulate(testData, { ...OPTIONS, days: REPORT_DAYS, seed }),
-    );
-    printReport(reports);
-    expect(reports).toHaveLength(SEEDS.length);
+  it(
+    'prints the balance report and holds the regression bar',
+    { timeout: 300_000 },
+    () => {
+      const reports = SEEDS.map((seed) =>
+        simulate(testData, { ...OPTIONS, days: REPORT_DAYS, seed }),
+      );
+      printReport(reports);
+      expect(reports).toHaveLength(SEEDS.length);
 
-    const chapterIds = [...testData.chapters.keys()];
-    for (const report of reports) {
-      const done = chapterIds.map((id) => report.chapterDoneAt[id]);
-      expect(
-        done.every((d) => d !== undefined),
-        `seed ${report.seed.toString()} did not finish every chapter: ${JSON.stringify(report.chapterDoneAt)}`,
-      ).toBe(true);
-      const days = done.map((d) => d?.day ?? Infinity);
-      expect(
-        days,
-        `seed ${report.seed.toString()} finished chapters out of order`,
-      ).toEqual([...days].sort((a, b) => a - b));
-      expect(
-        days.at(-1),
-        `seed ${report.seed.toString()} finished the game too late`,
-      ).toBeLessThanOrEqual(FINISH_BY_DAY);
-      // The systems the later chapters add must be exercised, not just present.
-      expect(report.wholesale.delivered).toBeGreaterThan(0);
-      expect(report.wholesale.hires.length).toBeGreaterThan(0);
-    }
-  });
+      const chapterIds = [...testData.chapters.keys()];
+      for (const report of reports) {
+        const done = chapterIds.map((id) => report.chapterDoneAt[id]);
+        expect(
+          done.every((d) => d !== undefined),
+          `seed ${report.seed.toString()} did not finish every chapter: ${JSON.stringify(report.chapterDoneAt)}`,
+        ).toBe(true);
+        const days = done.map((d) => d?.day ?? Infinity);
+        expect(
+          days,
+          `seed ${report.seed.toString()} finished chapters out of order`,
+        ).toEqual([...days].sort((a, b) => a - b));
+        expect(
+          days.at(-1),
+          `seed ${report.seed.toString()} finished the game too late`,
+        ).toBeLessThanOrEqual(FINISH_BY_DAY);
+        // The systems the later chapters add must be exercised, not just present.
+        expect(report.wholesale.delivered).toBeGreaterThan(0);
+        expect(report.wholesale.hires.length).toBeGreaterThan(0);
+      }
+    },
+  );
 
   it('prints the event balance report', { timeout: 600_000 }, () => {
     const runs = printEventReport();

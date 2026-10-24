@@ -30,6 +30,7 @@ import { mountStaffPanel } from './ui/staffPanel';
 import { mountShop } from './ui/shopScreen';
 import { mountDiscoveryCard } from './ui/discoveryCard';
 import { mountRushBubble } from './ui/rushBubble';
+import { mountCoinBubble } from './ui/coinBubble';
 import { mountEventSheet } from './ui/eventSheet';
 import { parseScenes } from './ui/dialogue';
 import { mountDialoguePlayer } from './ui/dialoguePlayer';
@@ -138,6 +139,7 @@ mountHelpDialog(tray, overlayRoot, store);
 mountKitchen(tray, overlayRoot, store, () => Date.now());
 mountDiscoveryCard(overlayRoot, store, settings);
 mountRushBubble(overlayRoot, store, boardView, () => Date.now());
+mountCoinBubble(overlayRoot, store, boardView);
 mountEventSheet(topChrome, overlayRoot, store, () => Date.now());
 
 // Story scenes (T5.5): the chapter intro on a new game, and a scene when a

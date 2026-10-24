@@ -31,6 +31,8 @@ function makeGameData(): GameData {
       rushGemsPerMinute: 1,
       sellUndoSec: 10,
       goldenWhiskMaxTier: 5,
+      generatorMerge: { first: 500, step: 500 },
+      orderShop: { priceMultiplier: 8, minPrice: 25 },
       orders: {
         maxOpen: 4,
         refillDelaySec: 5,
@@ -127,6 +129,7 @@ function makeThrowingHandlers(): Handlers {
     mergeOvens: notCalled,
     completeTask: notCalled,
     buyShopItem: notCalled,
+    buyOrderItem: notCalled,
     claimMilestone: notCalled,
     hireStaff: notCalled,
     assignStaff: notCalled,
@@ -160,6 +163,7 @@ const SAMPLE_ACTIONS: readonly Action[] = [
   { type: 'mergeOvens', from: 0, to: 1, now: NOW },
   { type: 'completeTask', taskId: 'task-1', now: NOW },
   { type: 'buyShopItem', shopItemId: 'shop-1', now: NOW },
+  { type: 'buyOrderItem', itemId: 'croissant', now: NOW },
   { type: 'claimMilestone', index: 0, now: NOW },
   { type: 'hireStaff', staffId: 'x', now: NOW },
   { type: 'assignStaff', staffId: 'x', chainId: null, now: NOW },
@@ -170,8 +174,8 @@ const SAMPLE_ACTIONS: readonly Action[] = [
 ];
 
 describe('dispatch', () => {
-  it('covers all 23 action types', () => {
-    expect(SAMPLE_ACTIONS).toHaveLength(23);
+  it('covers all 24 action types', () => {
+    expect(SAMPLE_ACTIONS).toHaveLength(24);
   });
 
   it.each(SAMPLE_ACTIONS.map((action) => ({ action })))(
