@@ -32,6 +32,7 @@ import type {
   SeasonDef,
   Timestamp,
 } from '../core/types';
+import { isMonthDay } from './calendar';
 
 /** A validated pack: the rules data core sees, and the content merged into GameData. */
 export interface SeasonPack {
@@ -105,18 +106,6 @@ const seasonPackSchema = z.strictObject({
 type SeasonPackFile = z.infer<typeof seasonPackSchema>;
 
 // ─── Cross-checks ────────────────────────────────────────────────────────────
-
-const DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-/** "MM-DD" naming a real day. Feb 29 is refused: the window has to exist every year. */
-function isMonthDay(value: string): boolean {
-  const match = /^(\d{2})-(\d{2})$/.exec(value);
-  if (match === null) return false;
-  const month = Number(match[1]);
-  const day = Number(match[2]);
-  const days = DAYS_IN_MONTH[month - 1];
-  return days !== undefined && day >= 1 && day <= days;
-}
 
 function validatePack(base: GameData, file: SeasonPackFile): string[] {
   const problems: string[] = [];
