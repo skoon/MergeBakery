@@ -1,3 +1,18 @@
+# Phase 14 — Seasons
+
+Scott, Nov 8: themed seasons added one at a time as runtime packs that can ship their own rules. Plan and contract approved Nov 8 (`implementation_plan.md`): opt-in, yearly calendar windows, MegaBun events paused while a joined season runs, Thanksgiving first, emoji placeholder art. Save version 4. One branch per task, `t14.n-…`.
+
+- [ ] T14.1 Contract: season types in `types.ts`, the hook API in `seasonApi.ts`, `Economy.seasons`, `GameData.seasons`, save v4 + migration and fixtures
+- [ ] T14.2 Pack format: zod schema, cross-checks, `withSeasons(base, packs)`, fixture pack
+- [ ] T14.3 Calendar: `resolveWindow` for month-day windows in local time, year wrap
+- [ ] T14.4 Core lifecycle: `joinSeason`, seasonal orders and points, milestones, keepsakes, end sweep, events pause
+- [ ] T14.5 Rule hooks wired into dispatch, generators, delivery
+- [ ] T14.6 Runtime loading: index fetch, pack import, art registry, orphan sweep, async startup, new-season banner
+- [ ] T14.7 Build + deploy: `build:seasons`, emoji placeholder SVGs, Workbox caching
+- [ ] T14.8 Season UI: invitation, season sheet, result card, keepsake shelf, theme, dev tools
+- [ ] T14.9 Thanksgiving pack "Harvest Supper"
+- [ ] T14.10 Scott plays the season
+
 # Phase 13 — Coin sinks
 
 Scott, Oct 24: players end up with far more coins than they can spend. Contract approved Oct 24: `Economy.generatorMerge` and `orderShop`, `buyOrderItem`, `merged.coins`, `itemBought`. No save change. Branch `t13-coin-sinks`.

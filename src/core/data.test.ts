@@ -182,6 +182,7 @@ function makeFixture(): RawGameData {
       goldenWhiskMaxTier: 5,
       generatorMerge: { first: 500, step: 500 },
       orderShop: { priceMultiplier: 8, minPrice: 25 },
+      seasons: { orphanItemCoins: 5 },
       orders: {
         maxOpen: 2,
         refillDelaySec: 5,
@@ -260,6 +261,15 @@ describe('parseGameData: valid fixture', () => {
     expect(data.chapters.get('chapter1')?.name).toBe("Grandma's Corner Shop");
     expect(data.economy.levels).toHaveLength(2);
     expect(data.newGame.chapterId).toBe('chapter1');
+    expect(data.economy.seasons.orphanItemCoins).toBe(5);
+    expect(data.seasons.size).toBe(0);
+  });
+
+  it('rejects a negative orphanItemCoins', () => {
+    const raw = makeFixture();
+    const economy = raw.economy as { seasons: { orphanItemCoins: number } };
+    economy.seasons.orphanItemCoins = -1;
+    expect(() => parseGameData(raw)).toThrow(/orphanItemCoins/);
   });
 });
 

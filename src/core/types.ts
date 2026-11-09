@@ -23,7 +23,15 @@
  * `notEnoughReputation`, `staffHired`, `staffActed` and `wholesaleExpired`.
  * Automation (T11.2, Scott, Oct 3): `StaffRole` 'oven', `StaffState.assignedRecipe`
  * and `assignStaff`'s `recipeId`. Coin sinks (T13, Scott, Oct 24): `Economy.generatorMerge`
- * and `orderShop`, `buyOrderItem`, `merged.coins` and `itemBought`.
+ * and `orderShop`, `buyOrderItem`, `merged.coins` and `itemBought`. Seasons
+ * (T14.1, Scott, Nov 8), save version 4: `SeasonId`, `KeepsakeId`, `JsonValue`,
+ * `SeasonWindow`, `SeasonReward`, `SeasonMilestone`, `KeepsakeDef`, `SeasonDef`,
+ * `LoadedSeason`, `ActiveSeason`, `SeasonResult`, `KeepsakeRecord`,
+ * `Chain.seasonId`, `Recipe.seasonId`, `Economy.seasons`, `GameData.seasons`,
+ * three `GameState` fields (`season`, `seasonResult`, `keepsakes`),
+ * `Order.seasonPoints`, `joinSeason`, `claimSeasonMilestone`,
+ * `dismissSeasonResult`, six events and two reject reasons. The pack hook API is
+ * in seasonApi.ts.
  *
  * Conventions every core function follows:
  * - Core functions are pure: they never mutate their inputs and return new
@@ -35,6 +43,8 @@
  * - Durations in data files are seconds (`...Sec`); timestamps in state are
  *   milliseconds since the Unix epoch.
  */
+
+import type { SeasonRules } from './seasonApi';
 
 // ─── Identifiers and primitives ─────────────────────────────────────────────
 
@@ -50,6 +60,17 @@ export type OrderId = number;
 export type ShopItemId = string;
 export type EventId = string;
 export type StaffId = string;
+export type SeasonId = string;
+export type KeepsakeId = string;
+
+/** Plain JSON: what a season pack may keep in its own saved state. */
+export type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | readonly JsonValue[]
+  | { readonly [key: string]: JsonValue };
 
 /** Milliseconds since the Unix epoch, as from Date.now(). */
 export type Timestamp = number;
@@ -88,6 +109,8 @@ export interface Chain {
   readonly color: string;
   /** Gems granted once, when every item in the chain is discovered. */
   readonly completionGems: number;
+  /** The season pack this chain came from. Set by the pack loader, never in JSON. */
+  readonly seasonId?: SeasonId;
 }
 
 export interface Item {
@@ -155,6 +178,8 @@ export interface Recipe {
   readonly output: ItemId;
   /** Bake time in a tier 1 oven, before the oven's multiplier. */
   readonly bakeSec: number;
+  /** The season pack this recipe came from. Set by the pack loader, never in JSON. */
+  readonly seasonId?: SeasonId;
 }
 
 export interface OvenDef {
@@ -265,6 +290,67 @@ export interface EventDef {
 
 export interface EventsFile {
   readonly events: readonly EventDef[];
+}
+
+// ─── Static data: season packs (runtime-loaded, T14) ────────────────────────
+
+/** A yearly window as "MM-DD" local dates, both days included. May wrap Dec → Jan. */
+export interface SeasonWindow {
+  readonly start: string;
+  readonly end: string;
+}
+
+/** What a season milestone pays. */
+export interface SeasonReward {
+  readonly coins: number;
+  readonly gems: number;
+  /** A permanent keepsake from the pack's `keepsakes`. */
+  readonly keepsakeId?: KeepsakeId;
+}
+
+export interface SeasonMilestone {
+  /** Season Points needed. */
+  readonly points: number;
+  readonly reward: SeasonReward;
+}
+
+/** Permanent decor earned from a season's reward track. */
+export interface KeepsakeDef {
+  readonly id: KeepsakeId;
+  readonly name: string;
+  readonly spriteKey: string;
+}
+
+/**
+ * A season pack's rules data (season.json). The pack's chains, items,
+ * generators, and recipes are merged into GameData by the loader; every id the
+ * pack adds starts with `${id}-`.
+ */
+export interface SeasonDef {
+  readonly id: SeasonId;
+  readonly name: string;
+  /** The pack's own version; part of its deployed path. */
+  readonly version: string;
+  /** The SEASON_API_VERSION the pack was built for (seasonApi.ts). */
+  readonly apiVersion: number;
+  readonly window: SeasonWindow;
+  /** The seasonal generator placed on the board when the season starts. */
+  readonly generatorItemId: ItemId;
+  /** Season Points per item in a delivered seasonal order. */
+  readonly pointsPerItem: number;
+  readonly orders: EventOrderRules;
+  /** In ascending order of points. */
+  readonly milestones: readonly SeasonMilestone[];
+  readonly keepsakes: readonly KeepsakeDef[];
+}
+
+/** A pack as core sees it: its data, its window resolved to this occurrence, its hooks. */
+export interface LoadedSeason {
+  readonly def: SeasonDef;
+  readonly startsAt: Timestamp;
+  readonly endsAt: Timestamp;
+  /** The pack's code hooks; null for a data-only pack. */
+  readonly rules: SeasonRules | null;
 }
 
 // ─── Static data: staff (staff.json) ────────────────────────────────────────
@@ -466,6 +552,10 @@ export interface Economy {
     readonly priceMultiplier: number;
     readonly minPrice: number;
   };
+  readonly seasons: {
+    /** Coins paid per item of a season whose pack can't be loaded, when it is removed from a save. */
+    readonly orphanItemCoins: number;
+  };
 }
 
 // ─── Static data: new game (newGame.json) ───────────────────────────────────
@@ -514,6 +604,8 @@ export interface GameData {
   readonly events: ReadonlyMap<EventId, EventDef>;
   /** In data order. */
   readonly staff: ReadonlyMap<StaffId, StaffDef>;
+  /** Season packs loaded at startup; empty when none are. */
+  readonly seasons: ReadonlyMap<SeasonId, LoadedSeason>;
 }
 
 // ─── Game state ─────────────────────────────────────────────────────────────
@@ -569,6 +661,8 @@ export interface Order {
   readonly reward: OrderReward;
   /** Hometown Pride this order earns; present only on event orders. */
   readonly eventPoints?: number;
+  /** Season Points this order earns; present only on seasonal orders. */
+  readonly seasonPoints?: number;
   /** Present only on wholesale orders (T10.1). */
   readonly wholesale?: { readonly expiresAt: Timestamp };
   /** Present only on catering orders (T9.2). */
@@ -632,6 +726,40 @@ export interface EventResult {
   readonly coins: number;
 }
 
+/** The season the player joined. At most one at a time. */
+export interface ActiveSeason {
+  readonly seasonId: SeasonId;
+  readonly joinedAt: Timestamp;
+  /** When its content started; null while waiting for a running MegaBun event to end. */
+  readonly startedAt: Timestamp | null;
+  /** The end of the season's window. */
+  readonly endsAt: Timestamp;
+  /** Season Points earned. */
+  readonly points: number;
+  /** Indices into the season's milestones. */
+  readonly claimedMilestones: readonly number[];
+  /** The pack's own saved state for its rules. */
+  readonly custom: JsonValue;
+}
+
+/** How a season ended, held until the result card is dismissed. */
+export interface SeasonResult {
+  readonly seasonId: SeasonId;
+  readonly points: number;
+  /** Coins paid for the seasonal items left on the board, in the Pantry, and in ovens. */
+  readonly coins: number;
+}
+
+/** An earned keepsake, stored whole so it still shows after its pack is gone. */
+export interface KeepsakeRecord {
+  readonly id: KeepsakeId;
+  readonly seasonId: SeasonId;
+  readonly name: string;
+  readonly spriteKey: string;
+  /** The calendar year of the season it came from. */
+  readonly year: number;
+}
+
 export type TutorialStep =
   'firstTap' | 'firstMerge' | 'firstOrder' | 'firstRenovation' | 'done';
 
@@ -680,6 +808,12 @@ export interface GameState {
   readonly reputation: number;
   /** Everyone hired so far. */
   readonly staff: readonly StaffState[];
+  /** The season the player joined, or null. */
+  readonly season: ActiveSeason | null;
+  /** The last season's result, until the player dismisses it. */
+  readonly seasonResult: SeasonResult | null;
+  /** Keepsakes earned from every season, in the order earned. */
+  readonly keepsakes: readonly KeepsakeRecord[];
 }
 
 export interface StaffState {
@@ -730,6 +864,11 @@ type ActionBody =
   /** Claim a reached milestone of the running event (T8.1). */
   | { readonly type: 'claimMilestone'; readonly index: number }
   | { readonly type: 'dismissEventResult' }
+  /** Opt in to a season whose window is open (T14). */
+  | { readonly type: 'joinSeason'; readonly seasonId: SeasonId }
+  /** Claim a reached milestone of the joined season. */
+  | { readonly type: 'claimSeasonMilestone'; readonly index: number }
+  | { readonly type: 'dismissSeasonResult' }
   | { readonly type: 'hireStaff'; readonly staffId: StaffId }
   /** Point a tapper at a generator chain, or an Auto-Oven at a recipe; null rests them. */
   | {
@@ -778,7 +917,11 @@ export type RejectReason =
   | 'alreadyCompleted'
   | 'noActiveEvent'
   | 'milestoneNotReached'
-  | 'notEnoughReputation';
+  | 'notEnoughReputation'
+  /** Joining a season outside its window, before the tutorial is done, or one not loaded. */
+  | 'seasonNotOpen'
+  /** Claiming a season milestone with no joined season. */
+  | 'noActiveSeason';
 
 /** What happened, for animation, audio, and UI cards. The state is the source of truth. */
 export type GameEvent =
@@ -878,6 +1021,32 @@ export type GameEvent =
       readonly eventId: EventId;
       readonly index: number;
       readonly reward: EventReward;
+    }
+  | { readonly type: 'seasonJoined'; readonly seasonId: SeasonId }
+  /** The joined season's content began: its generator is placed and its orders open. */
+  | { readonly type: 'seasonStarted'; readonly seasonId: SeasonId }
+  | {
+      readonly type: 'seasonEnded';
+      readonly seasonId: SeasonId;
+      readonly points: number;
+    }
+  | {
+      readonly type: 'seasonMilestoneClaimed';
+      readonly seasonId: SeasonId;
+      readonly index: number;
+      readonly reward: SeasonReward;
+    }
+  | {
+      readonly type: 'keepsakeEarned';
+      readonly seasonId: SeasonId;
+      readonly keepsakeId: KeepsakeId;
+    }
+  /** Emitted by a season pack's rules, for a sound or a toast. */
+  | {
+      readonly type: 'seasonRule';
+      readonly seasonId: SeasonId;
+      readonly name: string;
+      readonly payload: JsonValue;
     }
   /** The player moved on to this chapter (T7.2). */
   | { readonly type: 'chapterStarted'; readonly chapterId: ChapterId };

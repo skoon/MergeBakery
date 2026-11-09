@@ -87,5 +87,8 @@ export function createNewGame(
     trophies: [],
     reputation: 0,
     staff: [],
+    season: null,
+    seasonResult: null,
+    keepsakes: [],
   };
 }

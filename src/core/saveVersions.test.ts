@@ -12,9 +12,19 @@ import { testData } from './testing';
 import type { GameState } from './types';
 
 /** Fields added after each save version, so a fixture can be cut back to it. */
+const SEASON_FIELDS = ['season', 'seasonResult', 'keepsakes'];
 const ADDED_AFTER: Readonly<Record<number, readonly string[]>> = {
-  1: ['event', 'nextEventAt', 'eventResult', 'trophies', 'reputation', 'staff'],
-  2: ['reputation', 'staff'],
+  1: [
+    'event',
+    'nextEventAt',
+    'eventResult',
+    'trophies',
+    'reputation',
+    'staff',
+    ...SEASON_FIELDS,
+  ],
+  2: ['reputation', 'staff', ...SEASON_FIELDS],
+  3: SEASON_FIELDS,
 };
 
 /** What a save of `version` looked like: the current save with later fields removed. */
@@ -31,7 +41,7 @@ function legacySave(state: GameState, version: number): string {
 const fresh = createNewGame(testData, 11, 1_000);
 
 describe('loading a save from every past version', () => {
-  for (const version of [1, 2]) {
+  for (const version of [1, 2, 3]) {
     it(`version ${version.toString()} loads as the current version with the new fields empty`, () => {
       const loaded = deserializeSave(testData, legacySave(fresh, version));
       if (!loaded.ok) throw new Error(loaded.error);
@@ -78,8 +88,15 @@ describe('the current version', () => {
           reward: { coins: 400, stars: 0, xp: 5, reputation: 5 },
           wholesale: { expiresAt: 9e12 },
         },
+        {
+          id: 4,
+          customerId: 'walkin-hiker',
+          wants: ['cookie', 'cookie'],
+          reward: { coins: 8, stars: 0, xp: 0 },
+          seasonPoints: 12,
+        },
       ],
-      nextOrderId: 4,
+      nextOrderId: 5,
       event: {
         eventId: 'bake-off',
         startedAt: 1,
@@ -102,10 +119,44 @@ describe('the current version', () => {
         },
       ],
       discovered: [...fresh.discovered, 'sprinkles', 'layer-cake'],
+      season: {
+        seasonId: 'thanksgiving',
+        joinedAt: 2,
+        startedAt: null,
+        endsAt: 9e12,
+        points: 36,
+        claimedMilestones: [0, 1],
+        custom: { feastOrders: 3, lastGhostAt: null, seen: ['a', 'b'] },
+      },
+      seasonResult: { seasonId: 'halloween', points: 410, coins: 64 },
+      keepsakes: [
+        {
+          id: 'halloween-lantern',
+          seasonId: 'halloween',
+          name: 'Jack-o’-Lantern',
+          spriteKey: 'halloween-lantern',
+          year: 2026,
+        },
+      ],
     };
     const loaded = deserializeSave(testData, serializeSave(rich, 7));
     if (!loaded.ok) throw new Error(loaded.error);
     expect(loaded.save.state).toEqual(rich);
+  });
+
+  it('refuses a save whose joined season is missing a field', () => {
+    const file = JSON.parse(serializeSave(fresh, 1)) as {
+      state: Record<string, unknown>;
+    };
+    file.state['season'] = {
+      seasonId: 'thanksgiving',
+      joinedAt: 2,
+      startedAt: 3,
+      endsAt: 9e12,
+      points: 0,
+      claimedMilestones: [],
+    };
+    expect(deserializeSave(testData, JSON.stringify(file)).ok).toBe(false);
   });
 
   it('refuses a save from a newer version, and one with no version', () => {

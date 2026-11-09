@@ -91,5 +91,6 @@
     }
   },
   "generatorMerge": { "first": 500, "step": 500 },
-  "orderShop": { "priceMultiplier": 8, "minPrice": 25 }
+  "orderShop": { "priceMultiplier": 8, "minPrice": 25 },
+  "seasons": { "orphanItemCoins": 5 }
 }

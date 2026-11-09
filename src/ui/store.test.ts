@@ -34,6 +34,7 @@ function makeGameData(): GameData {
       goldenWhiskMaxTier: 5,
       generatorMerge: { first: 500, step: 500 },
       orderShop: { priceMultiplier: 8, minPrice: 25 },
+      seasons: { orphanItemCoins: 5 },
       orders: {
         maxOpen: 4,
         refillDelaySec: 5,
@@ -71,6 +72,7 @@ function makeGameData(): GameData {
     shop: new Map(),
     events: new Map(),
     staff: new Map(),
+    seasons: new Map(),
   };
 }
 
@@ -103,6 +105,9 @@ function makeState(overrides: Partial<GameState> = {}): GameState {
     trophies: [],
     reputation: 0,
     staff: [],
+    season: null,
+    seasonResult: null,
+    keepsakes: [],
     ...overrides,
   };
 }

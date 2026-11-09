@@ -10,6 +10,9 @@ import { migrate } from './migrate';
 import type {
   StaffState,
   ActiveEvent,
+  ActiveSeason,
+  KeepsakeRecord,
+  SeasonResult,
   EventResult,
   Bake,
   Board,
@@ -29,7 +32,7 @@ import type {
   TutorialStep,
 } from './types';
 
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 
 export interface SaveFile {
   version: number;
@@ -90,6 +93,7 @@ const orderSchema: z.ZodType<Order> = z.strictObject({
   wants: z.array(z.string()),
   reward: orderRewardSchema,
   eventPoints: z.number().optional(),
+  seasonPoints: z.number().optional(),
   catering: z
     .strictObject({ expiresAt: z.number(), upgradeChancePercent: z.number() })
     .optional(),
@@ -127,6 +131,30 @@ const eventResultSchema: z.ZodType<EventResult> = z.strictObject({
   won: z.boolean(),
   points: z.number(),
   coins: z.number(),
+});
+
+const activeSeasonSchema: z.ZodType<ActiveSeason> = z.strictObject({
+  seasonId: z.string(),
+  joinedAt: z.number(),
+  startedAt: z.number().nullable(),
+  endsAt: z.number(),
+  points: z.number(),
+  claimedMilestones: z.array(z.number()),
+  custom: z.json(),
+});
+
+const seasonResultSchema: z.ZodType<SeasonResult> = z.strictObject({
+  seasonId: z.string(),
+  points: z.number(),
+  coins: z.number(),
+});
+
+const keepsakeRecordSchema: z.ZodType<KeepsakeRecord> = z.strictObject({
+  id: z.string(),
+  seasonId: z.string(),
+  name: z.string(),
+  spriteKey: z.string(),
+  year: z.number(),
 });
 
 const tutorialStepSchema: z.ZodType<TutorialStep> = z.enum([
@@ -172,6 +200,9 @@ const gameStateSchema: z.ZodType<GameState> = z.strictObject({
   trophies: z.array(z.string()),
   reputation: z.number(),
   staff: z.array(staffStateSchema),
+  season: activeSeasonSchema.nullable(),
+  seasonResult: seasonResultSchema.nullable(),
+  keepsakes: z.array(keepsakeRecordSchema),
 });
 
 const saveFileSchema: z.ZodType<SaveFile> = z.strictObject({

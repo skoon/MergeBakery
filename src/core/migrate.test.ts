@@ -32,7 +32,18 @@ function v1Save(): SaveObject {
 
 describe('MIGRATIONS', () => {
   it('has one step per version up to SAVE_VERSION', () => {
-    expect(Object.keys(MIGRATIONS)).toEqual(['1', '2']);
+    expect(Object.keys(MIGRATIONS)).toEqual(['1', '2', '3']);
+  });
+
+  it('v3 → v4 adds the season fields and keeps the rest', () => {
+    const out = migrate({ version: 3, savedAt: 1, state: { coins: 5 } }, 4);
+    expect(out['version']).toBe(4);
+    expect(out['state']).toEqual({
+      coins: 5,
+      season: null,
+      seasonResult: null,
+      keepsakes: [],
+    });
   });
 
   it('v2 → v3 adds reputation and staff and keeps the rest', () => {

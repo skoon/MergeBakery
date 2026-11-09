@@ -353,6 +353,7 @@ const economySchema: z.ZodType<Economy> = z.strictObject({
     priceMultiplier: z.number(),
     minPrice: z.number(),
   }),
+  seasons: z.strictObject({ orphanItemCoins: z.number().int().nonnegative() }),
 });
 
 // ─── Zod schemas: new game (newGame.json) ───────────────────────────────────
@@ -1037,6 +1038,8 @@ function buildGameData(parsed: ParsedSections): GameData {
     shop: new Map(parsed.shop.items.map((i) => [i.id, i])),
     events: new Map(parsed.events.events.map((e) => [e.id, e])),
     staff: new Map(parsed.staff.staff.map((s) => [s.id, s])),
+    // Season packs are loaded at runtime and merged in afterwards (T14.2).
+    seasons: new Map(),
   };
 }
 

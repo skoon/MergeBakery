@@ -108,6 +108,12 @@ function routeAction(
       return handlers.claimMilestone(data, state, action, rng);
     case 'dismissEventResult':
       return handlers.dismissEventResult(data, state, action, rng);
+    case 'joinSeason':
+      return handlers.joinSeason(data, state, action, rng);
+    case 'claimSeasonMilestone':
+      return handlers.claimSeasonMilestone(data, state, action, rng);
+    case 'dismissSeasonResult':
+      return handlers.dismissSeasonResult(data, state, action, rng);
     case 'hireStaff':
       return handlers.hireStaff(data, state, action, rng);
     case 'assignStaff':
@@ -169,6 +175,16 @@ export const dispatch: Dispatch = createDispatch({
   claimMilestone: (data, state, action) =>
     claimMilestone(data, state, action.index),
   dismissEventResult: (_data, state) => dismissEventResult(state),
+  // The season actions are in the contract from T14.1; T14.4 builds them.
+  joinSeason: () => {
+    throw new Error('joinSeason: not built yet (T14.4)');
+  },
+  claimSeasonMilestone: () => {
+    throw new Error('claimSeasonMilestone: not built yet (T14.4)');
+  },
+  dismissSeasonResult: () => {
+    throw new Error('dismissSeasonResult: not built yet (T14.4)');
+  },
   hireStaff: (data, state, action) =>
     hireStaff(data, state, action.staffId, action.now),
   assignStaff: (data, state, action) =>

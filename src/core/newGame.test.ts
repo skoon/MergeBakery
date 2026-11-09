@@ -28,6 +28,7 @@ const ECONOMY: Economy = {
   goldenWhiskMaxTier: 5,
   generatorMerge: { first: 500, step: 500 },
   orderShop: { priceMultiplier: 8, minPrice: 25 },
+  seasons: { orphanItemCoins: 5 },
   orders: {
     maxOpen: 4,
     refillDelaySec: 5,
@@ -147,6 +148,7 @@ function makeGameData(overrides: Partial<GameData> = {}): GameData {
     shop: new Map(),
     events: new Map(),
     staff: new Map(),
+    seasons: new Map(),
     ...overrides,
   };
 }
