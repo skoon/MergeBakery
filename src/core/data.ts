@@ -73,7 +73,7 @@ const chainKindSchema: z.ZodType<ChainKind> = z.enum([
   'event',
 ]);
 
-const chainSchema: z.ZodType<Chain> = z.strictObject({
+export const chainSchema: z.ZodType<Chain> = z.strictObject({
   id: z.string(),
   name: z.string(),
   kind: chainKindSchema,
@@ -86,7 +86,7 @@ const collectRewardSchema = z.strictObject({
   coins: z.number(),
 });
 
-const itemSchema: z.ZodType<Item> = z.strictObject({
+export const itemSchema: z.ZodType<Item> = z.strictObject({
   id: z.string(),
   name: z.string(),
   chainId: z.string(),
@@ -109,7 +109,7 @@ const weightedEntrySchema: z.ZodType<WeightedEntry> = z.strictObject({
   weight: z.number(),
 });
 
-const generatorDefSchema: z.ZodType<GeneratorDef> = z.strictObject({
+export const generatorDefSchema: z.ZodType<GeneratorDef> = z.strictObject({
   itemId: z.string(),
   spawnTable: z.array(weightedEntrySchema),
   charges: z.number(),
@@ -128,7 +128,7 @@ const generatorsFileSchema: z.ZodType<GeneratorsFile> = z.strictObject({
 
 // ─── Zod schemas: recipes and ovens (recipes.json, ovens.json) ─────────────
 
-const recipeSchema: z.ZodType<Recipe> = z.strictObject({
+export const recipeSchema: z.ZodType<Recipe> = z.strictObject({
   id: z.string(),
   name: z.string(),
   inputs: z.array(z.string()),
@@ -385,7 +385,7 @@ const newGameConfigSchema: z.ZodType<NewGameConfig> = z.strictObject({
 
 // ─── Phase 1: shape validation ───────────────────────────────────────────────
 
-function parseSection<T>(
+export function parseSection<T>(
   schema: z.ZodType<T>,
   value: unknown,
   label: string,
@@ -419,7 +419,7 @@ interface ParsedSections {
 }
 
 /** Every id in `ids` must be distinct; reports each duplicate once. */
-function checkUnique(
+export function checkUnique(
   ids: readonly string[],
   label: string,
   problems: string[],
@@ -438,7 +438,7 @@ function checkUnique(
 }
 
 /** `tiers` must be exactly 1, 2, 3, ... with no gaps or repeats, in any order. */
-function checkTierSequence(
+export function checkTierSequence(
   tiers: readonly number[],
   label: string,
   problems: string[],
@@ -455,7 +455,7 @@ function checkTierSequence(
   }
 }
 
-function checkWeightedTable(
+export function checkWeightedTable(
   table: readonly WeightedEntry[],
   label: string,
   problems: string[],

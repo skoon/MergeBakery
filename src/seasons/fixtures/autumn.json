@@ -1,0 +1,159 @@
+{
+  "id": "autumn",
+  "name": "Autumn Test",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "window": { "start": "11-12", "end": "11-30" },
+  "generatorItemId": "autumn-patch-1",
+  "pointsPerItem": 4,
+  "orders": { "maxOpen": 3, "minItems": 1, "maxItems": 2, "maxTier": 3 },
+  "milestones": [
+    { "points": 20, "reward": { "coins": 50, "gems": 0 } },
+    { "points": 60, "reward": { "coins": 100, "gems": 5 } },
+    {
+      "points": 120,
+      "reward": { "coins": 0, "gems": 10, "keepsakeId": "autumn-wreath" }
+    }
+  ],
+  "keepsakes": [
+    {
+      "id": "autumn-wreath",
+      "name": "Harvest Wreath",
+      "spriteKey": "autumn-wreath"
+    }
+  ],
+  "chains": [
+    {
+      "id": "autumn-patch",
+      "name": "Gourd Patch",
+      "kind": "generator",
+      "color": "#c8702a",
+      "completionGems": 0
+    },
+    {
+      "id": "autumn-gourd",
+      "name": "Gourds",
+      "kind": "ingredient",
+      "color": "#e08a3c",
+      "completionGems": 5
+    },
+    {
+      "id": "autumn-pie",
+      "name": "Gourd Pies",
+      "kind": "baked",
+      "color": "#b5652b",
+      "completionGems": 5
+    }
+  ],
+  "items": [
+    {
+      "id": "autumn-patch-1",
+      "name": "Gourd Patch",
+      "chainId": "autumn-patch",
+      "tier": 1,
+      "spriteKey": "autumn-patch-1",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "autumn-patch-2",
+      "name": "Gourd Patch II",
+      "chainId": "autumn-patch",
+      "tier": 2,
+      "spriteKey": "autumn-patch-2",
+      "sellValue": 0,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "autumn-seed",
+      "name": "Gourd seed",
+      "chainId": "autumn-gourd",
+      "tier": 1,
+      "spriteKey": "autumn-seed",
+      "sellValue": 2,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "autumn-gourd",
+      "name": "Gourd",
+      "chainId": "autumn-gourd",
+      "tier": 2,
+      "spriteKey": "autumn-gourd",
+      "sellValue": 4,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "autumn-big-gourd",
+      "name": "Big gourd",
+      "chainId": "autumn-gourd",
+      "tier": 3,
+      "spriteKey": "autumn-big-gourd",
+      "sellValue": 8,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "autumn-prize-gourd",
+      "name": "Prize gourd",
+      "chainId": "autumn-gourd",
+      "tier": 4,
+      "spriteKey": "autumn-prize-gourd",
+      "sellValue": 16,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "autumn-pie",
+      "name": "Gourd pie",
+      "chainId": "autumn-pie",
+      "tier": 1,
+      "spriteKey": "autumn-pie",
+      "sellValue": 30,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "autumn-pie-pair",
+      "name": "Two gourd pies",
+      "chainId": "autumn-pie",
+      "tier": 2,
+      "spriteKey": "autumn-pie-pair",
+      "sellValue": 60,
+      "note": null,
+      "collectReward": null
+    }
+  ],
+  "generators": [
+    {
+      "itemId": "autumn-patch-1",
+      "spawnTable": [
+        { "itemId": "autumn-seed", "weight": 90 },
+        { "itemId": "autumn-gourd", "weight": 10 }
+      ],
+      "charges": 20,
+      "cooldownSec": 600
+    },
+    {
+      "itemId": "autumn-patch-2",
+      "spawnTable": [
+        { "itemId": "autumn-seed", "weight": 70 },
+        { "itemId": "autumn-gourd", "weight": 30 }
+      ],
+      "charges": 30,
+      "cooldownSec": 600
+    }
+  ],
+  "recipes": [
+    {
+      "id": "autumn-bake-pie",
+      "name": "Gourd pie",
+      "inputs": ["autumn-big-gourd", "flour-bag", "butter-pat"],
+      "output": "autumn-pie",
+      "bakeSec": 120
+    }
+  ]
+}

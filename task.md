@@ -2,8 +2,8 @@
 
 Scott, Nov 8: themed seasons added one at a time as runtime packs that can ship their own rules. Plan and contract approved Nov 8 (`implementation_plan.md`): opt-in, yearly calendar windows, MegaBun events paused while a joined season runs, Thanksgiving first, emoji placeholder art. Save version 4. One branch per task, `t14.n-…`.
 
-- [ ] T14.1 Contract: season types in `types.ts`, the hook API in `seasonApi.ts`, `Economy.seasons`, `GameData.seasons`, save v4 + migration and fixtures
-- [ ] T14.2 Pack format: zod schema, cross-checks, `withSeasons(base, packs)`, fixture pack
+- [x] T14.1 Contract: season types in `types.ts`, the hook API in `seasonApi.ts`, `Economy.seasons`, `GameData.seasons`, save v4 + migration and fixtures
+- [x] T14.2 Pack format (`src/seasons/pack.ts`): `parseSeasonPack(base, json)` validates season.json and throws one Error listing every problem; `withSeasons(base, packs)` merges resolved packs into a new GameData. A season adds only ingredient, baked, and generator chains. Every id and sprite key it adds starts with `<seasonId>-`, and no base id may start with that prefix (the orphan sweep removes by prefix; the base game's `harvest-showcase` rules out a "harvest" season). Each keepsake is paid by exactly one milestone. Feb 29 can't be a window day. `theme` isn't in the format yet (T14.8). Fixture: `src/seasons/fixtures/autumn.json`
 - [ ] T14.3 Calendar: `resolveWindow` for month-day windows in local time, year wrap
 - [ ] T14.4 Core lifecycle: `joinSeason`, seasonal orders and points, milestones, keepsakes, end sweep, events pause
 - [ ] T14.5 Rule hooks wired into dispatch, generators, delivery
