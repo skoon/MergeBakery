@@ -56,9 +56,9 @@ export interface ResolvedPack {
 // ─── season.json schema ──────────────────────────────────────────────────────
 
 /** Lowercase words joined by single dashes; the id is also a path segment and an id prefix. */
-const SEASON_ID = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+export const SEASON_ID = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 /** A path segment such as "1.0.0"; can't be "." or "..". */
-const PACK_VERSION = /^[a-z0-9]+([.-][a-z0-9]+)*$/;
+export const PACK_VERSION = /^[a-z0-9]+([.-][a-z0-9]+)*$/;
 
 /** Chain kinds a season may add. Event chains belong to MegaBun events. */
 const SEASON_CHAIN_KINDS: readonly ChainKind[] = [

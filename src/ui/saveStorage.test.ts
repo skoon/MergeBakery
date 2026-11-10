@@ -5,6 +5,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
   SAVE_KEY,
+  peekSavedSeasonId,
   readSave,
   writeSave,
   type KeyValueStorage,
@@ -12,6 +13,7 @@ import {
 import { serializeSave } from '../core/save';
 import { testData } from '../core/testing';
 import { createNewGame } from '../core/newGame';
+import type { GameState } from '../core/types';
 
 /** An in-memory KeyValueStorage backed by a Map, for tests. */
 class MemoryStorage implements KeyValueStorage {
@@ -132,5 +134,96 @@ describe('readSave', () => {
     expect(result).toBeNull();
     expect(consoleErrorSpy).toHaveBeenCalled();
     consoleErrorSpy.mockRestore();
+  });
+});
+
+describe('season content swept while loading (T14.6)', () => {
+  const autumnSave = (): GameState => ({
+    ...createNewGame(testData, 1, 0),
+    pantry: {
+      ...createNewGame(testData, 1, 0).pantry,
+      items: [{ itemId: 'autumn-pie', cobwebbed: false, generator: null }],
+    },
+    season: {
+      seasonId: 'autumn',
+      joinedAt: 1,
+      startedAt: 1,
+      endsAt: 9e12,
+      points: 10,
+      claimedMilestones: [],
+      custom: null,
+    },
+  });
+
+  it('backs up the save before sweeping, and returns the sweep', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const storage = new MemoryStorage();
+    writeSave(storage, autumnSave(), 5000);
+    const text = storage.map.get(SAVE_KEY);
+
+    const result = readSave(storage, testData, 7000);
+
+    expect(result?.swept).toEqual({
+      seasonId: 'autumn',
+      coins: testData.economy.seasons.orphanItemCoins,
+      ended: true,
+    });
+    expect(result?.state.season).toBeNull();
+    expect(storage.map.get(`${SAVE_KEY}-preseason-7000`)).toBe(text);
+    expect(storage.map.get(SAVE_KEY)).toBe(text);
+    expect(warn).toHaveBeenCalledOnce();
+    warn.mockRestore();
+  });
+
+  it('writes no backup when nothing is swept', () => {
+    const storage = new MemoryStorage();
+    writeSave(storage, createNewGame(testData, 1, 0), 5000);
+
+    expect(readSave(storage, testData, 7000)?.swept).toBeNull();
+    expect([...storage.map.keys()]).toEqual([SAVE_KEY]);
+  });
+});
+
+describe('peekSavedSeasonId', () => {
+  const withSeason = (seasonId: string): string =>
+    serializeSave(
+      {
+        ...createNewGame(testData, 1, 0),
+        season: {
+          seasonId,
+          joinedAt: 1,
+          startedAt: null,
+          endsAt: 2,
+          points: 0,
+          claimedMilestones: [],
+          custom: null,
+        },
+      },
+      3,
+    );
+
+  it.each<[string, string | null, string | null]>([
+    ['a joined season', withSeason('autumn'), 'autumn'],
+    ['no joined season', serializeSave(createNewGame(testData, 1, 0), 3), null],
+    ['no save', null, null],
+    ['a save that isn’t JSON', 'not json', null],
+    ['JSON null', 'null', null],
+    ['a version 3 save, before seasons', '{"version":3,"state":{}}', null],
+    [
+      'a seasonId that isn’t a string',
+      '{"state":{"season":{"seasonId":7}}}',
+      null,
+    ],
+  ])('reads %s', (_name, text, expected) => {
+    const storage = new MemoryStorage();
+    if (text !== null) storage.setItem(SAVE_KEY, text);
+    expect(peekSavedSeasonId(storage)).toBe(expected);
+  });
+
+  it('returns null and logs when storage throws', () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    expect(peekSavedSeasonId(new ThrowingStorage())).toBeNull();
+    expect(error).toHaveBeenCalledOnce();
+    error.mockRestore();
   });
 });

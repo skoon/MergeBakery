@@ -7,6 +7,7 @@
 
 import { z } from 'zod';
 import { migrate } from './migrate';
+import { sweepOrphanSeason, type SeasonSweep } from './seasons';
 import type {
   StaffState,
   ActiveEvent,
@@ -40,8 +41,10 @@ export interface SaveFile {
   state: GameState;
 }
 
+/** `swept` is what sweepOrphanSeason removed while loading, or null (T14.6). */
 export type LoadResult =
-  { ok: true; save: SaveFile } | { ok: false; error: string };
+  | { ok: true; save: SaveFile; swept: SeasonSweep | null }
+  | { ok: false; error: string };
 
 // ─── Zod schema for GameState (strict, mirrors data.ts) ─────────────────────
 
@@ -302,6 +305,8 @@ export function serializeSave(state: GameState, savedAt: Timestamp): string {
 
 /**
  * Never throws for bad input. See LoadResult for the error cases checked.
+ * Before checking ids, sweeps out the joined season's content `data` can't
+ * load (sweepOrphanSeason) and reports it as `swept`.
  */
 export function deserializeSave(data: GameData, text: string): LoadResult {
   let parsed: unknown;
@@ -352,17 +357,19 @@ export function deserializeSave(data: GameData, text: string): LoadResult {
     };
   }
 
-  const save = result.data;
-
-  const boardError = checkBoard(data, save.state.board);
+  const boardError = checkBoard(data, result.data.state.board);
   if (boardError !== null) {
     return { ok: false, error: `deserializeSave: ${boardError}` };
   }
+
+  // Season content that can't load is swept out rather than failing the save.
+  const { state, sweep } = sweepOrphanSeason(data, result.data.state);
+  const save = sweep ? { ...result.data, state } : result.data;
 
   const idError = checkKnownIds(data, save.state);
   if (idError !== null) {
     return { ok: false, error: `deserializeSave: ${idError}` };
   }
 
-  return { ok: true, save };
+  return { ok: true, save, swept: sweep };
 }

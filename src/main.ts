@@ -15,7 +15,15 @@ import { mountHud } from './ui/hud';
 import { mountCounterStrip } from './ui/counterStrip';
 import { mountHelpDialog } from './ui/helpDialog';
 import { startAutosave, onPageHide } from './ui/autosave';
-import { readSave, writeSave } from './ui/saveStorage';
+import { peekSavedSeasonId, readSave, writeSave } from './ui/saveStorage';
+import {
+  checkForSeasons,
+  loadSeasons,
+  type SeasonSource,
+} from './seasons/loader';
+import { registerSeasonArt } from './render/assets';
+import { mountSeasonBanner, showSeasonSweepNotice } from './ui/seasonBanner';
+import { seasonName, sweepNotice } from './ui/seasonBannerModel';
 import { resolveOffline, shouldShowAwayCard } from './core/offline';
 import { showAwayCard } from './ui/awayCard';
 import { mountKitchen } from './ui/kitchenSheet';
@@ -75,7 +83,28 @@ const topChrome = requireElement('#top');
 // on the next load; saves live in localStorage, which an update never touches.
 void registerSW({ immediate: true });
 
-const data = loadGameData();
+// Season packs (T14.6) load before the save, which may hold their items.
+const seasonSource: SeasonSource = {
+  baseUrl: import.meta.env.BASE_URL || '/',
+  fetch: (url, init) => fetch(url, init),
+  // A full URL: Vite's dev server adds "?import" to a path, and refuses to
+  // serve a public/ file that way.
+  importModule: (url) =>
+    import(
+      /* @vite-ignore */ new URL(url, location.href).href
+    ) as Promise<unknown>,
+};
+const offsetAt = (at: number): number => new Date(at).getTimezoneOffset();
+const seasons = await loadSeasons(loadGameData(), {
+  ...seasonSource,
+  now: Date.now(),
+  offsetAt,
+  savedSeasonId: peekSavedSeasonId(localStorage),
+  timeoutMs: 5000,
+});
+registerSeasonArt(seasonSource.baseUrl, seasons.index);
+
+const data = seasons.data;
 const now = Date.now();
 const saved = readSave(localStorage, data, now);
 const caughtUp = saved
@@ -248,6 +277,22 @@ startBakeNotifier(store, () => Date.now(), {
 if (caughtUp && shouldShowAwayCard(caughtUp.summary)) {
   showAwayCard(overlayRoot, data, caughtUp.summary);
 }
+if (saved?.swept) {
+  const notice = sweepNotice(
+    saved.swept,
+    seasonName(seasons.index, saved.swept.seasonId),
+  );
+  if (notice) showSeasonSweepNotice(overlayRoot, notice);
+}
+mountSeasonBanner(overlayRoot, store, {
+  intervalMs: 30 * 60_000,
+  findOffers: () =>
+    checkForSeasons(seasonSource, data, seasons.failed, Date.now(), offsetAt),
+  reload: () => {
+    writeSave(localStorage, store.getState(), Date.now());
+    location.reload();
+  },
+});
 createEffects(app, boardView, store, settings);
 
 // Browsers keep audio muted until the player interacts with the page.

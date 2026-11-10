@@ -455,3 +455,109 @@ export function dismissSeasonResult(state: GameState): ActionResult {
   if (!state.seasonResult) return { ok: true, state, events: [] };
   return { ok: true, state: { ...state, seasonResult: null }, events: [] };
 }
+
+/** What sweepOrphanSeason removed. */
+export interface SeasonSweep {
+  readonly seasonId: SeasonId;
+  /** `orphanItemCoins` for each item and bake removed. */
+  readonly coins: number;
+  /** True when the season's pack isn't loaded and the season was ended. */
+  readonly ended: boolean;
+}
+
+/**
+ * Removes the joined season's content that `data` can't load, so the save
+ * still loads (T14.6). Only ids starting with `<seasonId>-` are touched.
+ * Without the season's pack, all of them go and the season ends, with no
+ * result and no milestones paid. With the pack, only ids it doesn't know go
+ * (a pack update dropped them) and the season keeps running. Each item and
+ * bake removed pays `economy.seasons.orphanItemCoins`, generators included.
+ * `sweep` is null, and `state` the same object, when nothing was removed.
+ */
+export function sweepOrphanSeason(
+  data: GameData,
+  state: GameState,
+): { state: GameState; sweep: SeasonSweep | null } {
+  const active = state.season;
+  if (!active) return { state, sweep: null };
+  const prefix = `${active.seasonId}-`;
+  const ended = !data.seasons.has(active.seasonId);
+
+  let removed = false;
+  let items = 0;
+  const gone =
+    (known: ReadonlyMap<string, unknown>) =>
+    (id: string): boolean => {
+      const out = id.startsWith(prefix) && (ended || !known.has(id));
+      if (out) removed = true;
+      return out;
+    };
+  const itemGone = gone(data.items);
+  const recipeGone = gone(data.recipes);
+  const chainGone = gone(data.chains);
+  const sell = (itemId: ItemId): boolean => {
+    const out = itemGone(itemId);
+    if (out) items += 1;
+    return out;
+  };
+
+  const cells = state.board.cells.map((cell) =>
+    cell.kind === 'item' && sell(cell.item.itemId)
+      ? { kind: 'empty' as const }
+      : cell,
+  );
+  const pantryItems = state.pantry.items.filter((item) => !sell(item.itemId));
+  const ovens = state.kitchen.ovens.map((oven) => ({
+    ...oven,
+    slots: oven.slots.map((bake) => {
+      if (!bake || !recipeGone(bake.recipeId)) return bake;
+      items += 1;
+      return null;
+    }),
+  }));
+  const orders = state.orders.filter((order) => {
+    const wantsGone = order.wants.some(itemGone);
+    if (ended && order.seasonPoints !== undefined) removed = true;
+    return !wantsGone && !(ended && order.seasonPoints !== undefined);
+  });
+  const lastSale =
+    state.lastSale && itemGone(state.lastSale.item.itemId)
+      ? null
+      : state.lastSale;
+  const discovered = state.discovered.filter((id) => !itemGone(id));
+  const pendingDiscoveries = state.pendingDiscoveries.filter(
+    (id) => !itemGone(id),
+  );
+  const rewardedChains = state.rewardedChains.filter((id) => !chainGone(id));
+  const staff = state.staff.map((s) => {
+    const chain = s.assignedChain !== null && chainGone(s.assignedChain);
+    const recipeId = s.assignedRecipe ?? null;
+    const recipe = recipeId !== null && recipeGone(recipeId);
+    if (!chain && !recipe) return s;
+    return {
+      ...s,
+      ...(chain ? { assignedChain: null } : {}),
+      ...(recipe ? { assignedRecipe: null } : {}),
+    };
+  });
+
+  if (!ended && !removed) return { state, sweep: null };
+  const coins = items * data.economy.seasons.orphanItemCoins;
+  return {
+    state: {
+      ...state,
+      board: { ...state.board, cells },
+      pantry: { ...state.pantry, items: pantryItems },
+      kitchen: { ...state.kitchen, ovens },
+      orders,
+      lastSale,
+      discovered,
+      pendingDiscoveries,
+      rewardedChains,
+      staff,
+      coins: state.coins + coins,
+      season: ended ? null : active,
+    },
+    sweep: { seasonId: active.seasonId, coins, ended },
+  };
+}

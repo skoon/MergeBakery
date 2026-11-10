@@ -1,4 +1,5 @@
 import { Assets, Texture } from 'pixi.js';
+import { packUrl } from '../seasons/loader';
 
 export const PLACEHOLDER_KEY = '_missing';
 
@@ -12,9 +13,51 @@ const pngKeys = new Set(
   ),
 );
 
+interface SeasonArt {
+  /** The pack's art folder, ending in "/". */
+  readonly dir: string;
+  readonly pngKeys: ReadonlySet<string>;
+}
+
+/** Season id → its pack's art. A season's sprite keys all start with "<id>-". */
+let seasonArt = new Map<string, SeasonArt>();
+
+/**
+ * Sends sprite keys starting with "<id>-" to that season's pack folder
+ * (T14.6), replacing any seasons registered before. Every season in the
+ * index is registered, loaded or not, so old keepsakes keep their art.
+ */
+export function registerSeasonArt(
+  baseUrl: string,
+  seasons: readonly {
+    readonly id: string;
+    readonly version: string;
+    readonly pngKeys: readonly string[];
+  }[],
+): void {
+  seasonArt = new Map(
+    seasons.map((s) => [
+      s.id,
+      { dir: `${packUrl(baseUrl, s)}art/`, pngKeys: new Set(s.pngKeys) },
+    ]),
+  );
+}
+
+/** The registered season whose id prefixes `spriteKey`; the longest id wins. */
+function seasonArtFor(spriteKey: string): SeasonArt | null {
+  let found: { id: string; art: SeasonArt } | null = null;
+  for (const [id, art] of seasonArt) {
+    if (spriteKey.startsWith(`${id}-`) && id.length > (found?.id.length ?? 0)) {
+      found = { id, art };
+    }
+  }
+  return found?.art ?? null;
+}
+
 /**
  * `${import.meta.env.BASE_URL}art/${spriteKey}.png` for keys that have pixel
- * art, `.svg` otherwise. Throws when the key has characters other than
+ * art, `.svg` otherwise; a registered season's keys come from its pack's
+ * art folder the same way. Throws when the key has characters other than
  * a-z, A-Z, 0-9, "-" and "_".
  */
 export function assetUrl(spriteKey: string): string {
@@ -22,6 +65,11 @@ export function assetUrl(spriteKey: string): string {
     throw new Error(
       `Invalid sprite key "${spriteKey}": only a-z, A-Z, 0-9, "-" and "_" allowed`,
     );
+  }
+  const season = seasonArtFor(spriteKey);
+  if (season) {
+    const ext = season.pngKeys.has(spriteKey) ? 'png' : 'svg';
+    return `${season.dir}${spriteKey}.${ext}`;
   }
   const base = import.meta.env.BASE_URL || '/';
   const extension = pngKeys.has(spriteKey) ? 'png' : 'svg';

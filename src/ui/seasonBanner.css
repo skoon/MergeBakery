@@ -1,0 +1,24 @@
+/* New-season banner (T14.6): a pill just below the top chrome. */
+
+.season-banner {
+  position: absolute;
+  top: calc(var(--hud-height) + var(--counter-height) + var(--space-2));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  max-width: calc(100% - 2 * var(--space-4));
+  box-sizing: border-box;
+  padding: var(--space-2) var(--space-4);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  color: var(--color-ink);
+  background: var(--color-butter);
+  border: 2px solid var(--color-crust);
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
+.season-banner:hover {
+  opacity: 0.9;
+}

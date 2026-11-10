@@ -5,6 +5,8 @@
  */
 
 import { describe, expect, it } from 'vitest';
+import autumn from '../seasons/fixtures/autumn.json';
+import { parseSeasonPack, withSeasons } from '../seasons/pack';
 import { dispatch } from './dispatch';
 import { createNewGame } from './newGame';
 import { SAVE_VERSION, deserializeSave, serializeSave } from './save';
@@ -139,8 +141,19 @@ describe('the current version', () => {
         },
       ],
     };
-    const loaded = deserializeSave(testData, serializeSave(rich, 7));
+    // The joined season's pack must be loaded, or loading sweeps it (T14.6).
+    const thanksgiving = parseSeasonPack(
+      testData,
+      JSON.parse(
+        JSON.stringify(autumn).replaceAll('autumn', 'thanksgiving'),
+      ) as unknown,
+    );
+    const data = withSeasons(testData, [
+      { pack: thanksgiving, startsAt: 0, endsAt: 9e12, rules: null },
+    ]);
+    const loaded = deserializeSave(data, serializeSave(rich, 7));
     if (!loaded.ok) throw new Error(loaded.error);
+    expect(loaded.swept).toBeNull();
     expect(loaded.save.state).toEqual(rich);
   });
 

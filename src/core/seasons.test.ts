@@ -27,6 +27,7 @@ import {
   isSeasonalItem,
   joinSeason,
   runningSeason,
+  sweepOrphanSeason,
   tickSeason,
 } from './seasons';
 import { assignStaff } from './staff';
@@ -799,13 +800,107 @@ describe('the end of a season', () => {
 
   it('leaves a save that loads without the pack', () => {
     const before = ending();
-    expect(deserializeSave(testData, serializeSave(before, END)).ok).toBe(
-      false,
-    );
+    // Before the end, only the orphan sweep (T14.6) lets it load.
+    const orphaned = deserializeSave(testData, serializeSave(before, END));
+    expect(orphaned.ok && orphaned.swept?.ended).toBe(true);
     const { state } = ok(tickSeason(data, before, rng(), END));
     const loaded = deserializeSave(testData, serializeSave(state, END));
     if (!loaded.ok) throw new Error(loaded.error);
+    expect(loaded.swept).toBeNull();
     expect(loaded.save.state).toEqual(state);
+  });
+
+  describe('sweepOrphanSeason (T14.6)', () => {
+    const autumnIds = (ids: readonly string[]): string[] =>
+      ids.filter((id) => id.startsWith('autumn-'));
+
+    it('sweeps all of a season whose pack isn’t loaded, and ends it', () => {
+      const before = ending();
+      const { state, sweep } = sweepOrphanSeason(testData, before);
+      // The big gourd, the generator, the Pantry pie and the pie bake, at 5 each.
+      expect(sweep).toEqual({ seasonId: 'autumn', coins: 20, ended: true });
+      expect(autumnIds(boardItemIds(before))).toHaveLength(2);
+      expect(autumnIds(boardItemIds(state))).toEqual([]);
+      expect(state.pantry.items).toEqual([item('butter-pat')]);
+      expect(state.kitchen.ovens.map((o) => o.slots)).toEqual([
+        [null],
+        [null, cookieBake],
+      ]);
+      expect(state.orders.map((o) => o.id)).toEqual([99]);
+      expect(state.lastSale).toBeNull();
+      expect(autumnIds(state.discovered)).toEqual([]);
+      expect(state.pendingDiscoveries).toEqual(['egg']);
+      expect(state.rewardedChains).toEqual([flourChain]);
+      expect(state.staff).toEqual([
+        { staffId: 'sam', assignedChain: null, lastActedAt: NOW },
+        {
+          staffId: 'auto-oven',
+          assignedChain: null,
+          assignedRecipe: null,
+          lastActedAt: NOW,
+        },
+        { staffId: 'rosa', assignedChain: flourChain, lastActedAt: NOW },
+      ]);
+      expect(state.coins).toBe(before.coins + 20);
+      expect(state.gems).toBe(before.gems);
+      expect(state.season).toBeNull();
+      expect(state.seasonResult).toBeNull();
+      expect(state.keepsakes).toEqual(before.keepsakes);
+    });
+
+    it('sweeps only the ids an updated pack no longer has', () => {
+      const items = new Map(data.items);
+      items.delete('autumn-big-gourd');
+      const recipes = new Map(data.recipes);
+      recipes.delete('autumn-bake-pie');
+      const updated: GameData = { ...data, items, recipes };
+      const before = ending();
+      const { state, sweep } = sweepOrphanSeason(updated, before);
+      expect(sweep).toEqual({ seasonId: 'autumn', coins: 10, ended: false });
+      expect(boardItemIds(state)).not.toContain('autumn-big-gourd');
+      expect(boardItemIds(state)).toContain('autumn-patch-1');
+      expect(state.pantry.items).toEqual(before.pantry.items);
+      expect(state.kitchen.ovens.map((o) => o.slots)).toEqual([
+        [null],
+        [null, cookieBake],
+      ]);
+      expect(state.orders).toEqual(
+        before.orders.filter((o) => !o.wants.includes('autumn-big-gourd')),
+      );
+      expect(state.lastSale).toEqual(before.lastSale);
+      expect(state.staff[1]?.assignedRecipe).toBeNull();
+      expect(state.staff[0]).toEqual(before.staff[0]);
+      expect(state.season).toEqual(before.season);
+      expect(state.coins).toBe(before.coins + 10);
+    });
+
+    it('changes nothing when every id loads or no season is joined', () => {
+      const before = ending();
+      const loaded = sweepOrphanSeason(data, before);
+      expect(loaded.state).toBe(before);
+      expect(loaded.sweep).toBeNull();
+      const none = { ...before, season: null, keepsakes: [] };
+      expect(sweepOrphanSeason(data, none).state).toBe(none);
+    });
+
+    it('ends a season that had nothing on the board yet, paying nothing', () => {
+      const waiting = game({}, { season: season({ startedAt: null }) });
+      const { state, sweep } = sweepOrphanSeason(testData, waiting);
+      expect(sweep).toEqual({ seasonId: 'autumn', coins: 0, ended: true });
+      expect(state.season).toBeNull();
+      expect(state.coins).toBe(waiting.coins);
+    });
+
+    it('still refuses a save with another unknown id', () => {
+      const before = ending();
+      const odd = {
+        ...before,
+        pantry: { ...before.pantry, items: [item('winter-sled')] },
+      };
+      const loaded = deserializeSave(testData, serializeSave(odd, END));
+      expect(loaded.ok).toBe(false);
+      if (!loaded.ok) expect(loaded.error).toContain('"winter-sled"');
+    });
   });
 });
 

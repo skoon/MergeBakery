@@ -1,5 +1,61 @@
-import { describe, it, expect, vi } from 'vitest';
-import { assetUrl, PLACEHOLDER_KEY, createAssetCache } from './assets';
+import { afterEach, describe, it, expect, vi } from 'vitest';
+import {
+  assetUrl,
+  PLACEHOLDER_KEY,
+  createAssetCache,
+  registerSeasonArt,
+} from './assets';
+
+describe('season art (T14.6)', () => {
+  afterEach(() => {
+    registerSeasonArt('/', []);
+  });
+
+  const season = (id: string, pngKeys: string[] = []) => ({
+    id,
+    version: '1.0.0',
+    pngKeys,
+  });
+
+  it('sends a season’s keys to its pack folder, .png where drawn', () => {
+    registerSeasonArt('/game/', [season('autumn', ['autumn-pie'])]);
+    expect(assetUrl('autumn-pie')).toBe(
+      '/game/seasons/autumn/1.0.0/art/autumn-pie.png',
+    );
+    expect(assetUrl('autumn-seed')).toBe(
+      '/game/seasons/autumn/1.0.0/art/autumn-seed.svg',
+    );
+  });
+
+  it('leaves other keys, and the placeholder, as they were', () => {
+    registerSeasonArt('/game/', [season('autumn')]);
+    expect(assetUrl('cookie')).toBe('/art/cookie.png');
+    expect(assetUrl('autumnal')).toBe('/art/autumnal.svg');
+    expect(assetUrl(PLACEHOLDER_KEY)).toBe(`/art/${PLACEHOLDER_KEY}.svg`);
+  });
+
+  it('picks the longer id when two match', () => {
+    registerSeasonArt('/', [season('harvest'), season('harvest-moon')]);
+    expect(assetUrl('harvest-moon-pie')).toBe(
+      '/seasons/harvest-moon/1.0.0/art/harvest-moon-pie.svg',
+    );
+    expect(assetUrl('harvest-pie')).toBe(
+      '/seasons/harvest/1.0.0/art/harvest-pie.svg',
+    );
+  });
+
+  it('replaces what was registered before', () => {
+    registerSeasonArt('/', [season('autumn')]);
+    registerSeasonArt('/', [season('winter')]);
+    expect(assetUrl('autumn-pie')).toBe('/art/autumn-pie.svg');
+  });
+
+  it('refuses a season whose id or version isn’t a safe path', () => {
+    expect(() =>
+      registerSeasonArt('/', [{ id: '..', version: '1', pngKeys: [] }]),
+    ).toThrow('packUrl: bad season');
+  });
+});
 
 describe('assetUrl', () => {
   it('returns the correct URL format', () => {
