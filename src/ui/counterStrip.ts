@@ -8,9 +8,23 @@ import type { GameStore } from './store';
 import { counterCards, type OrderCard } from './counterModel';
 import { formatTimeLeft } from './eventModel';
 
-/** Catering first (it expires), then event orders, then the regular queue. */
+/** Catering first (it expires), then event and seasonal orders, then the regular queue. */
 const priority = (c: OrderCard): number =>
-  c.timed !== undefined ? 0 : c.eventPoints !== undefined ? 1 : 2;
+  c.timed !== undefined
+    ? 0
+    : c.eventPoints !== undefined || c.seasonPoints !== undefined
+      ? 1
+      : 2;
+
+function rewardText(card: OrderCard): string {
+  if (card.eventPoints !== undefined) {
+    return `${card.coins}c +${card.eventPoints} pride`;
+  }
+  if (card.seasonPoints !== undefined) {
+    return `${card.coins}c +${card.seasonPoints} pts`;
+  }
+  return `${card.coins}c ${card.stars}★`;
+}
 
 export function mountCounterStrip(
   counter: HTMLElement,
@@ -34,6 +48,8 @@ export function mountCounterStrip(
       cardEl.className = 'counter-card';
       if (card.eventPoints !== undefined)
         cardEl.classList.add('counter-card--event');
+      if (card.seasonPoints !== undefined)
+        cardEl.classList.add('counter-card--season');
       if (card.timed !== undefined) {
         cardEl.classList.add('counter-card--catering');
       }
@@ -92,10 +108,7 @@ export function mountCounterStrip(
 
       const reward = document.createElement('div');
       reward.className = 'counter-card-reward';
-      reward.textContent =
-        card.eventPoints === undefined
-          ? `${card.coins}c ${card.stars}★`
-          : `${card.coins}c +${card.eventPoints} pride`;
+      reward.textContent = rewardText(card);
       cardEl.appendChild(reward);
 
       const deliverButton = document.createElement('button');

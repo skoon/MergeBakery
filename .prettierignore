@@ -3,3 +3,6 @@ package-lock.json
 # Design docs mirrored from the claude.ai artifacts; keep them byte-identical to the source.
 docs/Rise & Shine Bakery — Game Design Document.md
 docs/Rise & Shine Bakery — Implementation Plan.md
+
+# Written by npm run build:seasons (T14.7).
+seasons/keepsakes.json

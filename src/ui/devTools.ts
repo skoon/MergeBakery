@@ -7,6 +7,8 @@
  *   bakery.away(90)                            pretend 90 minutes passed
  *   bakery.stars(200)                          set the star count
  *   bakery.event()                             start an event on the next tick
+ *   bakery.season('thanksgiving')              open a season's window now (null: stop)
+ *   bakery.endSeason()                         end the joined season on the next tick
  *   bakery.load({ coins: 9999 })               overwrite any part of the state
  *   bakery.ui({ textScale: 1.5, width: 320 })  jump to a text size and a window size
  *   bakery.store                               the live store, to dispatch an action
@@ -19,7 +21,7 @@
 
 import { nearestEmpty, setCell } from '../core/board';
 import type { BoardItem, GameData, GameState, ItemId } from '../core/types';
-import { SAVE_KEY, writeSave } from './saveStorage';
+import { DEV_SEASON_KEY, SAVE_KEY, writeSave } from './saveStorage';
 import type { SettingsStore, TextScale } from './settings';
 import type { GameStore } from './store';
 
@@ -130,6 +132,15 @@ export function rewindState(state: GameState, ms: number): GameState {
   };
 }
 
+/**
+ * The joined season with its end moved to `now`, so the next tick ends it as
+ * if its window had closed (T14.8). Throws when no season is joined.
+ */
+export function endSeasonNow(state: GameState, now: number): GameState {
+  if (!state.season) throw new Error('endSeasonNow: no season is joined');
+  return { ...state, season: { ...state.season, endsAt: now } };
+}
+
 export function installDevTools(
   store: GameStore,
   stopAutosave: () => void,
@@ -164,6 +175,19 @@ export function installDevTools(
         Date.now(),
       );
     },
+    /**
+     * Loads the season with its window open from now (it still ends on its
+     * own last day) so it can be joined early; null goes back to the calendar.
+     */
+    season(seasonId: string | null): void {
+      if (seasonId === null) localStorage.removeItem(DEV_SEASON_KEY);
+      else localStorage.setItem(DEV_SEASON_KEY, seasonId);
+      location.reload();
+    },
+    endSeason(): void {
+      localStorage.removeItem(DEV_SEASON_KEY);
+      saveAndReload(endSeasonNow(store.getState(), Date.now()), Date.now());
+    },
     away(minutes: number): void {
       const ms = minutes * 60_000;
       saveAndReload(rewindState(store.getState(), ms), Date.now() - ms);
@@ -196,6 +220,6 @@ export function installDevTools(
 
   Object.assign(window, { bakery: tools });
   console.info(
-    "Dev tools: bakery.give('dough-ball', 'butter-block'), bakery.stars(200), bakery.away(90), bakery.event(), bakery.load({ coins: 9999 }), bakery.ui({ textScale: 1.5, width: 320 }), bakery.reset()",
+    "Dev tools: bakery.give('dough-ball', 'butter-block'), bakery.stars(200), bakery.away(90), bakery.event(), bakery.season('thanksgiving'), bakery.endSeason(), bakery.load({ coins: 9999 }), bakery.ui({ textScale: 1.5, width: 320 }), bakery.reset()",
   );
 }

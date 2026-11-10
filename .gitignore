@@ -5,3 +5,4 @@ coverage
 .DS_Store
 docs/ui-checks
 scripts/art/hd/out
+public/seasons

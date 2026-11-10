@@ -66,13 +66,15 @@ export function isSeasonalItem(data: GameData, itemId: ItemId): boolean {
 /**
  * The calendar year a season's window opened. `endsAt` is local midnight
  * after the window's last day; every time zone is within a day of UTC, so the
- * last day's year is the one whose UTC date lands within a day of it.
+ * last day's year is the first whose UTC date after the last day is no more
+ * than a day before it. A run ended early (dev tools' "end season now", T14.8)
+ * still counts as the run it was in.
  */
 function seasonYear(def: SeasonDef, endsAt: Timestamp): number {
   const [month = 0, day = 0] = def.window.end.split('-').map(Number);
   const near = new Date(endsAt).getUTCFullYear();
   const lastDayYear = [near - 1, near, near + 1].find(
-    (year) => Math.abs(Date.UTC(year, month - 1, day + 1) - endsAt) <= DAY,
+    (year) => Date.UTC(year, month - 1, day + 1) >= endsAt - DAY,
   );
   if (lastDayYear === undefined) {
     throw new Error(

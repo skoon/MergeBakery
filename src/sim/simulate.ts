@@ -17,12 +17,15 @@ import { createNewGame } from '../core/newGame';
 import { orderShopItems } from '../core/orderShop';
 import { shopItemsFor } from '../core/shop';
 import { nextTask } from '../core/orders';
+import { createRng } from '../core/rng';
+import { seasonSpawnTable } from '../core/seasonHooks';
 import type {
   CellIndex,
   ChainId,
   GameData,
   GameState,
   GameEvent,
+  SeasonId,
   Timestamp,
 } from '../core/types';
 import { recipeAvailable } from '../ui/kitchenModel';
@@ -48,6 +51,13 @@ export interface SimOptions {
   sessionStarts: readonly number[];
   /** A session ends at this length even if there's more to do. */
   maxSessionMin: number;
+  /** When day 1 starts; 1 Jan 2026 (UTC) when left out. */
+  start?: Timestamp;
+  /**
+   * A season the bot joins as soon as its window opens (T14.9), with the
+   * tutorial marked done, since the bot never runs the UI tutorial.
+   */
+  joinSeason?: SeasonId;
 }
 
 export const DEFAULT_OPTIONS: SimOptions = {
@@ -91,9 +101,29 @@ export interface EventRun {
   sessionsRun: number;
 }
 
+/** The season the bot was in, or what it saw of seasons without joining (T14.9). */
+export interface SeasonRun {
+  seasonId: SeasonId | null;
+  joinedDay: number | null;
+  /** Season Points when the season ended, or at the last session. */
+  points: number;
+  /** The day each milestone's points were first reached, or null. */
+  milestoneDays: (number | null)[];
+  keepsakes: string[];
+  ordersArrived: number;
+  ordersDelivered: number;
+  /** Coins paid for seasonal orders, Feast bonuses included. */
+  orderCoins: number;
+  /** Seasonal orders of three items or more delivered. */
+  feasts: number;
+  /** Coins for the seasonal items sold when the season ended. */
+  endCoins: number;
+}
+
 export interface SimReport {
   seed: number;
   events: EventRun[];
+  season: SeasonRun;
   /** Catering orders that arrived, were delivered, and ran out of time, and generator upgrades from them. */
   catering: {
     arrived: number;
@@ -147,11 +177,30 @@ class Bot {
   firstCroissantAtMin: number | null = null;
   private events: GameEvent[] = [];
   private readonly data: GameData;
+  private readonly seasonId: SeasonId | null;
+  /** Seasonal orders seen, by id, with how many items each wants. */
+  private readonly seasonalOrders = new Map<number, number>();
+  readonly seasonStats = {
+    joinedDay: null as number | null,
+    ordersDelivered: 0,
+    orderCoins: 0,
+    feasts: 0,
+  };
 
-  constructor(data: GameData, seed: number, start: Timestamp) {
+  constructor(
+    data: GameData,
+    seed: number,
+    start: Timestamp,
+    seasonId: SeasonId | null = null,
+  ) {
     this.data = data;
     this.state = createNewGame(data, seed, start);
     this.now = start;
+    this.seasonId = seasonId;
+  }
+
+  get seasonOrdersArrived(): number {
+    return this.seasonalOrders.size;
   }
 
   /** Dispatches; on success keeps the state, advances the clock, and returns true. */
@@ -172,6 +221,9 @@ class Bot {
         this.cateringIds.add(o.id);
         this.catering.arrived++;
       }
+      if (o.seasonPoints !== undefined && !this.seasonalOrders.has(o.id)) {
+        this.seasonalOrders.set(o.id, o.wants.length);
+      }
     }
     for (const e of result.events) {
       if (e.type === 'itemBought') {
@@ -187,6 +239,16 @@ class Bot {
       if (e.type === 'orderDelivered' && this.cateringIds.has(e.orderId)) {
         this.catering.delivered++;
       }
+      const seasonalSize =
+        e.type === 'orderDelivered'
+          ? this.seasonalOrders.get(e.orderId)
+          : undefined;
+      if (e.type === 'orderDelivered' && seasonalSize !== undefined) {
+        this.seasonStats.ordersDelivered++;
+        this.seasonStats.orderCoins += e.reward.coins;
+        if (seasonalSize >= 3) this.seasonStats.feasts++;
+      }
+      if (e.type === 'seasonJoined') this.seasonStats.joinedDay = this.day;
     }
     if (kind) {
       const ms = ACTION_SEC[kind] * 1000;
@@ -231,12 +293,34 @@ class Bot {
   /** Chains the open orders and available recipes still need, most-needed first. */
   private neededChains(): ChainId[] {
     const counts = new Map<ChainId, number>();
+    const count = (chain: ChainId | undefined, n: number) => {
+      if (chain) counts.set(chain, (counts.get(chain) ?? 0) + n);
+    };
     const add = (itemIds: readonly string[]) => {
       const matches = matchOrderItems(this.state, itemIds);
       itemIds.forEach((itemId, i) => {
         if (matches[i] !== null) return;
-        const chain = this.data.items.get(itemId)?.chainId;
-        if (chain) counts.set(chain, (counts.get(chain) ?? 0) + 1);
+        const item = this.data.items.get(itemId);
+        count(item?.chainId, 1);
+        // A seasonal bake needs its recipe's inputs grown first: a player knows
+        // a pair of pies takes two pumpkins (T14.9). Base-game bakes are left
+        // to the recipe count below, as before.
+        const chain = item && this.data.chains.get(item.chainId);
+        if (!item || chain?.kind !== 'baked' || chain.seasonId === undefined) {
+          return;
+        }
+        for (const recipe of this.data.recipes.values()) {
+          const output = this.data.items.get(recipe.output);
+          if (output?.chainId !== item.chainId) continue;
+          const held = matchOrderItems(this.state, recipe.inputs);
+          recipe.inputs.forEach((input, j) => {
+            if (held[j] !== null) return;
+            count(
+              this.data.items.get(input)?.chainId,
+              2 ** (item.tier - output.tier),
+            );
+          });
+        }
       });
     };
     for (const order of this.state.orders) add(order.wants);
@@ -244,6 +328,33 @@ class Bot {
       if (recipeAvailable(this.data, this.state, recipe)) add(recipe.inputs);
     }
     return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([c]) => c);
+  }
+
+  /**
+   * Joins the bot's season once its window opens, then claims each milestone
+   * as it's reached. Joining is tried every step until it works.
+   */
+  private season(): boolean {
+    if (this.seasonId === null) return false;
+    if (this.seasonStats.joinedDay === null) {
+      if (this.state.tutorialStep !== 'done') {
+        this.act(null, { type: 'setTutorialStep', step: 'done' });
+      }
+      return this.act('task', {
+        type: 'joinSeason',
+        seasonId: this.seasonId,
+      });
+    }
+    const active = this.state.season;
+    const def = active && this.data.seasons.get(active.seasonId)?.def;
+    if (!active || !def) return false;
+    const index = def.milestones.findIndex(
+      (m, i) =>
+        m.points <= active.points && !active.claimedMilestones.includes(i),
+    );
+    return (
+      index !== -1 && this.act('bonus', { type: 'claimSeasonMilestone', index })
+    );
   }
 
   private deliver(): boolean {
@@ -588,10 +699,32 @@ class Bot {
       if (cell.kind !== 'item' || !cell.item.generator || cell.item.cobwebbed)
         return;
       const def = this.data.generators.get(cell.item.itemId);
-      const chain =
-        def && this.data.items.get(def.spawnTable[0]?.itemId ?? '')?.chainId;
-      const rank = chain ? wanted.indexOf(chain) : -1;
-      generators.push({ cell: i, rank: rank === -1 ? 99 : rank });
+      // Ranked by the most-needed chain it can spawn, the season's extra spawns
+      // included (pecans from a Flour Mill, T14.9). Every base generator spawns
+      // a single chain, so for them this is the first entry's chain, as before.
+      const table = def
+        ? seasonSpawnTable(
+            this.data,
+            this.state,
+            cell.item.itemId,
+            def.spawnTable,
+            this.now,
+            createRng(0),
+          )
+        : [];
+      const ranks = table
+        .map((e) =>
+          wanted.indexOf(this.data.items.get(e.itemId)?.chainId ?? ''),
+        )
+        .filter((r) => r !== -1);
+      // A season's generator is the only source of its items and refills on
+      // its own cooldown, so a player who joined spends its charges first.
+      const chainId = this.data.items.get(cell.item.itemId)?.chainId ?? '';
+      const seasonal = this.data.chains.get(chainId)?.seasonId !== undefined;
+      generators.push({
+        cell: i,
+        rank: ranks.length === 0 ? 99 : seasonal ? -1 : Math.min(...ranks),
+      });
     });
     generators.sort((a, b) => a.rank - b.rank);
     for (const { cell } of generators) {
@@ -646,6 +779,7 @@ class Bot {
   step(): boolean {
     this.act(null, { type: 'tick' });
     return (
+      this.season() ||
       this.deliver() ||
       this.renovate() ||
       this.kitchen() ||
@@ -666,8 +800,14 @@ export function simulate(
   data: GameData,
   options: SimOptions = DEFAULT_OPTIONS,
 ): SimReport {
-  const start = Date.UTC(2026, 0, 1);
-  const bot = new Bot(data, options.seed, start);
+  const start = options.start ?? Date.UTC(2026, 0, 1);
+  const seasonId = options.joinSeason ?? null;
+  const bot = new Bot(data, options.seed, start, seasonId);
+  const milestones =
+    (seasonId !== null && data.seasons.get(seasonId)?.def.milestones) || [];
+  const milestoneDays: (number | null)[] = milestones.map(() => null);
+  let seasonPoints = 0;
+  let seasonEnded = false;
   const allTasks = [...data.chapters.values()].flatMap((c) => c.tasks);
   const lastTasks = new Map(
     [...data.chapters.values()].map((c) => [c.tasks.at(-1)?.id, c.id]),
@@ -737,6 +877,10 @@ export function simulate(
             });
             running = null;
           }
+          if (event.type === 'seasonEnded' && event.seasonId === seasonId) {
+            seasonPoints = event.points;
+            seasonEnded = true;
+          }
           if (event.type === 'orderDelivered') {
             report.orders++;
             if (report.energyEmptyAtMin === null) report.ordersOnFullBar++;
@@ -750,6 +894,13 @@ export function simulate(
               chapterDoneAt[finished] = { day, session: index + 1 };
             }
           }
+        }
+        const points = bot.state.season?.points;
+        if (points !== undefined && !seasonEnded) {
+          seasonPoints = points;
+          milestones.forEach((m, i) => {
+            if (points >= m.points) milestoneDays[i] ??= day;
+          });
         }
         if (
           report.energyEmptyAtMin === null &&
@@ -781,6 +932,18 @@ export function simulate(
   return {
     seed: options.seed,
     events: eventRuns,
+    season: {
+      seasonId,
+      joinedDay: bot.seasonStats.joinedDay,
+      points: seasonPoints,
+      milestoneDays,
+      keepsakes: bot.state.keepsakes.map((k) => k.id),
+      ordersArrived: bot.seasonOrdersArrived,
+      ordersDelivered: bot.seasonStats.ordersDelivered,
+      orderCoins: bot.seasonStats.orderCoins,
+      feasts: bot.seasonStats.feasts,
+      endCoins: bot.state.seasonResult?.coins ?? 0,
+    },
     catering: bot.catering,
     wholesale: bot.wholesale,
     sessions,

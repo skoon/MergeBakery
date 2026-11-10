@@ -32,6 +32,16 @@ export interface LocationModel {
   stars: number;
   /** Names of the events won, each once, for the trophy shelf. */
   trophies: string[];
+  /** Season keepsakes (T14.8), in the order earned. */
+  keepsakes: KeepsakeView[];
+}
+
+export interface KeepsakeView {
+  name: string;
+  spriteKey: string;
+  year: number;
+  /** "Harvest Wreath, 2026". */
+  label: string;
 }
 
 export function locationModel(data: GameData, state: GameState): LocationModel {
@@ -76,5 +86,11 @@ export function locationModel(data: GameData, state: GameState): LocationModel {
     trophies: [...new Set(state.trophies)].map(
       (id) => data.events.get(id)?.name ?? id,
     ),
+    keepsakes: state.keepsakes.map((k) => ({
+      name: k.name,
+      spriteKey: k.spriteKey,
+      year: k.year,
+      label: `${k.name}, ${k.year.toString()}`,
+    })),
   };
 }

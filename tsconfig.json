@@ -22,5 +22,5 @@
     "noUncheckedSideEffectImports": true,
     "erasableSyntaxOnly": true
   },
-  "include": ["src", "vite.config.ts"]
+  "include": ["src", "seasons", "vite.config.ts"]
 }

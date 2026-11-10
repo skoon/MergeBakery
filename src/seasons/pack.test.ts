@@ -110,7 +110,7 @@ describe('parseSeasonPack', () => {
     [
       'an unknown field',
       (p) => {
-        p['theme'] = {};
+        p['flavor'] = {};
       },
     ],
     [
@@ -412,6 +412,93 @@ describe('parseSeasonPack', () => {
       `season "autumn": apiVersion 3 is not the game's 1`,
       `season "autumn": window.start "02-30" is not a month-day like "11-26" (Feb 29 isn't allowed)`,
     ]);
+  });
+});
+
+describe('season theme (T14.8)', () => {
+  const music = {
+    bpm: 80,
+    rootHz: 220,
+    wave: 'triangle',
+    gain: 0.06,
+    pattern: [0, 1, 2, 1, 0, 2, 1, 2],
+    progression: [
+      [0, 3, 7],
+      [5, 8, 12],
+    ],
+  };
+  const intro = [
+    { speaker: 'grandma', expression: 'happy', text: 'Pumpkins!' },
+    { speaker: 'narrator', text: 'The harbor smells of pie.' },
+  ];
+
+  it('has an empty theme when season.json has none', () => {
+    expect(parseSeasonPack(testData, raw()).theme).toEqual({
+      invitation: null,
+      tokens: {},
+      music: null,
+      intro: null,
+    });
+  });
+
+  it('returns the theme beside the def, not in it', () => {
+    const pack = parseSeasonPack(
+      testData,
+      raw((p) => {
+        p['theme'] = {
+          invitation: 'Join us?',
+          tokens: { '--color-crust': '#b5652b' },
+          music,
+          intro,
+        };
+      }),
+    );
+    expect(pack.theme).toEqual({
+      invitation: 'Join us?',
+      tokens: { '--color-crust': '#b5652b' },
+      music,
+      intro,
+    });
+    expect(Object.keys(pack.def)).not.toContain('theme');
+  });
+
+  it.each<[string, Record<string, unknown>, RegExp]>([
+    ['an unknown theme field', { board: 'x' }, /theme/],
+    [
+      'a token that is not a custom property',
+      { tokens: { color: 'red' } },
+      /theme\.tokens/,
+    ],
+    [
+      'an empty token value',
+      { tokens: { '--color-crust': '' } },
+      /theme\.tokens/,
+    ],
+    ['an empty invitation', { invitation: '' }, /theme\.invitation/],
+    [
+      'music whose pattern runs past a chord',
+      { music: { ...music, progression: [[0, 4]] } },
+      /theme\.music: parseMusic:\n.*pattern step is past/,
+    ],
+    [
+      'music of the wrong shape',
+      { music: { bpm: 80 } },
+      /theme\.music: parseMusic/,
+    ],
+    [
+      'an intro line with an unknown speaker',
+      { intro: [{ speaker: 'santa', text: 'Ho' }] },
+      /theme\.intro: parseScenes:\n.*unknown speaker "santa"/,
+    ],
+    [
+      'an empty intro',
+      { intro: [] },
+      /theme\.intro: parseScenes:\n.*has no lines/,
+    ],
+  ])('refuses %s', (_name, theme, message) => {
+    expectRefused((p) => {
+      p['theme'] = theme;
+    }, message);
   });
 });
 

@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "npm run build:seasons",
     "dev": "vite",
+    "prebuild": "npm run build:seasons",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "lint": "eslint . && prettier --check .",
@@ -14,6 +16,7 @@
     "test:watch": "vitest",
     "balance": "vitest run src/sim --silent=false",
     "art:placeholders": "node scripts/gen-placeholder-art.js",
+    "build:seasons": "node scripts/build-seasons.js",
     "ui-check": "npx -y -p playwright node scripts/ui-check.js"
   },
   "dependencies": {

@@ -10,6 +10,8 @@ import { deserializeSave, serializeSave, type SaveFile } from '../core/save';
 import type { SeasonSweep } from '../core/seasons';
 
 export const SAVE_KEY = 'rise-and-shine-save';
+/** Dev tools only (T14.8): the season `bakery.season(id)` forces open. */
+export const DEV_SEASON_KEY = 'rise-and-shine-dev-season';
 
 /** The part of the Web Storage API used here; window.localStorage satisfies it. */
 export interface KeyValueStorage {

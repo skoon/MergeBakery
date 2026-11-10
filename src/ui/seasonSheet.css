@@ -1,0 +1,37 @@
+/* Season pill, sheet and cards (T14.8); the rest is shared from eventSheet.css. */
+
+.season-pill {
+  border-style: dashed;
+  border-color: var(--color-crust);
+}
+
+.season-sheet__join,
+.season-card__later {
+  font: inherit;
+  font-weight: 700;
+  border-radius: var(--space-2);
+  cursor: pointer;
+}
+
+.season-sheet__join {
+  width: 100%;
+  margin-bottom: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-cream);
+  background: var(--color-crust);
+  border: none;
+}
+
+.season-sheet__points {
+  margin: 0 0 var(--space-3);
+  font-weight: 700;
+}
+
+.season-card__later {
+  width: 100%;
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  color: var(--color-ink);
+  background: none;
+  border: 2px solid var(--color-crust);
+}

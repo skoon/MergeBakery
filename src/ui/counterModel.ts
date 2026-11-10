@@ -15,6 +15,8 @@ export interface OrderCard {
   stars: number;
   /** Hometown Pride this order earns; present only on event orders. */
   eventPoints?: number;
+  /** Season Points this order earns; present only on seasonal orders (T14.8). */
+  seasonPoints?: number;
   /** Catering (T9.3) and wholesale (T10.4) orders expire; the card says which and when. */
   timed?: { label: 'Catering' | 'Wholesale'; expiresAt: number };
   /** Wholesale: how many of the batch the player holds, of how many. */
@@ -76,6 +78,9 @@ export function counterCards(data: GameData, state: GameState): OrderCard[] {
       stars: order.reward.stars,
       ...(order.eventPoints !== undefined && {
         eventPoints: order.eventPoints,
+      }),
+      ...(order.seasonPoints !== undefined && {
+        seasonPoints: order.seasonPoints,
       }),
       ...(order.catering && {
         timed: {

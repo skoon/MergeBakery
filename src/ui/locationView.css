@@ -192,3 +192,36 @@
 .location-trophies[hidden] {
   display: none;
 }
+
+/* Season keepsakes (T14.8). */
+.location-keepsakes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.location-keepsakes[hidden] {
+  display: none;
+}
+
+.location-keepsakes__title {
+  flex: 1 1 100%;
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-crust);
+}
+
+.location-keepsake {
+  width: calc(72px * var(--ui-scale));
+  margin: 0;
+  font-size: var(--font-size-xs);
+  text-align: center;
+}
+
+.location-keepsake__art {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+}

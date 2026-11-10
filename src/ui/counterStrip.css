@@ -160,6 +160,12 @@
   border: 2px solid var(--color-strawberry);
 }
 
+/* Seasonal orders (T14.8): the season's theme recolours the crust border. */
+.counter-card--season {
+  background: var(--color-cream);
+  border: 2px dashed var(--color-crust);
+}
+
 .counter-card--catering {
   background: var(--color-butter);
   border: 2px solid var(--color-crust);

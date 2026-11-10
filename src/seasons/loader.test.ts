@@ -201,9 +201,60 @@ describe('loadSeasons', () => {
     expect([...loaded.data.seasons.keys()]).toEqual(['autumn', 'winter']);
   });
 
+  it('returns the theme of each pack that loaded (T14.8)', async () => {
+    const themed = {
+      ...fixture,
+      theme: { invitation: 'Join us?', tokens: { '--color-crust': '#b5652b' } },
+    };
+    const loaded = await loadSeasons(
+      testData,
+      options(
+        twoPacks({
+          [`${dir('autumn')}season.json`]: themed,
+          [`${dir('winter')}season.json`]: 404,
+        }),
+      ),
+    );
+    expect([...loaded.themes.keys()]).toEqual(['autumn']);
+    expect(loaded.themes.get('autumn')).toEqual({
+      invitation: 'Join us?',
+      tokens: { '--color-crust': '#b5652b' },
+      music: null,
+      intro: null,
+    });
+  });
+
+  it('opens a forced season from now until its own end (dev tools)', async () => {
+    const now = Date.UTC(2026, 10, 9);
+    const loaded = await loadSeasons(
+      testData,
+      options(twoPacks(), {}, { now, forceOpen: 'winter' }),
+    );
+    // Autumn opens on the 12th; only the forced winter loads.
+    expect([...loaded.data.seasons.keys()]).toEqual(['winter']);
+    const winter = loaded.data.seasons.get('winter');
+    expect(winter?.startsAt).toBe(now);
+    expect(winter?.endsAt).toBe(Date.UTC(2026, 11, 1));
+  });
+
+  it('leaves an open forced season’s window as it is', async () => {
+    const loaded = await loadSeasons(
+      testData,
+      options(twoPacks(), {}, { forceOpen: 'autumn' }),
+    );
+    expect(loaded.data.seasons.get('autumn')?.startsAt).toBe(
+      Date.UTC(2026, 10, 12),
+    );
+  });
+
   it('warns and goes on without seasons when there is no index', async () => {
     const loaded = await loadSeasons(testData, options({}));
-    expect(loaded).toEqual({ data: testData, index: [], failed: [] });
+    expect(loaded).toEqual({
+      data: testData,
+      index: [],
+      failed: [],
+      themes: new Map(),
+    });
     expect(warn).toHaveBeenCalledOnce();
     expect(error).not.toHaveBeenCalled();
   });
@@ -215,7 +266,12 @@ describe('loadSeasons', () => {
     ['an index that is not an object', ['autumn']],
   ])('logs an error and goes on without seasons on %s', async (_name, body) => {
     const loaded = await loadSeasons(testData, options({ [INDEX]: body }));
-    expect(loaded).toEqual({ data: testData, index: [], failed: [] });
+    expect(loaded).toEqual({
+      data: testData,
+      index: [],
+      failed: [],
+      themes: new Map(),
+    });
     expect(error).toHaveBeenCalledOnce();
   });
 
@@ -331,7 +387,12 @@ describe('the load timeout', () => {
     vi.useFakeTimers();
     const loading = loadSeasons(testData, { ...options({}), fetch: hanging });
     await vi.advanceTimersByTimeAsync(5000);
-    expect(await loading).toEqual({ data: testData, index: [], failed: [] });
+    expect(await loading).toEqual({
+      data: testData,
+      index: [],
+      failed: [],
+      themes: new Map(),
+    });
     expect(warn).toHaveBeenCalledOnce();
   });
 

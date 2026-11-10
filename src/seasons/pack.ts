@@ -32,11 +32,29 @@ import type {
   SeasonDef,
   Timestamp,
 } from '../core/types';
+import { parseMusic, type MusicTheme } from '../audio/music';
+import { parseScenes, type DialogueLine } from '../ui/dialogue';
 import { isMonthDay } from './calendar';
+
+/**
+ * How a joined season looks and sounds while it runs (T14.8). Kept beside the
+ * frozen SeasonDef: only the UI uses it, never core.
+ */
+export interface SeasonTheme {
+  /** The invitation card's text; null for the default. */
+  readonly invitation: string | null;
+  /** CSS custom properties from tokens.css, overridden while the season runs. */
+  readonly tokens: Readonly<Record<string, string>>;
+  /** Plays instead of the chapter's theme while the season runs. */
+  readonly music: MusicTheme | null;
+  /** Scene `<id>-intro`, played when the player joins. */
+  readonly intro: readonly DialogueLine[] | null;
+}
 
 /** A validated pack: the rules data core sees, and the content merged into GameData. */
 export interface SeasonPack {
   readonly def: SeasonDef;
+  readonly theme: SeasonTheme;
   /** Stamped with `seasonId`. */
   readonly chains: readonly Chain[];
   readonly items: readonly Item[];
@@ -59,6 +77,8 @@ export interface ResolvedPack {
 export const SEASON_ID = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 /** A path segment such as "1.0.0"; can't be "." or "..". */
 export const PACK_VERSION = /^[a-z0-9]+([.-][a-z0-9]+)*$/;
+/** A CSS custom property name; the pack build checks it is one tokens.css declares. */
+export const TOKEN_NAME = /^--[a-z0-9]+(-[a-z0-9]+)*$/;
 
 /** Chain kinds a season may add. Event chains belong to MegaBun events. */
 const SEASON_CHAIN_KINDS: readonly ChainKind[] = [
@@ -101,6 +121,17 @@ const seasonPackSchema = z.strictObject({
   items: z.array(itemSchema),
   generators: z.array(generatorDefSchema),
   recipes: z.array(recipeSchema),
+  // Music and intro lines are checked by parseMusic and parseScenes in validatePack.
+  theme: z
+    .strictObject({
+      invitation: z.string().min(1).optional(),
+      tokens: z
+        .record(z.string().regex(TOKEN_NAME), z.string().min(1))
+        .optional(),
+      music: z.unknown().optional(),
+      intro: z.unknown().optional(),
+    })
+    .optional(),
 });
 
 type SeasonPackFile = z.infer<typeof seasonPackSchema>;
@@ -323,6 +354,25 @@ function validatePack(base: GameData, file: SeasonPackFile): string[] {
     }
   }
 
+  // The theme's music and intro lines, with the checks the game's own use.
+  const theme = file.theme;
+  if (theme?.music !== undefined) {
+    try {
+      parseMusic({ themes: { [file.id]: theme.music } }, []);
+    } catch (error) {
+      problems.push(`theme.music: ${(error as Error).message}`);
+    }
+  }
+  if (theme?.intro !== undefined) {
+    try {
+      parseScenes(base, {
+        scenes: [{ id: `${file.id}-intro`, lines: theme.intro }],
+      });
+    } catch (error) {
+      problems.push(`theme.intro: ${(error as Error).message}`);
+    }
+  }
+
   return problems;
 }
 
@@ -346,9 +396,23 @@ export function parseSeasonPack(base: GameData, raw: unknown): SeasonPack {
       problems.map((p) => `season "${file.id}": ${p}`).join('\n'),
     );
   }
-  const { chains, items, generators, recipes, ...def } = file;
+  const { chains, items, generators, recipes, theme, ...def } = file;
   return {
     def,
+    theme: {
+      invitation: theme?.invitation ?? null,
+      tokens: theme?.tokens ?? {},
+      music:
+        theme?.music === undefined
+          ? null
+          : (parseMusic({ themes: { t: theme.music } }, [])['t'] ?? null),
+      intro:
+        theme?.intro === undefined
+          ? null
+          : (parseScenes(base, {
+              scenes: [{ id: 'intro', lines: theme.intro }],
+            }).get('intro')?.lines ?? null),
+    },
     chains: chains.map((c) => ({ ...c, seasonId: def.id })),
     items,
     generators,

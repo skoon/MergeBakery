@@ -43,7 +43,11 @@ export function mountLocationView(
   scene.append(backdrop, spots, popover);
   const shelf = document.createElement('p');
   shelf.className = 'location-trophies';
-  container.append(header, scene, shelf);
+  // Season keepsakes (T14.8): each one's art and name, stored whole in the save.
+  const keepsakes = document.createElement('section');
+  keepsakes.className = 'location-keepsakes';
+  keepsakes.setAttribute('aria-label', 'Keepsakes');
+  container.append(header, scene, shelf, keepsakes);
 
   let selected: TaskId | null = null;
   /** Each spot's state at the last render, to spot the one that just completed. */
@@ -102,6 +106,27 @@ export function mountLocationView(
 
     shelf.hidden = model.trophies.length === 0;
     shelf.textContent = `Trophies: ${model.trophies.join(', ')}`;
+
+    keepsakes.hidden = model.keepsakes.length === 0;
+    keepsakes.replaceChildren();
+    if (model.keepsakes.length > 0) {
+      const title = document.createElement('p');
+      title.className = 'location-keepsakes__title';
+      title.textContent = 'Keepsakes';
+      keepsakes.appendChild(title);
+    }
+    for (const keepsake of model.keepsakes) {
+      const figure = document.createElement('figure');
+      figure.className = 'location-keepsake';
+      const art = document.createElement('img');
+      art.className = 'location-keepsake__art';
+      art.alt = '';
+      setImageArt(art, keepsake.spriteKey);
+      const caption = document.createElement('figcaption');
+      caption.textContent = keepsake.label;
+      figure.append(art, caption);
+      keepsakes.appendChild(figure);
+    }
 
     setImageArt(backdrop, model.sceneKey);
 

@@ -70,6 +70,22 @@ describe('counterCards', () => {
     expect(cards[1]?.eventPoints).toBe(20);
   });
 
+  it('carries the Season Points of a seasonal order (T14.8)', () => {
+    const regular: Order = {
+      id: 1,
+      customerId: 'gus',
+      wants: ['apple'],
+      reward: { coins: 10, stars: 0, xp: 0 },
+    };
+    const seasonal: Order = { ...regular, id: 2, seasonPoints: 8 };
+    const cards = counterCards(
+      testData,
+      stateWith({}, { orders: [regular, seasonal] }),
+    );
+    expect(cards[0]).not.toHaveProperty('seasonPoints');
+    expect(cards[1]?.seasonPoints).toBe(8);
+  });
+
   it('returns no cards when there are no orders', () => {
     const state = stateWith({}, { orders: [] });
 

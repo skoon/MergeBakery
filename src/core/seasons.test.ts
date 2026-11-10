@@ -618,6 +618,9 @@ describe('claimSeasonMilestone', () => {
     ['12-01', '12-31', Date.UTC(2026, 11, 31, 15), 2026],
     ['01-01', '01-05', Date.UTC(2027, 0, 6, 8), 2027],
     ['01-01', '01-05', Date.UTC(2027, 0, 5, 15), 2027],
+    // Ended early by dev tools (T14.8): still that run's year.
+    ['11-12', '11-30', Date.UTC(2026, 10, 9, 20), 2026],
+    ['12-20', '01-06', Date.UTC(2026, 11, 22, 8), 2026],
   ])(
     'dates a keepsake from a %s to %s season ending at %d as %d',
     (start, end, endsAt, year) => {

@@ -1,0 +1,340 @@
+{
+  "id": "thanksgiving",
+  "name": "Harvest Supper",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "window": {
+    "start": "11-12",
+    "end": "11-30"
+  },
+  "generatorItemId": "thanksgiving-patch-1",
+  "pointsPerItem": 5,
+  "orders": {
+    "maxOpen": 3,
+    "minItems": 1,
+    "maxItems": 3,
+    "minTier": 1,
+    "maxTier": 3
+  },
+  "milestones": [
+    {
+      "points": 50,
+      "reward": {
+        "coins": 50,
+        "gems": 0
+      }
+    },
+    {
+      "points": 125,
+      "reward": {
+        "coins": 100,
+        "gems": 5
+      }
+    },
+    {
+      "points": 225,
+      "reward": {
+        "coins": 150,
+        "gems": 10
+      }
+    },
+    {
+      "points": 350,
+      "reward": {
+        "coins": 0,
+        "gems": 10,
+        "keepsakeId": "thanksgiving-wreath"
+      }
+    },
+    {
+      "points": 500,
+      "reward": {
+        "coins": 0,
+        "gems": 20,
+        "keepsakeId": "thanksgiving-trophy"
+      }
+    }
+  ],
+  "keepsakes": [
+    {
+      "id": "thanksgiving-wreath",
+      "name": "Harvest Wreath",
+      "spriteKey": "thanksgiving-wreath"
+    },
+    {
+      "id": "thanksgiving-trophy",
+      "name": "Prize Pumpkin Trophy",
+      "spriteKey": "thanksgiving-trophy"
+    }
+  ],
+  "chains": [
+    {
+      "id": "thanksgiving-patch",
+      "name": "Pumpkin Patch",
+      "kind": "generator",
+      "color": "#c8702a",
+      "completionGems": 0
+    },
+    {
+      "id": "thanksgiving-pumpkin",
+      "name": "Pumpkins",
+      "kind": "ingredient",
+      "color": "#f08a24",
+      "completionGems": 5
+    },
+    {
+      "id": "thanksgiving-cranberry",
+      "name": "Cranberries",
+      "kind": "ingredient",
+      "color": "#b8323f",
+      "completionGems": 5
+    },
+    {
+      "id": "thanksgiving-pecan",
+      "name": "Pecans",
+      "kind": "ingredient",
+      "color": "#9a6a44",
+      "completionGems": 5
+    },
+    {
+      "id": "thanksgiving-pie",
+      "name": "Pumpkin pies",
+      "kind": "baked",
+      "color": "#d9822b",
+      "completionGems": 5
+    },
+    {
+      "id": "thanksgiving-tart",
+      "name": "Cranberry tarts",
+      "kind": "baked",
+      "color": "#a8324a",
+      "completionGems": 5
+    }
+  ],
+  "items": [
+    {
+      "id": "thanksgiving-patch-1",
+      "name": "Pumpkin Patch",
+      "chainId": "thanksgiving-patch",
+      "tier": 1,
+      "spriteKey": "thanksgiving-patch-1",
+      "sellValue": 0,
+      "note": "Tap it for pumpkin sprouts and cranberries.",
+      "collectReward": null
+    },
+    {
+      "id": "thanksgiving-sprout",
+      "name": "Pumpkin sprout",
+      "chainId": "thanksgiving-pumpkin",
+      "tier": 1,
+      "spriteKey": "thanksgiving-sprout",
+      "sellValue": 2,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "thanksgiving-small-pumpkin",
+      "name": "Small pumpkin",
+      "chainId": "thanksgiving-pumpkin",
+      "tier": 2,
+      "spriteKey": "thanksgiving-small-pumpkin",
+      "sellValue": 4,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "thanksgiving-pumpkin",
+      "name": "Pumpkin",
+      "chainId": "thanksgiving-pumpkin",
+      "tier": 3,
+      "spriteKey": "thanksgiving-pumpkin",
+      "sellValue": 8,
+      "note": "Just right for a pie.",
+      "collectReward": null
+    },
+    {
+      "id": "thanksgiving-prize-pumpkin",
+      "name": "Prize pumpkin",
+      "chainId": "thanksgiving-pumpkin",
+      "tier": 4,
+      "spriteKey": "thanksgiving-prize-pumpkin",
+      "sellValue": 16,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "thanksgiving-cranberry",
+      "name": "Cranberry",
+      "chainId": "thanksgiving-cranberry",
+      "tier": 1,
+      "spriteKey": "thanksgiving-cranberry",
+      "sellValue": 2,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "thanksgiving-cranberry-handful",
+      "name": "Handful of cranberries",
+      "chainId": "thanksgiving-cranberry",
+      "tier": 2,
+      "spriteKey": "thanksgiving-cranberry-handful",
+      "sellValue": 4,
+      "note": "Enough for a tart.",
+      "collectReward": null
+    },
+    {
+      "id": "thanksgiving-cranberry-basket",
+      "name": "Basket of cranberries",
+      "chainId": "thanksgiving-cranberry",
+      "tier": 3,
+      "spriteKey": "thanksgiving-cranberry-basket",
+      "sellValue": 8,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "thanksgiving-pecan",
+      "name": "Pecan",
+      "chainId": "thanksgiving-pecan",
+      "tier": 1,
+      "spriteKey": "thanksgiving-pecan",
+      "sellValue": 3,
+      "note": "Turns up at the Flour Mill this time of year.",
+      "collectReward": null
+    },
+    {
+      "id": "thanksgiving-pecan-bag",
+      "name": "Bag of pecans",
+      "chainId": "thanksgiving-pecan",
+      "tier": 2,
+      "spriteKey": "thanksgiving-pecan-bag",
+      "sellValue": 6,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "thanksgiving-pecan-tin",
+      "name": "Tin of pecans",
+      "chainId": "thanksgiving-pecan",
+      "tier": 3,
+      "spriteKey": "thanksgiving-pecan-tin",
+      "sellValue": 12,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "thanksgiving-pie",
+      "name": "Pumpkin pie",
+      "chainId": "thanksgiving-pie",
+      "tier": 1,
+      "spriteKey": "thanksgiving-pie",
+      "sellValue": 30,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "thanksgiving-pie-pair",
+      "name": "Two pumpkin pies",
+      "chainId": "thanksgiving-pie",
+      "tier": 2,
+      "spriteKey": "thanksgiving-pie-pair",
+      "sellValue": 60,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "thanksgiving-tart",
+      "name": "Cranberry tart",
+      "chainId": "thanksgiving-tart",
+      "tier": 1,
+      "spriteKey": "thanksgiving-tart",
+      "sellValue": 30,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "thanksgiving-tart-pair",
+      "name": "Two cranberry tarts",
+      "chainId": "thanksgiving-tart",
+      "tier": 2,
+      "spriteKey": "thanksgiving-tart-pair",
+      "sellValue": 60,
+      "note": null,
+      "collectReward": null
+    }
+  ],
+  "generators": [
+    {
+      "itemId": "thanksgiving-patch-1",
+      "spawnTable": [
+        {
+          "itemId": "thanksgiving-sprout",
+          "weight": 55
+        },
+        {
+          "itemId": "thanksgiving-cranberry",
+          "weight": 45
+        }
+      ],
+      "charges": 20,
+      "cooldownSec": 600
+    }
+  ],
+  "recipes": [
+    {
+      "id": "thanksgiving-bake-pie",
+      "name": "Pumpkin pie",
+      "inputs": ["thanksgiving-pumpkin", "flour-bag", "egg-pair"],
+      "output": "thanksgiving-pie",
+      "bakeSec": 300
+    },
+    {
+      "id": "thanksgiving-bake-tart",
+      "name": "Cranberry tart",
+      "inputs": ["thanksgiving-cranberry-handful", "flour-bag", "sugar-bowl"],
+      "output": "thanksgiving-tart",
+      "bakeSec": 240
+    }
+  ],
+  "theme": {
+    "invitation": "Harvest Supper has come to town! Grandma's old recipe card is out of the drawer: pumpkin pie, cranberry tart, and a feast for the whole harbor. Join in?",
+    "tokens": {
+      "--color-crust": "#a5532a",
+      "--color-butter": "#f3b55e",
+      "--color-strawberry": "#c8453b"
+    },
+    "music": {
+      "bpm": 78,
+      "rootHz": 196,
+      "wave": "triangle",
+      "gain": 0.06,
+      "pattern": [0, 1, 2, 1, 0, 2, 1, 2],
+      "progression": [
+        [0, 3, 7],
+        [8, 12, 15],
+        [3, 7, 10],
+        [10, 14, 17]
+      ]
+    },
+    "intro": [
+      {
+        "speaker": "narrator",
+        "text": "The harbor smells of cinnamon and woodsmoke. Harvest Supper has come to town."
+      },
+      {
+        "speaker": "grandma",
+        "expression": "happy",
+        "text": "Look what I found! My mother's recipe card: pumpkin pie and cranberry tart."
+      },
+      {
+        "speaker": "grandma",
+        "text": "Tap the Pumpkin Patch and see what grows. Folks will order harvest treats, and an order of three makes a Feast. They pay half again for a Feast."
+      },
+      {
+        "speaker": "grandma",
+        "expression": "happy",
+        "text": "And keep the Flour Mill busy. Pecans have a way of turning up this time of year."
+      }
+    ]
+  }
+}

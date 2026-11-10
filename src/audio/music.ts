@@ -124,6 +124,8 @@ export function startMusic(
   audio: AudioManager,
   themes: MusicThemes,
   isHidden: () => boolean = () => document.hidden,
+  /** A theme that plays instead of the chapter's, e.g. a running season's (T14.8). */
+  override: () => MusicTheme | null = () => null,
 ): () => void {
   let bar = 0;
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -132,7 +134,7 @@ export function startMusic(
 
   function next(): void {
     if (stopped) return;
-    const theme = themeFor(themes, store.getState().chapterId);
+    const theme = override() ?? themeFor(themes, store.getState().chapterId);
     if (!isHidden()) {
       audio.play(
         barTones(theme, bar).map((t) => ({

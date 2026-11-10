@@ -32,11 +32,34 @@ export default defineConfig({
       workbox: {
         // Every art file is cached, so the whole game plays offline.
         globPatterns: ['**/*.{js,css,html,svg,png,json,webmanifest}'],
+        // Season packs (T14.7) are fetched only when needed, then kept: the
+        // catalog from the network when it answers within 3 s, else the cached
+        // copy; a pack's files cache-first, since a version's files never change.
+        globIgnores: ['seasons/**'],
+        runtimeCaching: [
+          {
+            urlPattern: /\/seasons\/index\.json$/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'season-index',
+              networkTimeoutSeconds: 3,
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+          {
+            urlPattern: /\/seasons\/[^/]+\/[^/]+\/.+/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'season-packs',
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+        ],
       },
     }),
   ],
   test: {
-    include: ['src/**/*.test.ts'],
+    include: ['src/**/*.test.ts', 'seasons/**/*.test.ts'],
     environment: 'node',
     // Vitest replaces CSS with empty strings unless included; tokens.test.ts reads tokens.css.
     css: { include: [/tokens\.css/] },

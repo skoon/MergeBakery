@@ -15,7 +15,12 @@ import { mountHud } from './ui/hud';
 import { mountCounterStrip } from './ui/counterStrip';
 import { mountHelpDialog } from './ui/helpDialog';
 import { startAutosave, onPageHide } from './ui/autosave';
-import { peekSavedSeasonId, readSave, writeSave } from './ui/saveStorage';
+import {
+  DEV_SEASON_KEY,
+  peekSavedSeasonId,
+  readSave,
+  writeSave,
+} from './ui/saveStorage';
 import {
   checkForSeasons,
   loadSeasons,
@@ -24,6 +29,9 @@ import {
 import { registerSeasonArt } from './render/assets';
 import { mountSeasonBanner, showSeasonSweepNotice } from './ui/seasonBanner';
 import { seasonName, sweepNotice } from './ui/seasonBannerModel';
+import { mountSeasonSheet } from './ui/seasonSheet';
+import { createInviteMemory, seasonMusic } from './ui/seasonModel';
+import { startSeasonTheme } from './ui/seasonTheme';
 import { resolveOffline, shouldShowAwayCard } from './core/offline';
 import { showAwayCard } from './ui/awayCard';
 import { mountKitchen } from './ui/kitchenSheet';
@@ -101,6 +109,8 @@ const seasons = await loadSeasons(loadGameData(), {
   offsetAt,
   savedSeasonId: peekSavedSeasonId(localStorage),
   timeoutMs: 5000,
+  // bakery.season(id) in dev tools (T14.8).
+  forceOpen: import.meta.env.DEV ? localStorage.getItem(DEV_SEASON_KEY) : null,
 });
 registerSeasonArt(seasonSource.baseUrl, seasons.index);
 
@@ -170,6 +180,14 @@ mountDiscoveryCard(overlayRoot, store, settings);
 mountRushBubble(overlayRoot, store, boardView, () => Date.now());
 mountCoinBubble(overlayRoot, store, boardView);
 mountEventSheet(topChrome, overlayRoot, store, () => Date.now());
+// Seasons (T14.8): the pill, invitation, sheet and result card, and the
+// running season's colours.
+mountSeasonSheet(topChrome, overlayRoot, store, {
+  themes: seasons.themes,
+  invites: createInviteMemory(localStorage),
+  clock: () => Date.now(),
+});
+startSeasonTheme(store, seasons.themes);
 
 // Story scenes (T5.5): the chapter intro on a new game, and a scene when a
 // renovation task that has one completes. The player queues them.
@@ -184,6 +202,10 @@ const dialogue = mountDialoguePlayer(
       ...chapter4Scenes.scenes,
       ...chapter5Scenes.scenes,
       ...eventScenes.scenes,
+      // Each loaded season's intro (T14.8), played when the player joins.
+      ...[...seasons.themes].flatMap(([seasonId, theme]) =>
+        theme.intro ? [{ id: `${seasonId}-intro`, lines: theme.intro }] : [],
+      ),
     ],
   }),
 );
@@ -202,6 +224,12 @@ store.subscribe((state, events) => {
   for (const event of events) {
     if (event.type === 'eventStarted') {
       void dialogue.play(`event-${event.eventId}-start`);
+    }
+    if (
+      event.type === 'seasonJoined' &&
+      seasons.themes.get(event.seasonId)?.intro
+    ) {
+      void dialogue.play(`${event.seasonId}-intro`);
     }
   }
   if (shownResult && !state.eventResult) {
@@ -307,7 +335,14 @@ settings.subscribe(applyVolumes);
 applyVolumes();
 startMergeChime(store, audio);
 startSfx(store, audio, () => Date.now(), parseSfx(sfxData));
-startMusic(store, audio, parseMusic(musicData, [...data.chapters.keys()]));
+startMusic(
+  store,
+  audio,
+  parseMusic(musicData, [...data.chapters.keys()]),
+  () => document.hidden,
+  // A running season's music plays instead of the chapter's (T14.8).
+  () => seasonMusic(data, store.getState(), seasons.themes),
+);
 
 // Console helpers for testing; a dynamic import keeps them out of production builds.
 if (import.meta.env.DEV) {

@@ -65,4 +65,37 @@ describe('locationModel', () => {
       chapter?.tasks.map((t) => t.id),
     );
   });
+
+  it('lists keepsakes in the order earned, from the save alone (T14.8)', () => {
+    const keepsake = (name: string, year: number) => ({
+      id: `gone-${name}`,
+      seasonId: 'gone',
+      name,
+      spriteKey: `gone-${name}`,
+      year,
+    });
+    // The season isn't loaded: the record is all the shelf needs.
+    const model = locationModel(
+      testData,
+      stateWith(
+        {},
+        { keepsakes: [keepsake('Wreath', 2025), keepsake('Trophy', 2026)] },
+      ),
+    );
+    expect(model.keepsakes).toEqual([
+      {
+        name: 'Wreath',
+        spriteKey: 'gone-Wreath',
+        year: 2025,
+        label: 'Wreath, 2025',
+      },
+      {
+        name: 'Trophy',
+        spriteKey: 'gone-Trophy',
+        year: 2026,
+        label: 'Trophy, 2026',
+      },
+    ]);
+    expect(locationModel(testData, stateWith({})).keepsakes).toEqual([]);
+  });
 });

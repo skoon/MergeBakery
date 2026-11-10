@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { giveItems, rewindState } from './devTools';
+import { endSeasonNow, giveItems, rewindState } from './devTools';
 import { testData, stateWith } from '../core/testing';
 import { getCell } from '../core/board';
 import { resolveOffline } from '../core/offline';
@@ -165,5 +165,27 @@ describe('rewindState', () => {
       bakesFinished: ['bake-croissant'],
       generatorsRecharged: 2,
     });
+  });
+});
+
+describe('endSeasonNow (T14.8)', () => {
+  it("moves the joined season's end to now, leaving the rest", () => {
+    const season = {
+      seasonId: 'autumn',
+      joinedAt: 1,
+      startedAt: 2,
+      endsAt: 9_999,
+      points: 40,
+      claimedMilestones: [0],
+      custom: null,
+    };
+    const state = stateWith({}, { season });
+    expect(endSeasonNow(state, 500).season).toEqual({ ...season, endsAt: 500 });
+  });
+
+  it('throws when no season is joined', () => {
+    expect(() => endSeasonNow(stateWith({}), 500)).toThrow(
+      'endSeasonNow: no season is joined',
+    );
   });
 });

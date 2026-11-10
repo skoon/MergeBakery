@@ -27,6 +27,7 @@ import {
   parseSeasonPack,
   withSeasons,
   type ResolvedPack,
+  type SeasonTheme,
 } from './pack';
 
 /** One season in index.json. */
@@ -69,6 +70,11 @@ export interface LoadOptions extends SeasonSource {
   readonly savedSeasonId: SeasonId | null;
   /** Gives up after this long, only when `savedSeasonId` is null. */
   readonly timeoutMs: number;
+  /**
+   * Dev tools (T14.8): loads this season with its window open from `now`. It
+   * still ends on its own last day, which the season's keepsake year needs.
+   */
+  readonly forceOpen?: SeasonId | null;
 }
 
 export interface LoadedSeasons {
@@ -78,7 +84,16 @@ export interface LoadedSeasons {
   readonly index: readonly SeasonIndexEntry[];
   /** `packKey` of each pack that failed to load. */
   readonly failed: readonly string[];
+  /** The theme of each pack that loaded (T14.8). */
+  readonly themes: ReadonlyMap<SeasonId, SeasonTheme>;
 }
+
+const NO_SEASONS = (base: GameData): LoadedSeasons => ({
+  data: base,
+  index: [],
+  failed: [],
+  themes: new Map(),
+});
 
 export type IndexResult =
   | {
@@ -89,7 +104,8 @@ export type IndexResult =
     }
   | { readonly ok: false; readonly missing: boolean; readonly error: string };
 
-const SPRITE_KEY = /^[a-zA-Z0-9_-]+$/;
+/** A sprite key that is also a safe file name. */
+export const SPRITE_KEY = /^[a-zA-Z0-9_-]+$/;
 const HOOKS: ReadonlySet<string> = new Set([
   'onTick',
   'afterAction',
@@ -217,8 +233,8 @@ function isOpen(
   return startsAt <= now && now < endsAt;
 }
 
-/** A rules.js module's default export, checked against the hook API. */
-function checkRules(module: unknown): SeasonRules {
+/** A rules.js module's default export, checked: only known hooks, each a function, and this apiVersion. */
+export function checkRules(module: unknown): SeasonRules {
   if (typeof module !== 'object' || module === null || !('default' in module)) {
     throw new Error('rules.js has no default export');
   }
@@ -268,7 +284,15 @@ async function loadPack(
     options.now,
     options.offsetAt,
   );
-  return { pack, startsAt, endsAt, rules };
+  return {
+    pack,
+    startsAt:
+      entry.id === options.forceOpen
+        ? Math.min(startsAt, options.now)
+        : startsAt,
+    endsAt,
+    rules,
+  };
 }
 
 async function loadAll(
@@ -282,13 +306,14 @@ async function loadAll(
     } else {
       console.error(`Seasons not loaded: ${index.error}`);
     }
-    return { data: base, index: [], failed: [] };
+    return NO_SEASONS(base);
   }
   for (const problem of index.problems) console.error(problem);
 
   const wanted = index.entries.filter(
     (entry) =>
       entry.id === options.savedSeasonId ||
+      entry.id === options.forceOpen ||
       isOpen(entry.window, options.now, options.offsetAt),
   );
   const packs = await Promise.allSettled(
@@ -297,6 +322,7 @@ async function loadAll(
 
   let data = base;
   const failed: string[] = [];
+  const themes = new Map<SeasonId, SeasonTheme>();
   wanted.forEach((entry, i) => {
     const skip = (error: unknown): void => {
       console.error(`Season "${entry.id}" ${entry.version} not loaded:`, error);
@@ -311,9 +337,11 @@ async function loadAll(
       data = withSeasons(data, [result.value]);
     } catch (error) {
       skip(error);
+      return;
     }
+    themes.set(entry.id, result.value.pack.theme);
   });
-  return { data, index: index.entries, failed };
+  return { data, index: index.entries, failed, themes };
 }
 
 /**
@@ -340,7 +368,7 @@ export async function loadSeasons(
     console.warn(
       `Seasons not loaded: gave up after ${String(options.timeoutMs)} ms`,
     );
-    return { data: base, index: [], failed: [] };
+    return NO_SEASONS(base);
   }
   return loaded;
 }

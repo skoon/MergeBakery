@@ -113,4 +113,35 @@ describe('startMusic', () => {
     stop();
     vi.useRealTimers();
   });
+
+  it('plays the override instead of the chapter, from the next bar (T14.8)', () => {
+    vi.useFakeTimers();
+    const played: (readonly ToneSpec[])[] = [];
+    const audio: AudioManager = {
+      unlock: () => undefined,
+      setVolumes: () => undefined,
+      play: (tones) => {
+        played.push(tones);
+      },
+    };
+    const store = {
+      getState: () => ({ chapterId: 'chapter1' }),
+    } as unknown as GameStore;
+    const season = themes['chapter5']!;
+    let running = false;
+    const stop = startMusic(
+      store,
+      audio,
+      themes,
+      () => false,
+      () => (running ? season : null),
+    );
+    expect(played[0]?.[1]?.type).toBe(theme.wave);
+    running = true;
+    vi.advanceTimersByTime(barMs(theme) + 1);
+    expect(played).toHaveLength(2);
+    expect(played[1]?.[0]?.freq).toBeCloseTo(barTones(season, 1)[0]?.freq ?? 0);
+    stop();
+    vi.useRealTimers();
+  });
 });
