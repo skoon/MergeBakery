@@ -18,10 +18,12 @@ import { addEnergy, spendEnergy } from './energy';
 import { weightedPick } from './rng';
 import { discover } from './discovery';
 import { perkCooldownMultiplier } from './events';
+import { seasonCooldownMultiplier, seasonSpawnTable } from './seasonHooks';
 
 /**
  * Spends energy to tap a generator item, spawning an item at the nearest
- * empty cell. See RejectReason for why a tap can fail.
+ * empty cell. See RejectReason for why a tap can fail. A running season's
+ * rules can add spawns and change the cooldown (T14.5).
  */
 export function tapGenerator(
   data: GameData,
@@ -84,7 +86,16 @@ export function tapGenerator(
 
   const roll = rng.next();
   const rare = roll * 100 < data.rareDrops.chancePercent;
-  const table = rare ? data.rareDrops.table : generatorDef.spawnTable;
+  const table = rare
+    ? data.rareDrops.table
+    : seasonSpawnTable(
+        data,
+        state,
+        tappedItem.itemId,
+        generatorDef.spawnTable,
+        now,
+        rng,
+      );
   const spawnedItemId = weightedPick(table, rng);
 
   const spawnedGeneratorDef = data.generators.get(spawnedItemId);
@@ -104,7 +115,13 @@ export function tapGenerator(
     (slow && tappedChain === slow.chainId ? slow.cooldownMultiplier : 1) *
     perkCooldownMultiplier(data, state, tappedChain);
   const newCooldownEndsAt =
-    newCharges === 0 ? now + generatorDef.cooldownSec * slowed * 1000 : null;
+    newCharges === 0
+      ? now +
+        generatorDef.cooldownSec *
+          slowed *
+          seasonCooldownMultiplier(data, state, tappedChain, now, rng) *
+          1000
+      : null;
   const updatedTappedItem: BoardItem = {
     ...tappedItem,
     generator: { charges: newCharges, cooldownEndsAt: newCooldownEndsAt },

@@ -17,6 +17,7 @@ import { setCell } from './board';
 import { addXp } from './level';
 import { nextTier } from './merge';
 import { pickUniform } from './orders';
+import { seasonOrderReward } from './seasonHooks';
 
 /**
  * For each wanted item, in order, a distinct board cell holding that item that isn't
@@ -104,7 +105,8 @@ function upgradeGenerator(
  * A catering order (T9.2) may also upgrade one board generator a tier, when `rng` is given.
  * A wholesale order (T10.1) may take what the board lacks from the Pantry, and adds its
  * reputation to the company's. An event or seasonal order adds its points to
- * the running event or the joined season.
+ * the running event or the joined season. A running season's `orderReward`
+ * hook may change the reward first; what it returns is paid and reported.
  */
 export function deliverOrder(
   data: GameData,
@@ -153,6 +155,9 @@ export function deliverOrder(
     newBoard = setCell(newBoard, cellIndex, { kind: 'empty' });
   }
 
+  // A running season's rules can change what the order pays (T14.5).
+  const reward = seasonOrderReward(data, state, order, now, rng);
+
   // Remove the order
   const newOrders = state.orders.filter((_, i) => i !== orderIndex);
 
@@ -170,9 +175,9 @@ export function deliverOrder(
       ...state.pantry,
       items: state.pantry.items.filter((_, j) => !pantryTaken.has(j)),
     },
-    coins: state.coins + order.reward.coins,
-    stars: state.stars + order.reward.stars,
-    reputation: state.reputation + (order.reward.reputation ?? 0),
+    coins: state.coins + reward.coins,
+    stars: state.stars + reward.stars,
+    reputation: state.reputation + (reward.reputation ?? 0),
     orders: newOrders,
     nextOrderAt: newNextOrderAt,
     event:
@@ -189,7 +194,7 @@ export function deliverOrder(
   const { state: stateWithXp, events: xpEvents } = addXp(
     data,
     newState,
-    order.reward.xp,
+    reward.xp,
     now,
   );
   newState = stateWithXp;
@@ -199,7 +204,7 @@ export function deliverOrder(
     {
       type: 'orderDelivered',
       orderId,
-      reward: order.reward,
+      reward,
     },
     ...xpEvents,
   ];

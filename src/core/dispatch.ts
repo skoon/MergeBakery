@@ -17,6 +17,7 @@ import {
   joinSeason,
   tickSeason,
 } from './seasons';
+import { runSeasonHooks } from './seasonHooks';
 import { refillOrders } from './orders';
 import { mergeOvens } from './ovens';
 import { completeTask } from './renovation';
@@ -48,8 +49,13 @@ export type Handlers = {
 export function createDispatch(handlers: Handlers): Dispatch {
   return (data: GameData, state: GameState, action: Action): ActionResult => {
     const rng = createRng(state.rngState);
-    const result = routeAction(handlers, data, state, action, rng);
+    const routed = routeAction(handlers, data, state, action, rng);
+    if (!routed.ok) {
+      return routed;
+    }
 
+    // A running season's rules get the last word (T14.5).
+    const result = runSeasonHooks(data, routed, action, rng);
     if (!result.ok) {
       return result;
     }

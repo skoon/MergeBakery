@@ -911,4 +911,26 @@ describe('a player who never joins', () => {
     expect(without.events.map((e) => e.type)).toContain('eventStarted');
     expect(play(data)).toEqual(without);
   });
+
+  it('plays the same with a pack whose rules define every hook (T14.5)', () => {
+    const loud = (): never => {
+      throw new Error('a season hook ran');
+    };
+    const hooked = withSeasons(testData, [
+      {
+        pack,
+        startsAt: START,
+        endsAt: END,
+        rules: {
+          apiVersion: 1,
+          onTick: loud,
+          afterAction: loud,
+          extraSpawns: loud,
+          cooldownMultiplier: loud,
+          orderReward: loud,
+        },
+      },
+    ]);
+    expect(play(hooked)).toEqual(play(testData));
+  });
 });
