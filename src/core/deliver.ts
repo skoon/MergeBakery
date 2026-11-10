@@ -103,7 +103,8 @@ function upgradeGenerator(
  * reward's XP with addXp. Events: orderDelivered { orderId, reward }, then any levelUp events.
  * A catering order (T9.2) may also upgrade one board generator a tier, when `rng` is given.
  * A wholesale order (T10.1) may take what the board lacks from the Pantry, and adds its
- * reputation to the company's.
+ * reputation to the company's. An event or seasonal order adds its points to
+ * the running event or the joined season.
  */
 export function deliverOrder(
   data: GameData,
@@ -178,6 +179,10 @@ export function deliverOrder(
       order.eventPoints !== undefined && state.event
         ? { ...state.event, points: state.event.points + order.eventPoints }
         : state.event,
+    season:
+      order.seasonPoints !== undefined && state.season
+        ? { ...state.season, points: state.season.points + order.seasonPoints }
+        : state.season,
   };
 
   // Add XP and get level-up events

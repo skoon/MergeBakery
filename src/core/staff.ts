@@ -8,6 +8,7 @@ import { bakeStatus, collectBake } from './bakes';
 import { matchOrderItems } from './deliver';
 import { tapGenerator } from './generators';
 import { loadRecipe } from './kitchen';
+import { seasonContentAvailable } from './seasons';
 import type {
   ActionResult,
   CellIndex,
@@ -66,6 +67,8 @@ export function hireStaff(
  * `recipeId`), or rests them with null, starting their clock at `now` so time
  * spent idle isn't banked. Throws for someone not hired, a baker (they have no
  * assignment), a chain that isn't a generator chain, or an unknown recipe.
+ * Rejects 'noActiveSeason' for a seasonal chain or recipe whose season isn't
+ * running.
  */
 export function assignStaff(
   data: GameData,
@@ -80,8 +83,12 @@ export function assignStaff(
   const role = data.staff.get(staffId)?.role;
 
   if (role === 'oven') {
-    if (recipeId !== null && !data.recipes.has(recipeId)) {
-      throw new Error(`assignStaff: unknown recipe "${recipeId}"`);
+    if (recipeId !== null) {
+      const recipe = data.recipes.get(recipeId);
+      if (!recipe) throw new Error(`assignStaff: unknown recipe "${recipeId}"`);
+      if (!seasonContentAvailable(data, state, recipe.seasonId)) {
+        return { ok: false, reason: 'noActiveSeason' };
+      }
     }
     if ((hired.assignedRecipe ?? null) === recipeId) {
       return { ok: true, state, events: [] };
@@ -103,8 +110,14 @@ export function assignStaff(
   if (role !== 'tapper') {
     throw new Error(`assignStaff: "${staffId}" is not a tapper or an oven`);
   }
-  if (chainId !== null && data.chains.get(chainId)?.kind !== 'generator') {
-    throw new Error(`assignStaff: "${chainId}" is not a generator chain`);
+  if (chainId !== null) {
+    const chain = data.chains.get(chainId);
+    if (chain?.kind !== 'generator') {
+      throw new Error(`assignStaff: "${chainId}" is not a generator chain`);
+    }
+    if (!seasonContentAvailable(data, state, chain.seasonId)) {
+      return { ok: false, reason: 'noActiveSeason' };
+    }
   }
   if (hired.assignedChain === chainId) return { ok: true, state, events: [] };
 

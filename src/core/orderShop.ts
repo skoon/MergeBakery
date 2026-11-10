@@ -6,6 +6,7 @@
 
 import { nearestEmpty, setCell } from './board';
 import { middleCell, roomForItems } from './placement';
+import { isSeasonalItem } from './seasons';
 import type {
   ActionResult,
   BoardItem,
@@ -35,7 +36,7 @@ export function orderShopPrice(data: GameData, itemId: ItemId): number {
 /**
  * Ingredients and baked goods the open orders want more of than the player
  * holds (on the board or in the Pantry, not cobwebbed), in the order the
- * orders first ask for them.
+ * orders first ask for them. Seasonal items are never sold here.
  */
 export function orderShopItems(
   data: GameData,
@@ -44,7 +45,10 @@ export function orderShopItems(
   const wanted = new Map<ItemId, number>();
   for (const itemId of state.orders.flatMap((o) => o.wants)) {
     const kind = data.chains.get(data.items.get(itemId)?.chainId ?? '')?.kind;
-    if (kind === 'ingredient' || kind === 'baked') {
+    if (
+      (kind === 'ingredient' || kind === 'baked') &&
+      !isSeasonalItem(data, itemId)
+    ) {
       wanted.set(itemId, (wanted.get(itemId) ?? 0) + 1);
     }
   }

@@ -16,6 +16,7 @@ import type {
   Timestamp,
 } from './types';
 import { getCell, setCell } from './board';
+import { seasonContentAvailable } from './seasons';
 
 /**
  * The bake in a slot, or null when empty. Throws RangeError for an oven or slot
@@ -133,8 +134,9 @@ export function bakeDurationMs(
  * Throws for an unknown recipe, a bad slot, or `cells` whose length differs
  * from the recipe's inputs or that repeats a cell (programming errors: the UI
  * builds `cells`).
- * Rejects 'slotBusy' when the slot holds a bake, and 'missingItems' when any
- * cells[i] doesn't hold recipe.inputs[i] (empty, locked, a different item, or
+ * Rejects 'noActiveSeason' for a seasonal recipe whose season isn't running,
+ * 'slotBusy' when the slot holds a bake, and 'missingItems' when any cells[i]
+ * doesn't hold recipe.inputs[i] (empty, locked, a different item, or
  * cobwebbed).
  * Otherwise empties those cells and sets the slot to
  * { recipeId, startedAt: now, endsAt: now + bakeDurationMs(recipe, the slot's oven) }.
@@ -176,6 +178,10 @@ export function loadRecipe(
   const cellSet = new Set(cells);
   if (cellSet.size !== cells.length) {
     throw new Error(`loadRecipe: cells array contains repeated indices`);
+  }
+
+  if (!seasonContentAvailable(data, state, recipe.seasonId)) {
+    return { ok: false, reason: 'noActiveSeason' };
   }
 
   // Check if slot is busy

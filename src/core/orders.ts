@@ -45,7 +45,11 @@ export function pickUniform<T>(items: readonly T[], rng: Rng): T {
   return value;
 }
 
-/** Items an order of this kind may ask for: discovered, in an ingredient or baked chain, tier <= the kind's maxTier. */
+/**
+ * Items an order of this kind may ask for: discovered, in a base-game
+ * ingredient or baked chain, tier <= the kind's maxTier. Seasonal items are
+ * asked for only by seasonal orders.
+ */
 export function orderCandidates(
   data: GameData,
   state: GameState,
@@ -66,6 +70,9 @@ export function orderCandidates(
       );
     }
     if (chain.kind !== 'ingredient' && chain.kind !== 'baked') {
+      continue;
+    }
+    if (chain.seasonId !== undefined) {
       continue;
     }
     if (item.tier > rules.maxTier) {
@@ -216,8 +223,10 @@ export function generateOrder(
     Math.floor(rng.next() * (rules.maxItems - rules.minItems + 1));
 
   let candidates = orderCandidates(data, state, customer.kind);
-  const anyOpenOrderFullyProducible = state.orders.some((order) =>
-    order.wants.every((id) => isProducible(data, state, id)),
+  const anyOpenOrderFullyProducible = state.orders.some(
+    (order) =>
+      order.seasonPoints === undefined &&
+      order.wants.every((id) => isProducible(data, state, id)),
   );
   if (!anyOpenOrderFullyProducible) {
     candidates = candidates.filter((item) =>
@@ -300,13 +309,16 @@ export function generateCateringOrder(
   if (rng.next() * 100 >= rules.chancePercent) return null;
 
   const discovered = new Set(state.discovered);
-  const candidates = [...data.items.values()].filter(
-    (i) =>
+  const candidates = [...data.items.values()].filter((i) => {
+    const chain = data.chains.get(i.chainId);
+    return (
       discovered.has(i.id) &&
-      data.chains.get(i.chainId)?.kind === 'baked' &&
+      chain?.kind === 'baked' &&
+      chain.seasonId === undefined &&
       i.tier >= rules.minTier &&
-      i.tier <= rules.maxTier,
-  );
+      i.tier <= rules.maxTier
+    );
+  });
   if (candidates.length === 0) return null;
   const item = pickUniform(candidates, rng);
 
@@ -363,10 +375,11 @@ export function generateWholesaleOrder(
     ) {
       return false;
     }
-    const kind = data.chains.get(i.chainId)?.kind;
+    const chain = data.chains.get(i.chainId);
+    if (chain?.seasonId !== undefined) return false;
     return (
-      kind === 'baked' ||
-      (kind === 'ingredient' && isProducible(data, state, i.id))
+      chain?.kind === 'baked' ||
+      (chain?.kind === 'ingredient' && isProducible(data, state, i.id))
     );
   });
   if (candidates.length === 0) return null;
@@ -437,9 +450,12 @@ export function refillOrders(
   let currentState = state;
   const events: GameEvent[] = [...expired.events];
 
-  // Event orders (T8.4) are extra: they don't take a regular order's slot.
+  // Event (T8.4) and seasonal (T14.4) orders are extra: they don't take a
+  // regular order's slot.
   const regularOpen = (s: GameState): number =>
-    s.orders.filter((o) => o.eventPoints === undefined).length;
+    s.orders.filter(
+      (o) => o.eventPoints === undefined && o.seasonPoints === undefined,
+    ).length;
   while (regularOpen(currentState) < data.economy.orders.maxOpen) {
     const order =
       generateCateringOrder(data, currentState, rng, now) ??

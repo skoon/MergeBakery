@@ -149,7 +149,8 @@ function generateEventOrder(
  * the points reach MegaBun's final score; a win pays trophyGems and is recorded
  * in `trophies`), schedules the next one `gapAfterSec` after the end, and starts
  * it when due, drawing from the events the player's chapter has reached.
- * Nothing starts while one is running, so events never overlap.
+ * Nothing starts while one is running, so events never overlap, or while a
+ * season is joined (T14.4).
  */
 export function tickEvents(
   data: GameData,
@@ -216,7 +217,8 @@ export function tickEvents(
               now + (first.firstAfterSec ?? first.gapAfterSec) * 1000,
           };
         }
-      } else if (now >= next.nextEventAt) {
+      } else if (now >= next.nextEventAt && next.season === null) {
+        // A joined season pauses events; the one due starts after it ends.
         const def = eligible[Math.floor(rng.next() * eligible.length)];
         if (def) {
           // The event waits (and retries next tick) until its generator has room.

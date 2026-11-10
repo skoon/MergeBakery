@@ -11,6 +11,12 @@ import { collectBonus, rushCooldown, tapGenerator } from './generators';
 import { claimMilestone, dismissEventResult, tickEvents } from './events';
 import { assignStaff, hireStaff, tickStaff } from './staff';
 import { loadRecipe } from './kitchen';
+import {
+  claimSeasonMilestone,
+  dismissSeasonResult,
+  joinSeason,
+  tickSeason,
+} from './seasons';
 import { refillOrders } from './orders';
 import { mergeOvens } from './ovens';
 import { completeTask } from './renovation';
@@ -175,16 +181,11 @@ export const dispatch: Dispatch = createDispatch({
   claimMilestone: (data, state, action) =>
     claimMilestone(data, state, action.index),
   dismissEventResult: (_data, state) => dismissEventResult(state),
-  // The season actions are in the contract from T14.1; T14.4 builds them.
-  joinSeason: () => {
-    throw new Error('joinSeason: not built yet (T14.4)');
-  },
-  claimSeasonMilestone: () => {
-    throw new Error('claimSeasonMilestone: not built yet (T14.4)');
-  },
-  dismissSeasonResult: () => {
-    throw new Error('dismissSeasonResult: not built yet (T14.4)');
-  },
+  joinSeason: (data, state, action, rng) =>
+    joinSeason(data, state, action.seasonId, rng, action.now),
+  claimSeasonMilestone: (data, state, action) =>
+    claimSeasonMilestone(data, state, action.index),
+  dismissSeasonResult: (_data, state) => dismissSeasonResult(state),
   hireStaff: (data, state, action) =>
     hireStaff(data, state, action.staffId, action.now),
   assignStaff: (data, state, action) =>
@@ -205,11 +206,18 @@ export const dispatch: Dispatch = createDispatch({
     if (!orders.ok) return orders;
     const events = tickEvents(data, orders.state, rng, action.now);
     if (!events.ok) return events;
-    const staff = tickStaff(data, events.state, rng, action.now);
+    const season = tickSeason(data, events.state, rng, action.now);
+    if (!season.ok) return season;
+    const staff = tickStaff(data, season.state, rng, action.now);
     if (!staff.ok) return staff;
     return {
       ...staff,
-      events: [...orders.events, ...events.events, ...staff.events],
+      events: [
+        ...orders.events,
+        ...events.events,
+        ...season.events,
+        ...staff.events,
+      ],
     };
   },
 });
