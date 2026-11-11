@@ -2,6 +2,7 @@
  * What the Staff panel shows (T10.4). Pure, no DOM.
  */
 
+import { recipeAvailable } from '../core/orders';
 import type {
   ChainId,
   GameData,
@@ -10,7 +11,6 @@ import type {
   StaffRole,
 } from '../core/types';
 import { formatTimeLeft } from './eventModel';
-import { recipeAvailable } from './kitchenModel';
 
 export interface ChainOption {
   chainId: ChainId;

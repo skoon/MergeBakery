@@ -188,7 +188,8 @@ On wide desktop screens, the location view sits beside the board instead of behi
 
 - Style: polished flat vector (SVG) with soft gradients, rounded shapes, and subtle highlights so items feel cute, not clip-art. Keep art behind a sprite-keyed asset layer so it can swap to hand-painted sprites later without code changes.
 - Palette: butter yellow, crust brown, strawberry pink, mint, cream backgrounds.
-- Items: chunky, rounded silhouettes readable at 48 px; each tier adds size, shine, or garnish so tiers read at a glance.
+- Items: chunky, rounded silhouettes readable at 48 px; each tier adds size, shine, or garnish so tiers read at a glance. The tier number is too small to tell tiers apart on a phone, so the picture must do it alone.
+- Plurals: an item that is several of something (a pair, a handful, a bag) shows more than one of it in its icon.
 - Characters: bust portraits with 3 expressions each (neutral, happy, impatient).
 - Motion: squash-and-stretch on merge, steam wisps on fresh bakes, crumbs on sell.
 

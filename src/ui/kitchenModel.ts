@@ -5,7 +5,7 @@
 import { bakeStatus, rushCost, type BakeStatus } from '../core/bakes';
 import { matchOrderItems } from '../core/deliver';
 import { bakeDurationMs } from '../core/kitchen';
-import { producibleChains } from '../core/orders';
+import { recipeAvailable } from '../core/orders';
 import { nextOven } from '../core/ovens';
 import type {
   BakeSlotRef,
@@ -14,7 +14,6 @@ import type {
   GameState,
   ItemId,
   OvenId,
-  Recipe,
   RecipeId,
   Timestamp,
 } from '../core/types';
@@ -96,25 +95,13 @@ function inputCells(
   return matches.every((cell) => cell !== null) ? matches : null;
 }
 
-/**
- * True when the player can get every input right now: its chain is fed by a
- * generator they own, or the item is already on the board or in the Pantry.
- * Recipes needing a generator the player hasn't unlocked stay hidden.
- */
-export function recipeAvailable(
-  data: GameData,
-  state: GameState,
-  recipe: Recipe,
-): boolean {
-  const chains = producibleChains(data, state);
-  const held = new Set<ItemId>(state.pantry.items.map((item) => item.itemId));
-  for (const cell of state.board.cells) {
-    if (cell.kind === 'item') held.add(cell.item.itemId);
+/** The oven bake times are shown for: the one with the first free slot, else the first. */
+export function timingOven(state: GameState): OvenId {
+  const ovenId = state.kitchen.ovens[firstFreeSlot(state)?.oven ?? 0]?.ovenId;
+  if (ovenId === undefined) {
+    throw new Error('kitchenModel: the kitchen has no ovens');
   }
-  return recipe.inputs.every((itemId) => {
-    const chainId = data.items.get(itemId)?.chainId;
-    return held.has(itemId) || (chainId !== undefined && chains.has(chainId));
-  });
+  return ovenId;
 }
 
 export function kitchenModel(
@@ -169,10 +156,7 @@ export function kitchenModel(
   });
 
   const freeSlot = firstFreeSlot(state);
-  const timingOven = state.kitchen.ovens[freeSlot?.oven ?? 0]?.ovenId;
-  if (timingOven === undefined) {
-    throw new Error('kitchenModel: the kitchen has no ovens');
-  }
+  const ovenForTimes = timingOven(state);
 
   const available = Array.from(data.recipes.values()).filter((recipe) =>
     recipeAvailable(data, state, recipe),
@@ -196,7 +180,7 @@ export function kitchenModel(
       }),
       cells,
       bakeTime: formatDuration(
-        bakeDurationMs(data, recipe.id, timingOven, state),
+        bakeDurationMs(data, recipe.id, ovenForTimes, state),
       ),
     };
   });

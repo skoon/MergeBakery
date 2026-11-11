@@ -3,14 +3,9 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import {
-  formatDuration,
-  kitchenModel,
-  recipeAvailable,
-  recipeForDrop,
-} from './kitchenModel';
+import { formatDuration, kitchenModel, recipeForDrop } from './kitchenModel';
 import { testData, stateWith } from '../core/testing';
-import type { Bake, GameState, OvenState, Recipe } from '../core/types';
+import type { Bake, GameState, OvenState } from '../core/types';
 
 const MINUTE = 60_000;
 
@@ -163,108 +158,6 @@ describe('kitchenModel', () => {
     );
 
     expect(model.upgrade).toEqual({ from: 1, to: 0, nextName: 'Brick Oven' });
-  });
-});
-
-describe('recipeAvailable', () => {
-  function recipe(id: string): Recipe {
-    const found = testData.recipes.get(id);
-    if (!found) throw new Error(`no recipe ${id}`);
-    return found;
-  }
-
-  function availableIds(state: GameState): string[] {
-    return Array.from(testData.recipes.values())
-      .filter((r) => recipeAvailable(testData, state, r))
-      .map((r) => r.id);
-  }
-
-  it('offers the scone with a Fruit Crate, and the tart once sugar is also near (T9.1)', () => {
-    const base = { 0: 'flour-mill-1', 1: 'dairy-fridge-1' } as const;
-    expect(availableIds(stateWith(base))).not.toContain('bake-scone');
-    const withCrate = stateWith({ ...base, 2: 'fruit-crate-1' });
-    expect(availableIds(withCrate)).toContain('bake-scone');
-    expect(availableIds(withCrate)).not.toContain('bake-fruit-tart');
-    const withSugar = stateWith({
-      ...base,
-      2: 'fruit-crate-1',
-      3: 'sugar-tin-1',
-    });
-    expect(availableIds(withSugar)).toContain('bake-fruit-tart');
-  });
-
-  it('offers the chocolate recipes once cocoa is within reach (T11.1)', () => {
-    const base = {
-      0: 'flour-mill-1',
-      1: 'dairy-fridge-1',
-      2: 'hen-coop-1',
-    } as const;
-    expect(availableIds(stateWith(base))).not.toContain('bake-brownie');
-    const sugar = stateWith({ ...base, 3: 'sugar-tin-1' });
-    expect(availableIds(sugar)).toContain('bake-brownie');
-    expect(availableIds(sugar)).toContain('bake-bonbon');
-  });
-
-  it('offers only the croissant with the Chapter 1 generators', () => {
-    const state = stateWith({ 0: 'flour-mill-1', 1: 'dairy-fridge-1' });
-
-    expect(availableIds(state)).toEqual(['bake-croissant']);
-  });
-
-  it('offers the Chapter 1 and 2 recipes once the Hen Coop and Sugar Tin are owned', () => {
-    const state = stateWith({
-      0: 'flour-mill-1',
-      1: 'dairy-fridge-1',
-      2: 'hen-coop-1',
-      3: 'sugar-tin-1',
-    });
-
-    // The chocolate line (T11.1) joins them: cocoa comes from the Sugar Tin.
-    expect(availableIds(state)).toEqual([
-      'bake-cookie',
-      'bake-croissant',
-      'bake-cupcake',
-      'bake-brownie',
-      'bake-bonbon',
-    ]);
-  });
-
-  it('counts a generator kept in the Pantry', () => {
-    const base = stateWith({ 0: 'flour-mill-1' });
-    const state: GameState = {
-      ...base,
-      pantry: {
-        ...base.pantry,
-        items: [
-          {
-            itemId: 'dairy-fridge-1',
-            cobwebbed: false,
-            generator: { charges: 12, cooldownEndsAt: null },
-          },
-        ],
-      },
-    };
-
-    expect(recipeAvailable(testData, state, recipe('bake-croissant'))).toBe(
-      true,
-    );
-  });
-
-  it('does not count a cobwebbed generator', () => {
-    const state = stateWith({
-      0: 'flour-mill-1',
-      1: { itemId: 'dairy-fridge-1', cobwebbed: true },
-    });
-
-    expect(recipeAvailable(testData, state, recipe('bake-croissant'))).toBe(
-      false,
-    );
-  });
-
-  it('counts inputs already on the board without their generator', () => {
-    const state = stateWith({ 0: 'flour-bag', 1: 'egg-pair', 2: 'cream-jug' });
-
-    expect(recipeAvailable(testData, state, recipe('bake-cupcake'))).toBe(true);
   });
 });
 

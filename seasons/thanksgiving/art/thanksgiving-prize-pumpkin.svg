@@ -1,0 +1,9 @@
+<!-- Prize pumpkin (tier 4): a larger jack-o'-lantern than tier 3, wearing a blue first-prize rosette. Drawn on the placeholder tile by npm run build:seasons. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <text x="58" y="64" font-family="'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif" font-size="90" text-anchor="middle" dominant-baseline="central">🎃</text>
+  <polygon points="89,96 96,99 91,122 87,117 83,121" fill="#2f6fd6" stroke="#163a7a" stroke-width="1.5" stroke-linejoin="round"/>
+  <polygon points="94,99 101,96 107,120 103,116 99,121" fill="#2f6fd6" stroke="#163a7a" stroke-width="1.5" stroke-linejoin="round"/>
+  <polygon points="95.0,69.0 98.0,72.8 102.4,70.7 103.4,75.4 108.3,75.4 107.2,80.1 111.6,82.2 108.5,86.0 111.6,89.8 107.2,91.9 108.3,96.6 103.4,96.6 102.4,101.3 98.0,99.2 95.0,103.0 92.0,99.2 87.6,101.3 86.6,96.6 81.7,96.6 82.8,91.9 78.4,89.8 81.5,86.0 78.4,82.2 82.8,80.1 81.7,75.4 86.6,75.4 87.6,70.7 92.0,72.8" fill="#2f6fd6" stroke="#163a7a" stroke-width="1.5" stroke-linejoin="round"/>
+  <circle cx="95" cy="86" r="10" fill="#4a86e8" stroke="#163a7a" stroke-width="1.5"/>
+  <circle cx="95" cy="86" r="5.5" fill="#f6d04d" stroke="#a07c10" stroke-width="1.5"/>
+</svg>

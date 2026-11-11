@@ -12,6 +12,7 @@ import {
   buildPacks,
   checkKeepsakeRecord,
   cssTokenNames,
+  drawingSvg,
   placeholderSvg,
   seasonIndex,
   type BuiltPack,
@@ -45,9 +46,22 @@ function source(overrides: Partial<PackSource> = {}): PackSource {
     season: season(id),
     placeholders: Object.fromEntries(spriteKeys(id).map((k) => [k, '🎃'])),
     pngKeys: [],
+    drawings: {},
     hasRules: false,
     ...overrides,
   };
+}
+
+const DRAWING =
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><circle cx="64" cy="70" r="20" fill="#e8641c"/></svg>\n';
+
+/** The fixture's placeholders without `keys`, for keys a test gives other art. */
+function placeholdersWithout(...keys: string[]): Record<string, string> {
+  return Object.fromEntries(
+    spriteKeys()
+      .filter((k) => !keys.includes(k))
+      .map((k) => [k, '🎃']),
+  );
 }
 
 function problemOf(fn: () => unknown): string {
@@ -80,8 +94,42 @@ describe('placeholderSvg', () => {
   });
 
   it('escapes the emoji text', () => {
-    expect(placeholderSvg('#e08a3c', '<&">', 1)).toContain(
-      '>&lt;&amp;&quot;&gt;</text>',
+    const svg = placeholderSvg('#e08a3c', '<&"', 1);
+    expect(svg).toContain('>&lt;</text>');
+    expect(svg).toContain('>&amp;</text>');
+    expect(svg).toContain('>&quot;</text>');
+    expect(placeholderSvg('#e08a3c', '>', 1)).toContain('>&gt;</text>');
+  });
+
+  it('draws one emoji large, two side by side and three in a cluster (T14.10)', () => {
+    const texts = (emoji: string) =>
+      [
+        ...placeholderSvg('#c8453b', emoji, null).matchAll(
+          /<text x="(\d+)" y="(\d+)"[^>]*font-size="(\d+)"[^>]*>(.*?)<\/text>/g,
+        ),
+      ].map(
+        ([, x, y, size, text]) =>
+          `${x ?? ''},${y ?? ''} ${size ?? ''} ${text ?? ''}`,
+      );
+    expect(texts('🍒')).toEqual(['64,70 64 🍒']);
+    expect(texts('🍒🍒')).toEqual(['42,72 48 🍒', '86,72 48 🍒']);
+    expect(texts('🍒🍒🍒')).toEqual([
+      '64,50 44 🍒',
+      '42,88 44 🍒',
+      '86,88 44 🍒',
+    ]);
+  });
+
+  it('counts an emoji made of several code points as one', () => {
+    const svg = placeholderSvg('#c8453b', '👩‍🍳🌶️', null);
+    expect(svg).toContain('>👩‍🍳</text>');
+    expect(svg).toContain('>🌶️</text>');
+    expect(svg).toContain('font-size="48"');
+  });
+
+  it('throws for more emoji than a tile holds', () => {
+    expect(() => placeholderSvg('#c8453b', '🍒🍒🍒🍒', 2)).toThrow(
+      /is 4 emoji; a tile holds 1 to 3/,
     );
   });
 
@@ -136,12 +184,64 @@ describe('buildPack', () => {
         .map((k) => [k, '🎃']),
     );
     expect(problemOf(() => build(source({ placeholders })))).toContain(
-      'sprite key "autumn-seed" has no art/autumn-seed.png and no emoji in placeholders.json',
+      'sprite key "autumn-seed" has no art/autumn-seed.png, no art/autumn-seed.svg and no emoji in placeholders.json',
     );
     // The .png covers it.
     expect(() =>
       build(source({ placeholders, pngKeys: ['autumn-seed'] })),
     ).not.toThrow();
+  });
+
+  it('lays a drawing from art/<key>.svg on the tile, under the tier (T14.10)', () => {
+    const built = build(
+      source({
+        placeholders: placeholdersWithout('autumn-big-gourd'),
+        drawings: {
+          'autumn-big-gourd': `<?xml version="1.0"?>\n<!-- A gourd. -->\n${DRAWING}`,
+        },
+      }),
+    );
+    const gourd = fixture.chains.find((c) => c.id === 'autumn-gourd');
+    const svg = built.svgs.get('autumn-big-gourd') ?? '';
+    expect(svg).toBe(drawingSvg(gourd?.color ?? '', DRAWING, 3));
+    expect(svg).toContain(`fill="${gourd?.color ?? ''}"`);
+    expect(svg).not.toContain('<?xml');
+    const circle = svg.indexOf('<circle');
+    expect(circle).toBeGreaterThan(svg.indexOf('<rect'));
+    expect(circle).toBeLessThan(svg.indexOf('>3</text>'));
+    expect(built.entry.pngKeys).toEqual([]);
+  });
+
+  it('refuses a drawing that is not one 128×128 <svg>, or a key with two kinds of art', () => {
+    const message = problemOf(() =>
+      build(
+        source({
+          placeholders: placeholdersWithout('autumn-seed'),
+          pngKeys: ['autumn-pie'],
+          drawings: {
+            'autumn-seed': DRAWING.replace('0 0 128 128', '0 0 64 64'),
+            'autumn-pie': DRAWING,
+            'autumn-big-gourd': DRAWING,
+            'autumn-typo': DRAWING,
+          },
+        }),
+      ),
+    );
+    expect(message).toContain(
+      'art/autumn-seed.svg must be one <svg viewBox="0 0 128 128"> element',
+    );
+    expect(message).toContain(
+      '"autumn-pie" has both art/autumn-pie.png and art/autumn-pie.svg',
+    );
+    expect(message).toContain(
+      '"autumn-big-gourd" has both art/autumn-big-gourd.svg and an emoji in placeholders.json',
+    );
+    expect(message).toContain(
+      "art/autumn-typo.svg isn't one of the pack's sprite keys",
+    );
+    expect(() => drawingSvg('#e8641c', '<g/>', 1)).toThrow(
+      /must be one <svg viewBox="0 0 128 128"> element/,
+    );
   });
 
   it('refuses an emoji or a .png for a key the pack does not have', () => {
@@ -162,6 +262,24 @@ describe('buildPack', () => {
     expect(message).toContain(
       "art/autumn-gone.png isn't one of the pack's sprite keys",
     );
+  });
+
+  it('refuses more emoji for a key than a tile holds, reported with the rest', () => {
+    const base = source();
+    const message = problemOf(() =>
+      build({
+        ...base,
+        placeholders: {
+          ...(base.placeholders as Json),
+          'autumn-seed': '🌱🌱🌱🌱',
+          'autumn-typo': '🎃',
+        },
+      }),
+    );
+    expect(message).toContain(
+      'placeholders.json gives "autumn-seed" 4 emoji; a tile holds 1 to 3',
+    );
+    expect(message).toContain('placeholders.json has "autumn-typo"');
   });
 
   it('refuses a placeholders.json that is not a map of strings', () => {

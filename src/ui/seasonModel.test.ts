@@ -3,8 +3,14 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { stateWith, testData } from '../core/testing';
-import type { ActiveSeason, GameState, KeepsakeRecord } from '../core/types';
+import { setCell } from '../core/board';
+import { stateWith, testData, type CellSpec } from '../core/testing';
+import type {
+  ActiveSeason,
+  GameData,
+  GameState,
+  KeepsakeRecord,
+} from '../core/types';
 import fixture from '../seasons/fixtures/autumn.json';
 import {
   parseSeasonPack,
@@ -22,6 +28,7 @@ import {
   seasonResultView,
   seasonSheet,
   seasonTokens,
+  type SeasonRecipeView,
   type SeasonThemes,
 } from './seasonModel';
 import type { KeyValueStorage } from './saveStorage';
@@ -321,5 +328,121 @@ describe('theme', () => {
     const running = state({ season: active() });
     expect(seasonTokens(data, running, new Map())).toEqual({});
     expect(seasonMusic(data, running, new Map())).toBeNull();
+  });
+});
+
+describe('seasonSheet recipes (T14.11)', () => {
+  /** The season running with the Gourd Patch at cell 10 and `cells` beside it. */
+  function running(cells: Readonly<Record<number, CellSpec>>): GameState {
+    const s = stateWith(cells, { tutorialStep: 'done', season: active() });
+    return {
+      ...s,
+      board: setCell(s.board, 10, {
+        kind: 'item',
+        item: {
+          itemId: 'autumn-patch-1',
+          cobwebbed: false,
+          generator: { charges: 20, cooldownEndsAt: null },
+        },
+      }),
+    };
+  }
+
+  function recipe(s: GameState, d: GameData = data): SeasonRecipeView {
+    const view = seasonSheet(d, s, NOW, themes)?.recipes[0];
+    if (!view) throw new Error('no recipe in the sheet');
+    return view;
+  }
+
+  it('lists the season’s recipes in every state', () => {
+    const states = [
+      state(),
+      state({ season: active({ startedAt: null }) }),
+      state({ season: active() }),
+    ];
+    for (const s of states) {
+      expect(
+        seasonSheet(data, s, NOW, themes)?.recipes.map((r) => r.recipeId),
+      ).toEqual(['autumn-bake-pie']);
+    }
+  });
+
+  it('shows it as the Kitchen does, needing nothing once every input can be had', () => {
+    const view = recipe(running({ 0: 'flour-mill-1', 1: 'dairy-fridge-1' }));
+    expect(view).toMatchObject({
+      recipeId: 'autumn-bake-pie',
+      name: 'Gourd pie',
+      outputSpriteKey: 'autumn-pie',
+      bakeTime: '2:00',
+      needs: null,
+    });
+    expect(view.inputs).toEqual([
+      {
+        itemId: 'autumn-big-gourd',
+        name: 'Big gourd',
+        spriteKey: 'autumn-big-gourd',
+        available: true,
+      },
+      {
+        itemId: 'flour-bag',
+        name: 'Flour bag',
+        spriteKey: data.items.get('flour-bag')?.spriteKey,
+        available: true,
+      },
+      {
+        itemId: 'butter-pat',
+        name: 'Butter pat',
+        spriteKey: data.items.get('butter-pat')?.spriteKey,
+        available: true,
+      },
+    ]);
+  });
+
+  it('names the generator of the one input missing', () => {
+    const view = recipe(running({ 0: 'flour-mill-1' }));
+    expect(view.needs).toBe('Needs a Dairy Fridge');
+    expect(view.inputs.map((i) => i.available)).toEqual([true, true, false]);
+  });
+
+  it('names every generator missing, each once', () => {
+    expect(recipe(running({})).needs).toBe(
+      'Needs a Flour Mill and a Dairy Fridge',
+    );
+    expect(recipe(state()).needs).toBe(
+      'Needs a Gourd Patch, a Flour Mill and a Dairy Fridge',
+    );
+  });
+
+  it('counts a held input as available', () => {
+    const view = recipe(running({ 0: 'flour-mill-1', 1: 'butter-pat' }));
+    expect(view.needs).toBeNull();
+    expect(view.inputs.every((i) => i.available)).toBe(true);
+  });
+
+  it('names the input itself when no generator spawns it', () => {
+    const noFridges: GameData = {
+      ...data,
+      generators: new Map(
+        [...data.generators].filter(([id]) => !id.startsWith('dairy-fridge')),
+      ),
+    };
+    expect(recipe(running({ 0: 'flour-mill-1' }), noFridges).needs).toBe(
+      'Needs a Butter pat',
+    );
+  });
+
+  it('says "an" before a vowel', () => {
+    const fridge = data.items.get('dairy-fridge-1');
+    if (!fridge) throw new Error('no dairy-fridge-1');
+    const iceBox: GameData = {
+      ...data,
+      items: new Map([
+        ...data.items,
+        ['dairy-fridge-1', { ...fridge, name: 'Ice Box' }],
+      ]),
+    };
+    expect(recipe(running({ 0: 'flour-mill-1' }), iceBox).needs).toBe(
+      'Needs an Ice Box',
+    );
   });
 });

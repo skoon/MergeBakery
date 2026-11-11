@@ -1032,3 +1032,88 @@ describe('a player who never joins', () => {
     expect(play(hooked)).toEqual(play(testData));
   });
 });
+
+describe('seasonal orders ask only for what the player can make (T14.11)', () => {
+  const GOURDS = ['autumn-seed', 'autumn-gourd', 'autumn-big-gourd'];
+  const PIES = ['autumn-pie', 'autumn-pie-pair'];
+
+  /** The season running, its patch at cell 10, and no seasonal orders yet. */
+  function running(cells: Readonly<Record<number, CellSpec>>): GameState {
+    return withPatch(game(cells, { season: season() }), 10);
+  }
+
+  /** Every item asked for by the orders 40 differently seeded top-ups open. */
+  function askedFor(state: GameState, d: GameData = data): string[] {
+    const wants: string[] = [];
+    for (let seed = 1; seed <= 40; seed++) {
+      const r = ok(tickSeason(d, state, createRng(seed), NOW));
+      wants.push(...seasonalOrders(r.state).flatMap((o) => o.wants));
+    }
+    return wants;
+  }
+
+  const fridge: BoardItem = {
+    itemId: 'dairy-fridge-1',
+    cobwebbed: false,
+    generator: { charges: 12, cooldownEndsAt: null },
+  };
+
+  it('never asks for a pie while its butter can’t be had', () => {
+    const wants = askedFor(running({ 0: 'flour-mill-1' }));
+    expect(wants.length).toBeGreaterThan(100);
+    for (const id of wants) expect(GOURDS).toContain(id);
+  });
+
+  it('asks for pies once a Dairy Fridge is owned, even in the Pantry', () => {
+    const base = running({ 0: 'flour-mill-1' });
+    const state = { ...base, pantry: { ...base.pantry, items: [fridge] } };
+    const wants = askedFor(state);
+    expect(wants.some((id) => PIES.includes(id))).toBe(true);
+    expect(wants.some((id) => GOURDS.includes(id))).toBe(true);
+  });
+
+  it('doesn’t count a cobwebbed generator', () => {
+    const wants = askedFor(
+      running({
+        0: 'flour-mill-1',
+        1: { itemId: 'dairy-fridge-1', cobwebbed: true },
+      }),
+    );
+    expect(wants.filter((id) => PIES.includes(id))).toEqual([]);
+  });
+
+  it('opens no order, and doesn’t throw, when nothing can be made, then tries again', () => {
+    const state = game({}, { season: season() });
+    const r = ok(tickSeason(data, state, rng(), NOW));
+    expect(r.state).toBe(state);
+    expect(r.events).toEqual([]);
+
+    const later = ok(tickSeason(data, withPatch(state, 10), rng(), NOW + 1000));
+    expect(seasonalOrders(later.state)).toHaveLength(3);
+  });
+
+  it('asks for a season item spawned only through extraSpawns while its generator is owned', () => {
+    const withMillSeeds = withSeasons(testData, [
+      {
+        pack,
+        startsAt: START,
+        endsAt: END,
+        rules: {
+          apiVersion: 1,
+          extraSpawns: (_ctx, generatorItemId) =>
+            generatorItemId === 'flour-mill-1'
+              ? [{ itemId: 'autumn-seed', weight: 10 }]
+              : [],
+        },
+      },
+    ]);
+    // No patch, so gourds come only from the mill.
+    const mill = game({ 0: 'flour-mill-1' }, { season: season() });
+    const wants = askedFor(mill, withMillSeeds);
+    expect(wants.length).toBeGreaterThan(100);
+    for (const id of wants) expect(GOURDS).toContain(id);
+
+    const noMill = game({ 0: 'dairy-fridge-1' }, { season: season() });
+    expect(askedFor(noMill, withMillSeeds)).toEqual([]);
+  });
+});

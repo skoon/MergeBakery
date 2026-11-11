@@ -16,7 +16,7 @@ import { canMerge } from '../core/merge';
 import { createNewGame } from '../core/newGame';
 import { orderShopItems } from '../core/orderShop';
 import { shopItemsFor } from '../core/shop';
-import { nextTask } from '../core/orders';
+import { nextTask, recipeAvailable } from '../core/orders';
 import { createRng } from '../core/rng';
 import { seasonSpawnTable } from '../core/seasonHooks';
 import type {
@@ -28,7 +28,6 @@ import type {
   SeasonId,
   Timestamp,
 } from '../core/types';
-import { recipeAvailable } from '../ui/kitchenModel';
 import type { ActionInput } from '../ui/store';
 
 /** Seconds each kind of action takes a player, roughly. */

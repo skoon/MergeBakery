@@ -4,11 +4,16 @@
  * clock of its own.
  */
 
+import { bakeDurationMs } from '../core/kitchen';
+import { missingInputs } from '../core/orders';
 import { runningSeason } from '../core/seasons';
 import type {
   GameData,
   GameState,
+  Item,
+  ItemId,
   LoadedSeason,
+  RecipeId,
   SeasonDef,
   SeasonId,
   SeasonReward,
@@ -17,6 +22,7 @@ import type {
 import type { MusicTheme } from '../audio/music';
 import type { SeasonTheme } from '../seasons/pack';
 import { formatTimeLeft } from './eventModel';
+import { formatDuration, timingOven } from './kitchenModel';
 import type { KeyValueStorage } from './saveStorage';
 
 export type SeasonThemes = ReadonlyMap<SeasonId, SeasonTheme>;
@@ -161,6 +167,26 @@ export interface SeasonMilestoneView {
   readonly status: 'claimed' | 'ready' | 'locked';
 }
 
+export interface SeasonRecipeInputView {
+  readonly itemId: ItemId;
+  readonly name: string;
+  readonly spriteKey: string;
+  /** False when the player can't get it now; shown dimmed. */
+  readonly available: boolean;
+}
+
+/** One of the season's recipes (T14.11), looking like a Kitchen sheet recipe. */
+export interface SeasonRecipeView {
+  readonly recipeId: RecipeId;
+  readonly name: string;
+  readonly outputSpriteKey: string;
+  /** formatDuration of the bake, timed as the Kitchen sheet times it. */
+  readonly bakeTime: string;
+  readonly inputs: readonly SeasonRecipeInputView[];
+  /** "Needs a Hen Coop" when an input can't be had now; null when the recipe is available. */
+  readonly needs: string | null;
+}
+
 export interface SeasonSheetModel {
   readonly seasonId: SeasonId;
   readonly name: string;
@@ -169,6 +195,8 @@ export interface SeasonSheetModel {
   /** The invitation, why it hasn't started, or how to play. */
   readonly text: string;
   readonly points: number;
+  /** The season's recipes, in data order, in every status. */
+  readonly recipes: readonly SeasonRecipeView[];
   readonly milestones: readonly SeasonMilestoneView[];
 }
 
@@ -179,6 +207,75 @@ function rewardText(def: SeasonDef, reward: SeasonReward): string {
   const keepsake = def.keepsakes.find((k) => k.id === reward.keepsakeId);
   if (keepsake) parts.push(`${keepsake.name} (keepsake)`);
   return parts.join(', ');
+}
+
+/**
+ * Where an input comes from: the lowest-tier generator whose spawn table holds
+ * its chain, or the input itself when no generator spawns it.
+ */
+function sourceName(data: GameData, itemId: ItemId): string {
+  const item = data.items.get(itemId);
+  if (!item) throw new Error(`seasonSheet: unknown item id "${itemId}"`);
+  let source: Item | null = null;
+  for (const generator of data.generators.values()) {
+    const generatorItem = data.items.get(generator.itemId);
+    const spawnsChain = generator.spawnTable.some(
+      (entry) => data.items.get(entry.itemId)?.chainId === item.chainId,
+    );
+    if (
+      generatorItem &&
+      spawnsChain &&
+      (source === null || generatorItem.tier < source.tier)
+    ) {
+      source = generatorItem;
+    }
+  }
+  return source?.name ?? item.name;
+}
+
+function withArticle(name: string): string {
+  return `${/^[aeiou]/i.test(name) ? 'an' : 'a'} ${name}`;
+}
+
+/** "a", "a and b", "a, b and c". */
+function andList(parts: readonly string[]): string {
+  return parts.length < 2
+    ? parts.join('')
+    : `${parts.slice(0, -1).join(', ')} and ${parts.slice(-1).join('')}`;
+}
+
+function seasonRecipes(
+  data: GameData,
+  state: GameState,
+  def: SeasonDef,
+): SeasonRecipeView[] {
+  const oven = timingOven(state);
+  return [...data.recipes.values()]
+    .filter((recipe) => recipe.seasonId === def.id)
+    .map((recipe) => {
+      const missing = missingInputs(data, state, recipe);
+      const sources = [...new Set(missing.map((id) => sourceName(data, id)))];
+      return {
+        recipeId: recipe.id,
+        name: recipe.name,
+        outputSpriteKey:
+          data.items.get(recipe.output)?.spriteKey ?? recipe.output,
+        bakeTime: formatDuration(bakeDurationMs(data, recipe.id, oven, state)),
+        inputs: recipe.inputs.map((itemId) => {
+          const item = data.items.get(itemId);
+          return {
+            itemId,
+            name: item?.name ?? itemId,
+            spriteKey: item?.spriteKey ?? itemId,
+            available: !missing.includes(itemId),
+          };
+        }),
+        needs:
+          sources.length === 0
+            ? null
+            : `Needs ${andList(sources.map(withArticle))}`,
+      };
+    });
 }
 
 /** The season sheet for the button's season; null when there is no button. */
@@ -219,6 +316,7 @@ export function seasonSheet(
     timeLeft: button.timeLeft,
     text,
     points,
+    recipes: seasonRecipes(data, state, def),
     milestones: def.milestones.map((m, index) => ({
       index,
       points: m.points,

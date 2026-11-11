@@ -154,6 +154,8 @@ describe('when hooks run', () => {
     const { calls, hooks } = recorder();
     exercise(withRules(hooks), shop(), NOW);
     expect(calls).toEqual([
+      // The tick's seasonal orders ask what the player can make (T14.11).
+      'extraSpawns',
       'onTick',
       'extraSpawns',
       'cooldownMultiplier',
@@ -337,7 +339,8 @@ describe('afterAction', () => {
       now: NOW,
     });
     expect(r.state.season?.startedAt).toBe(NOW);
-    expect(calls).toEqual(['afterAction:joinSeason']);
+    // The first seasonal orders ask what the player can make (T14.11).
+    expect(calls).toEqual(['extraSpawns', 'afterAction:joinSeason']);
   });
 });
 

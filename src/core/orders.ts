@@ -20,6 +20,7 @@ import type {
   ItemId,
   Order,
   OrderKindRules,
+  Recipe,
   RenovationTask,
   Rng,
   Timestamp,
@@ -84,14 +85,8 @@ export function orderCandidates(
   return result;
 }
 
-/**
- * Chains the player can produce right now: those with an item in the spawn
- * table of a generator they own, on the board (not cobwebbed) or in the Pantry.
- */
-export function producibleChains(
-  data: GameData,
-  state: GameState,
-): Set<ChainId> {
+/** The generators the player owns: on the board (not cobwebbed) or in the Pantry. */
+export function ownedGenerators(state: GameState): Set<ItemId> {
   const generatorItemIds = new Set<ItemId>();
   for (const cell of state.board.cells) {
     if (
@@ -107,9 +102,19 @@ export function producibleChains(
       generatorItemIds.add(pantryItem.itemId);
     }
   }
+  return generatorItemIds;
+}
 
+/**
+ * Chains the player can produce right now: those with an item in the spawn
+ * table of a generator they own, on the board (not cobwebbed) or in the Pantry.
+ */
+export function producibleChains(
+  data: GameData,
+  state: GameState,
+): Set<ChainId> {
   const chains = new Set<ChainId>();
-  for (const generatorItemId of generatorItemIds) {
+  for (const generatorItemId of ownedGenerators(state)) {
     const generatorDef = data.generators.get(generatorItemId);
     if (generatorDef === undefined) {
       continue;
@@ -122,6 +127,42 @@ export function producibleChains(
     }
   }
   return chains;
+}
+
+/**
+ * The recipe's inputs the player can't get right now, in recipe order: not on
+ * the board or in the Pantry, and in no chain fed by a generator they own.
+ */
+export function missingInputs(
+  data: GameData,
+  state: GameState,
+  recipe: Recipe,
+): ItemId[] {
+  const chains = producibleChains(data, state);
+  const held = new Set<ItemId>(state.pantry.items.map((item) => item.itemId));
+  for (const cell of state.board.cells) {
+    if (cell.kind === 'item') held.add(cell.item.itemId);
+  }
+  return recipe.inputs.filter((itemId) => {
+    const chainId = data.items.get(itemId)?.chainId;
+    return !(
+      held.has(itemId) ||
+      (chainId !== undefined && chains.has(chainId))
+    );
+  });
+}
+
+/**
+ * True when the player can get every input right now: its chain is fed by a
+ * generator they own, or the item is already on the board or in the Pantry.
+ * Recipes needing a generator the player hasn't unlocked stay hidden.
+ */
+export function recipeAvailable(
+  data: GameData,
+  state: GameState,
+  recipe: Recipe,
+): boolean {
+  return missingInputs(data, state, recipe).length === 0;
 }
 
 /**

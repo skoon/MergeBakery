@@ -22,6 +22,8 @@ export interface PackSource {
   readonly placeholders: unknown;
   /** The file names in `art/` that end in .png, without the extension. */
   readonly pngKeys: readonly string[];
+  /** The drawings in `art/`: file name without `.svg` → the file's text. */
+  readonly drawings: Readonly<Record<string, string>>;
   /** Whether the folder has a rules.ts. */
   readonly hasRules: boolean;
 }
@@ -29,7 +31,7 @@ export interface PackSource {
 /** What the script writes for one pack, besides copying its files. */
 export interface BuiltPack {
   readonly entry: SeasonIndexEntry;
-  /** Generated art: sprite key → SVG text, for every key without a .png. */
+  /** Generated art: sprite key → SVG text (an emoji or a drawing on the tile), for every key without a .png. */
   readonly svgs: ReadonlyMap<string, string>;
   /** The sprite keys of the pack's keepsakes. */
   readonly keepsakeKeys: readonly string[];
@@ -91,23 +93,112 @@ function escapeXml(text: string): string {
 }
 
 /**
+ * Where one, two or three emoji sit on a tile: one large in the middle, a pair
+ * side by side, or three in a cluster, so a higher tier can show more of the
+ * same thing (T14.10: a handful of cranberries looked like one cranberry).
+ */
+const EMOJI_LAYOUTS: readonly {
+  readonly size: number;
+  readonly at: readonly (readonly [number, number])[];
+}[] = [
+  { size: 64, at: [[64, 70]] },
+  {
+    size: 48,
+    at: [
+      [42, 72],
+      [86, 72],
+    ],
+  },
+  {
+    size: 44,
+    at: [
+      [64, 50],
+      [42, 88],
+      [86, 88],
+    ],
+  },
+];
+
+/** The most emoji one placeholder tile holds. */
+export const MAX_TILE_EMOJI = EMOJI_LAYOUTS.length;
+
+/** The emoji in a placeholders.json value, one per grapheme: "🍒🍒" is two. */
+export function tileEmoji(text: string): string[] {
+  const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+  return [...segmenter.segment(text)].map((s) => s.segment);
+}
+
+/**
  * A 128×128 tile like the base game's placeholders: `color` with a darker
- * outline, the emoji in the middle, and the tier (if any) in the top-left corner.
+ * outline, then `picture` (SVG elements), then the tier (if any) in the
+ * top-left corner.
+ */
+function tileSvg(color: string, picture: string, tier: number | null): string {
+  const tierText =
+    tier === null
+      ? ''
+      : `\n  <text x="22" y="31" font-family="sans-serif" font-size="22" font-weight="bold" fill="${textColor(color)}" text-anchor="middle">${String(tier)}</text>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect x="2" y="2" width="124" height="124" rx="24" ry="24" fill="${color}" stroke="${darken(color, 60)}" stroke-width="4"/>${picture}${tierText}
+</svg>
+`;
+}
+
+/**
+ * The placeholder tile with the emoji laid out by EMOJI_LAYOUTS. Throws for
+ * more emoji than a tile holds.
  */
 export function placeholderSvg(
   color: string,
   emoji: string,
   tier: number | null,
 ): string {
-  const tierText =
-    tier === null
-      ? ''
-      : `\n  <text x="22" y="31" font-family="sans-serif" font-size="22" font-weight="bold" fill="${textColor(color)}" text-anchor="middle">${String(tier)}</text>`;
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
-  <rect x="2" y="2" width="124" height="124" rx="24" ry="24" fill="${color}" stroke="${darken(color, 60)}" stroke-width="4"/>
-  <text x="64" y="70" font-family="'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif" font-size="64" text-anchor="middle" dominant-baseline="central">${escapeXml(emoji)}</text>${tierText}
-</svg>
-`;
+  const parts = tileEmoji(emoji);
+  const layout = EMOJI_LAYOUTS[parts.length - 1];
+  if (!layout) {
+    throw new Error(
+      `placeholderSvg: "${emoji}" is ${parts.length.toString()} emoji; a tile holds 1 to ${MAX_TILE_EMOJI.toString()}`,
+    );
+  }
+  const emojiText = layout.at
+    .map(
+      ([x, y], i) =>
+        `\n  <text x="${x.toString()}" y="${y.toString()}" font-family="'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif" font-size="${layout.size.toString()}" text-anchor="middle" dominant-baseline="central">${escapeXml(parts[i] ?? '')}</text>`,
+    )
+    .join('');
+  return tileSvg(color, emojiText, tier);
+}
+
+/** One `<svg>` element in the tile's coordinates, optionally after an XML declaration and comments. */
+const DRAWING =
+  /^\s*(?:<\?xml[^>]*\?>\s*)?(?:<!--[\s\S]*?-->\s*)*<svg\b([^>]*)>([\s\S]*)<\/svg>\s*$/;
+
+/** A drawing's content, or null when it isn't one `<svg viewBox="0 0 128 128">` element. */
+function drawingContent(drawing: string): string | null {
+  const match = DRAWING.exec(drawing);
+  if (!match || !/\bviewBox="0 0 128 128"/.test(match[1] ?? '')) return null;
+  return match[2] ?? '';
+}
+
+/**
+ * A pack's `art/<key>.svg` drawn on the placeholder tile, for a picture an
+ * emoji can't give (T14.10: a pumpkin without a face, a prize ribbon). The
+ * drawing uses the tile's own coordinates, so its content goes between the
+ * tile and the tier as it is. Throws when it isn't one
+ * `<svg viewBox="0 0 128 128">` element.
+ */
+export function drawingSvg(
+  color: string,
+  drawing: string,
+  tier: number | null,
+): string {
+  const content = drawingContent(drawing);
+  if (content === null) {
+    throw new Error(
+      'drawingSvg: a drawing must be one <svg viewBox="0 0 128 128"> element',
+    );
+  }
+  return tileSvg(color, `\n  <g>${content}</g>`, tier);
 }
 
 // ─── One pack ────────────────────────────────────────────────────────────────
@@ -187,10 +278,16 @@ export function buildPack(
   if (!placeholders.success) {
     problems.push('placeholders.json must map sprite keys to emoji strings');
   }
-  for (const key of emojis.keys()) {
+  for (const [key, emoji] of emojis) {
     if (!looks.has(key)) {
       problems.push(
         `placeholders.json has "${key}", which isn't one of the pack's sprite keys`,
+      );
+    }
+    const count = tileEmoji(emoji).length;
+    if (count > MAX_TILE_EMOJI) {
+      problems.push(
+        `placeholders.json gives "${key}" ${count.toString()} emoji; a tile holds 1 to ${MAX_TILE_EMOJI.toString()}`,
       );
     }
   }
@@ -200,19 +297,47 @@ export function buildPack(
       problems.push(`art/${key}.png isn't one of the pack's sprite keys`);
     }
   }
+  const drawings = new Map(Object.entries(source.drawings));
+  for (const [key, drawing] of drawings) {
+    if (!looks.has(key)) {
+      problems.push(`art/${key}.svg isn't one of the pack's sprite keys`);
+    }
+    if (pngKeys.has(key)) {
+      problems.push(`"${key}" has both art/${key}.png and art/${key}.svg`);
+    }
+    if (emojis.has(key)) {
+      problems.push(
+        `"${key}" has both art/${key}.svg and an emoji in placeholders.json`,
+      );
+    }
+    if (drawingContent(drawing) === null) {
+      problems.push(
+        `art/${key}.svg must be one <svg viewBox="0 0 128 128"> element`,
+      );
+    }
+  }
 
   const svgs = new Map<string, string>();
   for (const [key, look] of looks) {
     if (pngKeys.has(key)) continue;
+    const drawing = drawings.get(key);
+    if (drawing !== undefined) {
+      // A bad drawing is reported above.
+      if (drawingContent(drawing) !== null) {
+        svgs.set(key, drawingSvg(look.color, drawing, look.tier));
+      }
+      continue;
+    }
     const emoji = emojis.get(key);
     if (emoji === undefined) {
       if (placeholders.success) {
         problems.push(
-          `sprite key "${key}" has no art/${key}.png and no emoji in placeholders.json`,
+          `sprite key "${key}" has no art/${key}.png, no art/${key}.svg and no emoji in placeholders.json`,
         );
       }
       continue;
     }
+    if (tileEmoji(emoji).length > MAX_TILE_EMOJI) continue; // reported above
     svgs.set(key, placeholderSvg(look.color, emoji, look.tier));
   }
 

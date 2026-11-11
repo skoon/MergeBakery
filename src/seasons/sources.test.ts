@@ -28,6 +28,11 @@ const records = import.meta.glob<unknown>('/seasons/keepsakes.json', {
 });
 // Only the file names are used; nothing is imported.
 const pngs = Object.keys(import.meta.glob('/seasons/*/art/*.png'));
+const drawings = import.meta.glob<string>('/seasons/*/art/*.svg', {
+  eager: true,
+  query: '?raw',
+  import: 'default',
+});
 const rules = Object.keys(import.meta.glob('/seasons/*/rules.ts'));
 
 function folderOf(file: string): string {
@@ -45,6 +50,14 @@ const sources: PackSource[] = Object.entries(seasons).map(([file, season]) => {
     pngKeys: pngs
       .filter((png) => folderOf(png) === folder)
       .map((png) => png.slice(png.lastIndexOf('/') + 1, -'.png'.length)),
+    drawings: Object.fromEntries(
+      Object.entries(drawings)
+        .filter(([file]) => folderOf(file) === folder)
+        .map(([file, text]) => [
+          file.slice(file.lastIndexOf('/') + 1, -'.svg'.length),
+          text,
+        ]),
+    ),
     hasRules: rules.includes(`/seasons/${folder}/rules.ts`),
   };
 });

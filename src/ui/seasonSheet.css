@@ -35,3 +35,25 @@
   background: none;
   border: 2px solid var(--color-crust);
 }
+
+/* The season's recipes (T14.11); each card is a Kitchen sheet recipe card. */
+.season-recipes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.season-recipes__title {
+  margin: 0;
+  font-size: var(--font-size-md);
+  color: var(--color-crust);
+}
+
+.season-recipe__needs {
+  flex: 1 0 100%;
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-strawberry);
+}

@@ -4,13 +4,16 @@
  */
 
 import { describe, expect, it } from 'vitest';
+import { setCell } from '../../src/core/board';
 import { dispatch } from '../../src/core/dispatch';
 import { createRng } from '../../src/core/rng';
 import type { SeasonContext } from '../../src/core/seasonApi';
-import { stateWith, testData } from '../../src/core/testing';
+import { tickSeason } from '../../src/core/seasons';
+import { stateWith, testData, type CellSpec } from '../../src/core/testing';
 import type {
   ActionResult,
   ActiveSeason,
+  ChainId,
   GameState,
   Order,
 } from '../../src/core/types';
@@ -169,5 +172,78 @@ describe('through dispatch', () => {
     );
     expect(running).toContain('thanksgiving-pecan');
     expect(notJoined).not.toContain('thanksgiving-pecan');
+  });
+});
+
+describe('seasonal orders (T14.11)', () => {
+  /** The season running with its Pumpkin Patch at cell 10, `cells` beside it, and no orders yet. */
+  function running(cells: Readonly<Record<number, CellSpec>>): GameState {
+    const state = stateWith(cells, {
+      tutorialStep: 'done',
+      nextOrderAt: null,
+      season: season(),
+    });
+    return {
+      ...state,
+      board: setCell(state.board, 10, {
+        kind: 'item',
+        item: {
+          itemId: 'thanksgiving-patch-1',
+          cobwebbed: false,
+          generator: { charges: 20, cooldownEndsAt: null },
+        },
+      }),
+    };
+  }
+
+  /** The chains asked for by the orders 60 differently seeded top-ups open, sorted. */
+  function chainsAskedFor(state: GameState): ChainId[] {
+    const chains = new Set<ChainId>();
+    for (let seed = 1; seed <= 60; seed++) {
+      const r = ok(tickSeason(data, state, createRng(seed), NOW));
+      for (const id of r.state.orders.flatMap((o) => o.wants)) {
+        const item = data.items.get(id);
+        if (!item) throw new Error(`unknown item "${id}"`);
+        chains.add(item.chainId);
+      }
+    }
+    return [...chains].sort();
+  }
+
+  const CHAPTER_1 = { 0: 'flour-mill-1', 1: 'dairy-fridge-1' } as const;
+
+  it('asks a Chapter 1 board only for pumpkins, cranberries and pecans', () => {
+    expect(chainsAskedFor(running(CHAPTER_1))).toEqual([
+      'thanksgiving-cranberry',
+      'thanksgiving-pecan',
+      'thanksgiving-pumpkin',
+    ]);
+  });
+
+  it('asks for pies once a Hen Coop is owned', () => {
+    expect(chainsAskedFor(running({ ...CHAPTER_1, 2: 'hen-coop-1' }))).toEqual([
+      'thanksgiving-cranberry',
+      'thanksgiving-pecan',
+      'thanksgiving-pie',
+      'thanksgiving-pumpkin',
+    ]);
+  });
+
+  it('asks for tarts once a Sugar Tin is owned', () => {
+    expect(chainsAskedFor(running({ ...CHAPTER_1, 2: 'sugar-tin-1' }))).toEqual(
+      [
+        'thanksgiving-cranberry',
+        'thanksgiving-pecan',
+        'thanksgiving-pumpkin',
+        'thanksgiving-tart',
+      ],
+    );
+  });
+
+  it('asks for no pecans without a Flour Mill', () => {
+    expect(chainsAskedFor(running({ 1: 'dairy-fridge-1' }))).toEqual([
+      'thanksgiving-cranberry',
+      'thanksgiving-pumpkin',
+    ]);
   });
 });

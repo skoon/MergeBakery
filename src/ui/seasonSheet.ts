@@ -9,8 +9,10 @@
  */
 
 import './eventSheet.css';
+import './kitchenSheet.css';
 import './seasonSheet.css';
 import type { Timestamp } from '../core/types';
+import { setImageArt } from '../render/assets';
 import {
   inviteKey,
   joinableSeason,
@@ -20,6 +22,7 @@ import {
   seasonSheet,
   type InviteMemory,
   type SeasonButtonModel,
+  type SeasonRecipeView,
   type SeasonThemes,
 } from './seasonModel';
 import type { GameStore } from './store';
@@ -40,6 +43,46 @@ function button(className: string, text: string, onClick: () => void) {
   b.type = 'button';
   b.addEventListener('click', onClick);
   return b;
+}
+
+function art(spriteKey: string, className: string, alt: string) {
+  const img = el('img', className);
+  img.alt = alt;
+  setImageArt(img, spriteKey);
+  return img;
+}
+
+/**
+ * The season's recipes (T14.11) in the Kitchen sheet's recipe cards. An input
+ * the player can't get now is dimmed, as the Kitchen dims one not yet on the
+ * board, and the card says what's needed.
+ */
+function recipeList(recipes: readonly SeasonRecipeView[]): HTMLElement {
+  const section = el('section', 'season-recipes');
+  section.appendChild(el('h3', 'season-recipes__title', 'Recipes'));
+  for (const recipe of recipes) {
+    const card = el('div', 'kitchen-recipe');
+    const head = el('div', 'kitchen-recipe__head');
+    head.append(
+      art(recipe.outputSpriteKey, 'kitchen-recipe__output', ''),
+      el('span', 'kitchen-recipe__name', recipe.name),
+      el('span', 'kitchen-recipe__time', recipe.bakeTime),
+    );
+    const inputs = el('div', 'kitchen-recipe__inputs');
+    for (const input of recipe.inputs) {
+      const chip = el('span', 'kitchen-input');
+      chip.title = input.name;
+      chip.dataset['ready'] = String(input.available);
+      chip.appendChild(art(input.spriteKey, 'kitchen-input__art', input.name));
+      inputs.appendChild(chip);
+    }
+    card.append(head, inputs);
+    if (recipe.needs !== null) {
+      card.appendChild(el('p', 'season-recipe__needs', recipe.needs));
+    }
+    section.appendChild(card);
+  }
+  return section;
 }
 
 export interface SeasonSheetOptions {
@@ -113,7 +156,11 @@ export function mountSeasonSheet(
         setOpen(false);
       }),
     );
-    sheet.append(head, el('p', 'event-sheet__howto', model.text));
+    sheet.append(
+      head,
+      el('p', 'event-sheet__howto', model.text),
+      recipeList(model.recipes),
+    );
     if (model.status === 'offer') {
       sheet.appendChild(
         button('season-sheet__join', `Join ${model.name}`, () => {

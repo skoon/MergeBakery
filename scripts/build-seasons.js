@@ -44,17 +44,25 @@ function readSources() {
         throw new Error(`seasons/${folder}/ has no season.json`);
       }
       const artDir = path.join(dir, 'art');
-      const pngKeys = fs.existsSync(artDir)
-        ? fs
-            .readdirSync(artDir)
-            .filter((f) => f.endsWith('.png'))
-            .map((f) => f.slice(0, -'.png'.length))
-        : [];
+      const artFiles = fs.existsSync(artDir) ? fs.readdirSync(artDir) : [];
+      const pngKeys = artFiles
+        .filter((f) => f.endsWith('.png'))
+        .map((f) => f.slice(0, -'.png'.length));
+      // Drawings are laid on the placeholder tile by build.ts, not copied.
+      const drawings = Object.fromEntries(
+        artFiles
+          .filter((f) => f.endsWith('.svg'))
+          .map((f) => [
+            f.slice(0, -'.svg'.length),
+            fs.readFileSync(path.join(artDir, f), 'utf-8'),
+          ]),
+      );
       return {
         folder,
         season: readJson(path.join(dir, 'season.json')),
         placeholders: readJson(path.join(dir, 'placeholders.json')),
         pngKeys,
+        drawings,
         hasRules: fs.existsSync(path.join(dir, 'rules.ts')),
       };
     });

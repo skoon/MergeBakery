@@ -7,8 +7,17 @@
  * window already resolved to this year's run (src/seasons/).
  */
 
-import { eligibleCustomers, pickUniform } from './orders';
+import {
+  eligibleCustomers,
+  ownedGenerators,
+  pickUniform,
+  producibleChains,
+  recipeAvailable,
+} from './orders';
 import { placeGenerator } from './placement';
+// An import cycle (seasonHooks imports runningSeason from here); safe, since
+// neither module uses the other while loading.
+import { seasonSpawnTable } from './seasonHooks';
 import type {
   ActionResult,
   ActiveSeason,
@@ -105,19 +114,54 @@ function keepsakeRecord(
 }
 
 /**
+ * The chains the player can make now (T14.11): those a generator they own
+ * spawns, the season's `extraSpawns` included, and those the season's
+ * available recipes bake. Calls `extraSpawns` with `rng`, as a tap does.
+ */
+function makeableChains(
+  data: GameData,
+  state: GameState,
+  def: SeasonDef,
+  now: Timestamp,
+  rng: Rng,
+): Set<ChainId> {
+  const chains = producibleChains(data, state);
+  for (const generatorItemId of ownedGenerators(state)) {
+    const extra = seasonSpawnTable(data, state, generatorItemId, [], now, rng);
+    for (const entry of extra) {
+      const item = data.items.get(entry.itemId);
+      if (item) chains.add(item.chainId);
+    }
+  }
+  for (const recipe of data.recipes.values()) {
+    const output = data.items.get(recipe.output);
+    if (
+      recipe.seasonId === def.id &&
+      output &&
+      recipeAvailable(data, state, recipe)
+    ) {
+      chains.add(output.chainId);
+    }
+  }
+  return chains;
+}
+
+/**
  * A new seasonal order with id state.nextOrderId: a walk-in asks for
  * minItems–maxItems items, picked evenly from the pack's ingredient and baked
- * items within its tiers. It pays the items' sellValue in coins, no stars or
- * XP, and pointsPerItem per item in Season Points.
+ * items within its tiers that are in `makeable` chains. It pays the items'
+ * sellValue in coins, no stars or XP, and pointsPerItem per item in Season
+ * Points. Null when none of those items can be made now.
  */
 function generateSeasonOrder(
   data: GameData,
   state: GameState,
   def: SeasonDef,
+  makeable: ReadonlySet<ChainId>,
   rng: Rng,
-): Order {
+): Order | null {
   const minTier = def.orders.minTier ?? 1;
-  const candidates = [...data.items.values()].filter((item) => {
+  const items = [...data.items.values()].filter((item) => {
     const chain = data.chains.get(item.chainId);
     return (
       chain?.seasonId === def.id &&
@@ -126,9 +170,11 @@ function generateSeasonOrder(
       item.tier <= def.orders.maxTier
     );
   });
-  if (candidates.length === 0) {
+  if (items.length === 0) {
     throw new Error(`generateSeasonOrder: no items for season "${def.id}"`);
   }
+  const candidates = items.filter((item) => makeable.has(item.chainId));
+  if (candidates.length === 0) return null;
   const walkIns = [...data.customers.values()].filter(
     (c) => c.kind === 'walkIn',
   );
@@ -154,12 +200,16 @@ function generateSeasonOrder(
   };
 }
 
-/** Tops the started season's orders up to its maxOpen. Same state when none arrive. */
+/**
+ * Tops the started season's orders up to its maxOpen, with items the player
+ * can make now. Same state when none arrive.
+ */
 function topUpOrders(
   data: GameData,
   state: GameState,
   def: SeasonDef,
   rng: Rng,
+  now: Timestamp,
 ): Step {
   let next = state;
   const events: GameEvent[] = [];
@@ -168,8 +218,12 @@ function topUpOrders(
   }
   const open = (): number =>
     next.orders.filter((o) => o.seasonPoints !== undefined).length;
+  // Worked out only when an order is due, so a full tick draws nothing from rng.
+  let makeable: Set<ChainId> | null = null;
   while (open() < def.orders.maxOpen) {
-    const order = generateSeasonOrder(data, next, def, rng);
+    makeable ??= makeableChains(data, next, def, now, rng);
+    const order = generateSeasonOrder(data, next, def, makeable, rng);
+    if (!order) break;
     next = {
       ...next,
       orders: [...next.orders, order],
@@ -339,7 +393,7 @@ export function joinSeason(
     },
   };
   const started = startSeason(data, joined, loaded.def, now);
-  const topped = topUpOrders(data, started.state, loaded.def, rng);
+  const topped = topUpOrders(data, started.state, loaded.def, rng, now);
   return {
     ok: true,
     state: topped.state,
@@ -382,7 +436,7 @@ export function tickSeason(
   }
 
   const started = startSeason(data, state, loaded.def, now);
-  const topped = topUpOrders(data, started.state, loaded.def, rng);
+  const topped = topUpOrders(data, started.state, loaded.def, rng, now);
   return {
     ok: true,
     state: topped.state,
