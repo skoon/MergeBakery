@@ -1,0 +1,29 @@
+<!-- Gingerbread man (tier 1): one gingerbread man with white icing, a smile and gumdrop buttons. Drawn on the placeholder tile by npm run build:seasons. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <g fill="#5a2c0e" stroke="#5a2c0e" stroke-linecap="round">
+    <circle cx="64" cy="38" r="18"/>
+    <line x1="38" y1="62" x2="90" y2="62" stroke-width="24"/>
+    <ellipse cx="64" cy="72" rx="19" ry="23"/>
+    <line x1="57" y1="84" x2="46" y2="106" stroke-width="24"/>
+    <line x1="71" y1="84" x2="82" y2="106" stroke-width="24"/>
+  </g>
+  <g fill="#b8692e" stroke="#b8692e" stroke-linecap="round">
+    <circle cx="64" cy="38" r="15"/>
+    <line x1="38" y1="62" x2="90" y2="62" stroke-width="18"/>
+    <ellipse cx="64" cy="72" rx="16" ry="20"/>
+    <line x1="57" y1="84" x2="46" y2="106" stroke-width="18"/>
+    <line x1="71" y1="84" x2="82" y2="106" stroke-width="18"/>
+  </g>
+  <g fill="none" stroke="#fffaf0" stroke-width="2.5" stroke-linecap="round">
+    <path d="M57 43 Q64 49 71 43"/>
+    <path d="M41 55 Q37 58.5 41 62 Q45 65.5 41 69"/>
+    <path d="M87 55 Q91 58.5 87 62 Q83 65.5 87 69"/>
+    <path d="M41.9 98.5 Q43.7 102.7 48.2 101.6 Q52.7 100.5 54.5 104.7"/>
+    <path d="M86.1 98.5 Q84.3 102.7 79.8 101.6 Q75.3 100.5 73.5 104.7"/>
+  </g>
+  <circle cx="58" cy="35" r="2.6" fill="#3a1a08"/>
+  <circle cx="70" cy="35" r="2.6" fill="#3a1a08"/>
+  <circle cx="64" cy="63" r="3.4" fill="#d9483b" stroke="#fffaf0" stroke-width="1"/>
+  <circle cx="64" cy="72" r="3.4" fill="#3f8f4f" stroke="#fffaf0" stroke-width="1"/>
+  <circle cx="64" cy="81" r="3.4" fill="#d9483b" stroke="#fffaf0" stroke-width="1"/>
+</svg>

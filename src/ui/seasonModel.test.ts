@@ -408,9 +408,25 @@ describe('seasonSheet recipes (T14.11)', () => {
     expect(recipe(running({})).needs).toBe(
       'Needs a Flour Mill and a Dairy Fridge',
     );
-    expect(recipe(state()).needs).toBe(
+    // Running, with the patch gone from the board.
+    expect(recipe(state({ season: active() })).needs).toBe(
       'Needs a Gourd Patch, a Flour Mill and a Dairy Fridge',
     );
+  });
+
+  it('leaves out what the season’s generator spawns until the season starts', () => {
+    const waiting = { season: active({ startedAt: null }) };
+    for (const change of [{}, waiting]) {
+      const view = recipe(state(change));
+      expect(view.needs).toBe('Needs a Flour Mill and a Dairy Fridge');
+      expect(view.inputs.map((i) => i.available)).toEqual([true, false, false]);
+
+      const owned = stateWith(
+        { 0: 'flour-mill-1', 1: 'dairy-fridge-1' },
+        { tutorialStep: 'done', ...change },
+      );
+      expect(recipe(owned).needs).toBeNull();
+    }
   });
 
   it('counts a held input as available', () => {

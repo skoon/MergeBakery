@@ -1,0 +1,294 @@
+{
+  "id": "holidayfun",
+  "name": "Holiday fun!",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "window": {
+    "start": "12-01",
+    "end": "12-25"
+  },
+  "generatorItemId": "holidayfun-sleigh-1",
+  "pointsPerItem": 5,
+  "orders": {
+    "maxOpen": 3,
+    "minItems": 1,
+    "maxItems": 3,
+    "minTier": 1,
+    "maxTier": 3
+  },
+  "milestones": [
+    {
+      "points": 75,
+      "reward": {
+        "coins": 50,
+        "gems": 0
+      }
+    },
+    {
+      "points": 175,
+      "reward": {
+        "coins": 100,
+        "gems": 5
+      }
+    },
+    {
+      "points": 300,
+      "reward": {
+        "coins": 150,
+        "gems": 10
+      }
+    },
+    {
+      "points": 450,
+      "reward": {
+        "coins": 0,
+        "gems": 10,
+        "keepsakeId": "holidayfun-star"
+      }
+    },
+    {
+      "points": 600,
+      "reward": {
+        "coins": 0,
+        "gems": 20,
+        "keepsakeId": "holidayfun-gingerbread-house"
+      }
+    }
+  ],
+  "keepsakes": [
+    {
+      "id": "holidayfun-star",
+      "name": "Tree-top Star",
+      "spriteKey": "holidayfun-star"
+    },
+    {
+      "id": "holidayfun-gingerbread-house",
+      "name": "Golden Gingerbread House",
+      "spriteKey": "holidayfun-gingerbread-house"
+    }
+  ],
+  "chains": [
+    {
+      "id": "holidayfun-sleigh",
+      "name": "Holiday Sleigh",
+      "kind": "generator",
+      "color": "#b23a3a",
+      "completionGems": 0
+    },
+    {
+      "id": "holidayfun-peppermint",
+      "name": "Peppermints",
+      "kind": "ingredient",
+      "color": "#f3b3bd",
+      "completionGems": 5
+    },
+    {
+      "id": "holidayfun-clementine",
+      "name": "Clementines",
+      "kind": "ingredient",
+      "color": "#a9cce3",
+      "completionGems": 5
+    },
+    {
+      "id": "holidayfun-gingerbread",
+      "name": "Gingerbread",
+      "kind": "baked",
+      "color": "#7fb48a",
+      "completionGems": 5
+    },
+    {
+      "id": "holidayfun-cake",
+      "name": "Clementine cakes",
+      "kind": "baked",
+      "color": "#f2a65a",
+      "completionGems": 5
+    }
+  ],
+  "items": [
+    {
+      "id": "holidayfun-sleigh-1",
+      "name": "Holiday Sleigh",
+      "chainId": "holidayfun-sleigh",
+      "tier": 1,
+      "spriteKey": "holidayfun-sleigh-1",
+      "sellValue": 0,
+      "note": "Tap it for peppermints and clementines.",
+      "collectReward": null
+    },
+    {
+      "id": "holidayfun-peppermint",
+      "name": "Peppermint",
+      "chainId": "holidayfun-peppermint",
+      "tier": 1,
+      "spriteKey": "holidayfun-peppermint",
+      "sellValue": 2,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "holidayfun-peppermint-handful",
+      "name": "Handful of peppermints",
+      "chainId": "holidayfun-peppermint",
+      "tier": 2,
+      "spriteKey": "holidayfun-peppermint-handful",
+      "sellValue": 4,
+      "note": "Enough for a batch of gingerbread.",
+      "collectReward": null
+    },
+    {
+      "id": "holidayfun-candy-cane",
+      "name": "Candy cane",
+      "chainId": "holidayfun-peppermint",
+      "tier": 3,
+      "spriteKey": "holidayfun-candy-cane",
+      "sellValue": 8,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "holidayfun-clementine",
+      "name": "Clementine",
+      "chainId": "holidayfun-clementine",
+      "tier": 1,
+      "spriteKey": "holidayfun-clementine",
+      "sellValue": 2,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "holidayfun-clementine-pair",
+      "name": "Two clementines",
+      "chainId": "holidayfun-clementine",
+      "tier": 2,
+      "spriteKey": "holidayfun-clementine-pair",
+      "sellValue": 4,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "holidayfun-clementine-basket",
+      "name": "Basket of clementines",
+      "chainId": "holidayfun-clementine",
+      "tier": 3,
+      "spriteKey": "holidayfun-clementine-basket",
+      "sellValue": 8,
+      "note": "Just right for a cake.",
+      "collectReward": null
+    },
+    {
+      "id": "holidayfun-gingerbread-man",
+      "name": "Gingerbread man",
+      "chainId": "holidayfun-gingerbread",
+      "tier": 1,
+      "spriteKey": "holidayfun-gingerbread-man",
+      "sellValue": 30,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "holidayfun-gingerbread-pair",
+      "name": "Two gingerbread men",
+      "chainId": "holidayfun-gingerbread",
+      "tier": 2,
+      "spriteKey": "holidayfun-gingerbread-pair",
+      "sellValue": 60,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "holidayfun-clementine-cake",
+      "name": "Clementine cake",
+      "chainId": "holidayfun-cake",
+      "tier": 1,
+      "spriteKey": "holidayfun-clementine-cake",
+      "sellValue": 30,
+      "note": null,
+      "collectReward": null
+    },
+    {
+      "id": "holidayfun-clementine-cake-pair",
+      "name": "Two clementine cakes",
+      "chainId": "holidayfun-cake",
+      "tier": 2,
+      "spriteKey": "holidayfun-clementine-cake-pair",
+      "sellValue": 60,
+      "note": null,
+      "collectReward": null
+    }
+  ],
+  "generators": [
+    {
+      "itemId": "holidayfun-sleigh-1",
+      "spawnTable": [
+        {
+          "itemId": "holidayfun-peppermint",
+          "weight": 55
+        },
+        {
+          "itemId": "holidayfun-clementine",
+          "weight": 45
+        }
+      ],
+      "charges": 20,
+      "cooldownSec": 600
+    }
+  ],
+  "recipes": [
+    {
+      "id": "holidayfun-bake-gingerbread",
+      "name": "Gingerbread man",
+      "inputs": ["holidayfun-peppermint-handful", "flour-bag", "cream-jug"],
+      "output": "holidayfun-gingerbread-man",
+      "bakeSec": 300
+    },
+    {
+      "id": "holidayfun-bake-cake",
+      "name": "Clementine cake",
+      "inputs": ["holidayfun-clementine-basket", "flour-bag", "milk-bottle"],
+      "output": "holidayfun-clementine-cake",
+      "bakeSec": 240
+    }
+  ],
+  "theme": {
+    "invitation": "Holiday fun! is here! The harbor is strung with lights, and Grandma has her gingerbread cutters out. Join in?",
+    "tokens": {
+      "--color-crust": "#8f2d2d",
+      "--color-butter": "#f3c95a",
+      "--color-strawberry": "#d9483b",
+      "--color-mint": "#8cc7a1"
+    },
+    "music": {
+      "bpm": 96,
+      "rootHz": 523.25,
+      "wave": "sine",
+      "gain": 0.07,
+      "pattern": [0, 1, 2, 1, 2, 1, 0, 2],
+      "progression": [
+        [0, 4, 7],
+        [9, 12, 16],
+        [5, 9, 12],
+        [7, 11, 14]
+      ]
+    },
+    "intro": [
+      {
+        "speaker": "narrator",
+        "text": "Snow on the harbor and lights in every window. Holiday fun! has come to town."
+      },
+      {
+        "speaker": "grandma",
+        "expression": "happy",
+        "text": "Out came my gingerbread cutters! Gingerbread men and clementine cake, just like when you were small."
+      },
+      {
+        "speaker": "grandma",
+        "text": "Tap the Holiday Sleigh for peppermints and clementines. An order of three treats is a Gift order, and folks pay half again for those."
+      },
+      {
+        "speaker": "grandma",
+        "expression": "happy",
+        "text": "Flour from the Mill and cream and milk from the Fridge, and we're ready to bake."
+      }
+    ]
+  }
+}

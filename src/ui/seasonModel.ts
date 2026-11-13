@@ -8,6 +8,7 @@ import { bakeDurationMs } from '../core/kitchen';
 import { missingInputs } from '../core/orders';
 import { runningSeason } from '../core/seasons';
 import type {
+  ChainId,
   GameData,
   GameState,
   Item,
@@ -171,7 +172,10 @@ export interface SeasonRecipeInputView {
   readonly itemId: ItemId;
   readonly name: string;
   readonly spriteKey: string;
-  /** False when the player can't get it now; shown dimmed. */
+  /**
+   * False when the player can't get it now; shown dimmed. Before the season
+   * starts, what its generator spawns counts as available.
+   */
   readonly available: boolean;
 }
 
@@ -244,16 +248,44 @@ function andList(parts: readonly string[]): string {
     : `${parts.slice(0, -1).join(', ')} and ${parts.slice(-1).join('')}`;
 }
 
+/**
+ * Chains the season's generator spawns, while the season hasn't started: it
+ * arrives when the season starts, so its items aren't shown as missing.
+ */
+function comingWithSeason(
+  data: GameData,
+  state: GameState,
+  def: SeasonDef,
+): Set<ChainId> {
+  const chains = new Set<ChainId>();
+  if (runningSeason(data, state)?.def.id === def.id) return chains;
+  const generator = data.generators.get(def.generatorItemId);
+  if (!generator) {
+    throw new Error(
+      `seasonSheet: season "${def.id}" has no generator "${def.generatorItemId}"`,
+    );
+  }
+  for (const entry of generator.spawnTable) {
+    const item = data.items.get(entry.itemId);
+    if (item) chains.add(item.chainId);
+  }
+  return chains;
+}
+
 function seasonRecipes(
   data: GameData,
   state: GameState,
   def: SeasonDef,
 ): SeasonRecipeView[] {
   const oven = timingOven(state);
+  const coming = comingWithSeason(data, state, def);
   return [...data.recipes.values()]
     .filter((recipe) => recipe.seasonId === def.id)
     .map((recipe) => {
-      const missing = missingInputs(data, state, recipe);
+      const missing = missingInputs(data, state, recipe).filter((id) => {
+        const chainId = data.items.get(id)?.chainId;
+        return chainId === undefined || !coming.has(chainId);
+      });
       const sources = [...new Set(missing.map((id) => sourceName(data, id)))];
       return {
         recipeId: recipe.id,

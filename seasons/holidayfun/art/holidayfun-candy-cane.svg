@@ -1,0 +1,15 @@
+<!-- Candy cane (tier 3): a red-and-white striped cane with its hook to the left. Drawn on the placeholder tile by npm run build:seasons. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <pattern id="stripes" patternUnits="userSpaceOnUse" width="14" height="14" patternTransform="rotate(35)">
+      <rect width="7" height="14" fill="#d62839"/>
+    </pattern>
+    <mask id="cane">
+      <path d="M82 110 L82 46 A18 18 0 0 0 46 46 L46 58" fill="none" stroke="#ffffff" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    </mask>
+  </defs>
+  <path d="M82 110 L82 46 A18 18 0 0 0 46 46 L46 58" fill="none" stroke="#7a1420" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M82 110 L82 46 A18 18 0 0 0 46 46 L46 58" fill="none" stroke="#fffaf5" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="0" y="0" width="128" height="128" fill="url(#stripes)" mask="url(#cane)"/>
+  <path d="M78 104 L78 48" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+</svg>
