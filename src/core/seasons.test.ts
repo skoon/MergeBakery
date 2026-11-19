@@ -243,7 +243,7 @@ describe('joinSeason', () => {
     });
   });
 
-  it('waits for a running MegaBun event, then starts on the tick it ends', () => {
+  it('starts at once with a MegaBun event running, and both run side by side', () => {
     const eventEnds = NOW + DAY;
     const state = game(
       {},
@@ -259,21 +259,18 @@ describe('joinSeason', () => {
       },
     );
     const joined = ok(joinSeason(data, state, 'autumn', rng(), NOW));
-    expect(joined.state.season?.startedAt).toBeNull();
-
-    const during = ok(
-      dispatch(data, joined.state, { type: 'tick', now: NOW + HOUR }),
-    );
-    expect(during.state.season?.startedAt).toBeNull();
+    expect(joined.state.season?.startedAt).toBe(NOW);
+    expect(joined.events.map((e) => e.type)).toContain('seasonStarted');
+    expect(seasonalOrders(joined.state)).toHaveLength(3);
+    expect(joined.state.event?.eventId).toBe('bake-off');
 
     const after = ok(
-      dispatch(data, during.state, { type: 'tick', now: eventEnds }),
+      dispatch(data, joined.state, { type: 'tick', now: eventEnds }),
     );
     const types = after.events.map((e) => e.type);
     expect(types).toContain('eventEnded');
-    expect(types).toContain('seasonStarted');
-    expect(after.state.season?.startedAt).toBe(eventEnds);
-    expect(seasonalOrders(after.state)).toHaveLength(3);
+    expect(types).not.toContain('seasonStarted');
+    expect(after.state.season?.startedAt).toBe(NOW);
   });
 });
 

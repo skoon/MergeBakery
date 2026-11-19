@@ -225,7 +225,7 @@ describe('seasonSheet', () => {
     ]);
   });
 
-  it('says why a joined season is waiting', () => {
+  it('says a joined season is waiting for room, MegaBun event or not', () => {
     const waiting = active({ startedAt: null });
     expect(
       seasonSheet(data, state({ season: waiting }), NOW, themes)?.text,
@@ -242,7 +242,7 @@ describe('seasonSheet', () => {
     });
     expect(seasonSheet(data, withEvent, NOW, themes)).toMatchObject({
       status: 'waiting',
-      text: 'Autumn Test starts when the MegaBun event ends.',
+      text: "Autumn Test starts once there's room on the board or in the Pantry for the Gourd Patch.",
     });
   });
 

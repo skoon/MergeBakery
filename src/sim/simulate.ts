@@ -330,8 +330,9 @@ class Bot {
   }
 
   /**
-   * Joins the bot's season once its window opens, then claims each milestone
-   * as it's reached. Joining is tried every step until it works.
+   * Joins the bot's season once its window opens, takes the season's
+   * generator out of the Pantry once there's room on the board, then claims
+   * each milestone as it's reached. Joining is tried every step until it works.
    */
   private season(): boolean {
     if (this.seasonId === null) return false;
@@ -347,6 +348,18 @@ class Bot {
     const active = this.state.season;
     const def = active && this.data.seasons.get(active.seasonId)?.def;
     if (!active || !def) return false;
+    // A season that starts on a full board leaves its generator in the Pantry.
+    const stored = this.state.pantry.items.findIndex(
+      (item) => item.itemId === def.generatorItemId,
+    );
+    const empty = this.state.board.cells.findIndex((c) => c.kind === 'empty');
+    if (
+      stored !== -1 &&
+      empty !== -1 &&
+      this.act(null, { type: 'takeFromPantry', pantryIndex: stored, to: empty })
+    ) {
+      return true;
+    }
     const index = def.milestones.findIndex(
       (m, i) =>
         m.points <= active.points && !active.claimedMilestones.includes(i),

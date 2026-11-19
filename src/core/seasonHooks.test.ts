@@ -15,6 +15,8 @@ import type {
   Action,
   ActionResult,
   ActiveSeason,
+  BoardItem,
+  Cell,
   GameData,
   GameEvent,
   GameState,
@@ -173,19 +175,37 @@ describe('when hooks run', () => {
 
   it('calls none while the season waits to start', () => {
     const { calls, hooks } = recorder();
+    const d = withRules(hooks);
     const waiting = shop({ season: season({ startedAt: null }) });
-    // Keep it waiting: a running MegaBun event blocks the start.
-    const blocked: GameState = {
+    // Only a tick (or joining) starts a waiting season, so tap and deliver without one.
+    const tapped = act(d, waiting, {
+      type: 'tapGenerator',
+      cell: 0,
+      now: NOW,
+    });
+    const delivered = act(d, tapped.state, {
+      type: 'deliverOrder',
+      orderId: ORDER.id,
+      now: NOW,
+    });
+    expect(delivered.state.season?.startedAt).toBeNull();
+    // A tick with no room on the board or in the Pantry for its generator leaves it waiting.
+    const egg: BoardItem = { itemId: 'egg', cobwebbed: false, generator: null };
+    const full: GameState = {
       ...waiting,
-      event: {
-        eventId: 'bake-off',
-        startedAt: NOW - HOUR,
-        endsAt: NOW + HOUR,
-        points: 0,
-        claimedMilestones: [],
+      board: {
+        ...waiting.board,
+        cells: waiting.board.cells.map((c): Cell =>
+          c.kind === 'empty' ? { kind: 'item', item: egg } : c,
+        ),
+      },
+      pantry: {
+        ...waiting.pantry,
+        items: Array.from({ length: waiting.pantry.capacity }, () => egg),
       },
     };
-    exercise(withRules(hooks), blocked, NOW);
+    const ticked = act(d, full, { type: 'tick', now: NOW });
+    expect(ticked.state.season?.startedAt).toBeNull();
     expect(calls).toEqual([]);
   });
 

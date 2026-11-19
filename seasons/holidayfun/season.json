@@ -18,28 +18,28 @@
   },
   "milestones": [
     {
-      "points": 75,
+      "points": 100,
       "reward": {
         "coins": 50,
         "gems": 0
       }
     },
     {
-      "points": 175,
+      "points": 250,
       "reward": {
         "coins": 100,
         "gems": 5
       }
     },
     {
-      "points": 300,
+      "points": 425,
       "reward": {
         "coins": 150,
         "gems": 10
       }
     },
     {
-      "points": 450,
+      "points": 625,
       "reward": {
         "coins": 0,
         "gems": 10,
@@ -47,7 +47,7 @@
       }
     },
     {
-      "points": 600,
+      "points": 850,
       "reward": {
         "coins": 0,
         "gems": 20,

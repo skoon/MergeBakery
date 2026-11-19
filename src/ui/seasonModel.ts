@@ -331,10 +331,7 @@ export function seasonSheet(
     text = invitationText(def, themes.get(def.id));
   } else if (active.startedAt === null) {
     status = 'waiting';
-    text =
-      state.event !== null
-        ? `${def.name} starts when the MegaBun event ends.`
-        : `${def.name} starts once there's room on the board or in the Pantry for the ${generator}.`;
+    text = `${def.name} starts once there's room on the board or in the Pantry for the ${generator}.`;
   } else {
     status = 'running';
     text = `Tap the ${generator} and merge what it makes, and bake the season's recipes. Deliver the orders with a dashed border to earn Season Points, then claim your rewards here.`;

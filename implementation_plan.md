@@ -59,7 +59,7 @@ Packs are built separately from the game bundle and found at runtime, so a phone
 
 **Not joined.** The pack's data is loaded, but nothing in play changes: no generator, no seasonal orders or recipes, no theme, no rule hooks, and MegaBun events run as usual.
 
-**Joining.** `joinSeason` records the choice. The season's content starts at once, or, if a MegaBun event is running, when that event ends. Once joined, the season runs until its window ends; there's no leaving early (say if you want a "leave season" option — the end-of-season sweep already does what leaving would need).
+**Joining.** `joinSeason` records the choice. The season's content starts at once, even if a MegaBun event is running: the two run side by side until the event ends (Scott, Nov 18; it used to wait for the event). Once joined, the season runs until its window ends; there's no leaving early (say if you want a "leave season" option — the end-of-season sweep already does what leaving would need).
 
 **Seasonal chain and recipes.** Pack chains and recipes merge into the normal systems: tap, merge, bake, and Recipe Book discovery all work unchanged. Seasonal recipes may mix seasonal and base ingredients (Pumpkin + Flour + Butter → Pumpkin Pie). They appear in the Kitchen and Recipe Book only while the joined season is running.
 

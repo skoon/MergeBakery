@@ -235,8 +235,9 @@ function topUpOrders(
 }
 
 /**
- * Starts a joined season that is waiting: once no MegaBun event is running and
- * its generator fits on the board or in the Pantry. Same state when it can't.
+ * Starts a joined season that is waiting: once its generator fits on the board
+ * or in the Pantry. A MegaBun event already running doesn't hold it back; the
+ * two run side by side. Same state when it can't.
  */
 function startSeason(
   data: GameData,
@@ -245,7 +246,7 @@ function startSeason(
   now: Timestamp,
 ): Step {
   const season = state.season;
-  if (!season || season.startedAt !== null || state.event !== null) {
+  if (!season || season.startedAt !== null) {
     return { state, events: [] };
   }
   const placed = placeGenerator(data, state, def.generatorItemId);
